@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Đấu Tàu Vũ Trụ J-Q-X</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --j:#FF6EC7; --j-dark:#D6389C;
+    --q:#4FE0E8; --q-dark:#1FA9B3;
+    --x:#8B7CF6; --x-dark:#5F4CD6;
+    --yellow:#FFD84D; --yellow-dark:#E0A72E;
+    --red:#FF5C5C; --red-dark:#C7362A;
+    --green:#4CE0A0; --green-dark:#22A76F;
+    --space:#161A33; --space2:#0D0F22;
+    --paper:#1E2244; --line:#33396B;
+    --ink:#F3F4FF; --ink-soft:#A6ACD9;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(circle at 15% 20%, #2A2F5C 0%, transparent 40%),
+               radial-gradient(circle at 85% 80%, #2A1F52 0%, transparent 40%), var(--space2);
+    min-height:100vh;font-family:'Be Vietnam Pro',sans-serif;color:var(--ink);
+    display:flex;justify-content:center;padding:16px 12px 36px;
+  }
+  h1,.display{font-family:'Baloo 2',sans-serif;}
+  #app{width:100%;max-width:600px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .brand .name{font-family:'Baloo 2';font-weight:800;font-size:18px;color:var(--q);text-shadow:0 0 12px rgba(79,224,232,.5);}
+  .brand .sub{font-size:11px;color:var(--ink-soft);margin-top:-2px;}
+  .stat-pill{display:flex;align-items:center;gap:6px;background:var(--paper);border:2px solid var(--line);
+    border-radius:999px;padding:6px 12px;font-weight:700;font-size:14px;color:var(--yellow);}
+  .screen{display:none;} .screen.active{display:block;}
+  .card{background:var(--paper);border-radius:26px;border:2px solid var(--line);padding:20px 18px 24px;
+    box-shadow:0 0 30px rgba(79,224,232,.08), 0 8px 0 var(--space);}
+  .backlink{display:inline-flex;gap:4px;font-size:13px;color:var(--ink-soft);background:none;border:none;cursor:pointer;padding:0;margin-bottom:10px;font-weight:600;}
+
+  /* HOME */
+  .hero{text-align:center;margin:6px 0 6px;}
+  .hero .critters{display:flex;justify-content:center;gap:22px;margin-bottom:10px;}
+  .critter{font-size:44px;filter:drop-shadow(0 0 10px rgba(139,124,246,.5));}
+  .hero h1{font-size:21px;margin:0 0 6px;color:var(--ink);}
+  .hero p{color:var(--ink-soft);font-size:13.5px;line-height:1.6;margin:0 auto;max-width:440px;}
+  .rule-box{background:rgba(255,216,77,.1);border:1.5px dashed var(--yellow-dark);border-radius:14px;
+    padding:10px 12px;font-size:12px;color:#FFE9A8;margin-top:12px;line-height:1.5;text-align:left;}
+  .mode-list{display:flex;flex-direction:column;gap:12px;margin-top:18px;}
+  .mode-card{border-radius:18px;border:2px solid var(--line);padding:16px;cursor:pointer;text-align:left;
+    display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.04);}
+  .mode-card:active{transform:translateY(2px);}
+  .mode-card .memoji{font-size:30px;}
+  .mode-card .mname{font-family:'Baloo 2';font-weight:700;font-size:16px;color:var(--ink);}
+  .mode-card .mdesc{font-size:12px;color:var(--ink-soft);line-height:1.4;margin-top:2px;}
+  .mode-card.main{border-color:var(--j);}
+  .mode-card.review{border-color:var(--yellow-dark);}
+  footer{text-align:center;color:var(--ink-soft);font-size:11.5px;margin-top:16px;line-height:1.6;}
+
+  /* GAME — dùng chung cho cả 2 mode */
+  .hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .hearts{font-size:18px;}
+  .arena{
+    position:relative;height:260px;border-radius:20px 20px 0 0;overflow:hidden;
+    background:
+      radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 80px 90px, #fff, transparent),
+      radial-gradient(2px 2px at 150px 50px, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 200px 130px, #fff, transparent),
+      radial-gradient(2px 2px at 260px 70px, #fff, transparent),
+      linear-gradient(180deg,#0D0F22 0%, #161A33 60%, #1E2244 100%);
+    border:2px solid var(--line);border-bottom:none;
+  }
+  .ship{
+    position:absolute;left:50%;top:8px;transform:translateX(-50%);
+    font-size:44px;line-height:1;filter:drop-shadow(0 0 10px rgba(255,110,199,.6));
+    animation:hover 1.1s ease-in-out infinite;
+  }
+  @keyframes hover{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-6px);}}
+  .ship.boom{animation:boomPop .4s ease forwards;}
+  @keyframes boomPop{0%{transform:translateX(-50%) scale(1);opacity:1;}100%{transform:translateX(-50%) scale(2.2);opacity:0;}}
+  .laser{position:absolute;width:6px;height:26px;border-radius:6px;background:linear-gradient(180deg,#fff,var(--q));box-shadow:0 0 10px var(--q);}
+  .laser.fly{transition:transform .24s ease-out, opacity .24s ease-out;transform:translate(var(--dx,0px), var(--dy,-190px));opacity:0;}
+  .replay-mini{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.08);border:2px solid var(--line);
+    border-radius:50%;width:36px;height:36px;font-size:15px;cursor:pointer;z-index:5;color:var(--ink);}
+  .listen-tag{position:absolute;top:8px;left:8px;background:var(--yellow);color:#4A3400;font-family:'Baloo 2';
+    font-weight:700;font-size:11.5px;padding:4px 9px;border-radius:999px;opacity:0;transition:opacity .2s ease;}
+  .listen-tag.show{opacity:1;}
+
+  .targetbar{background:rgba(255,255,255,.03);border:2px solid var(--line);border-top:none;border-radius:0 0 20px 20px;padding:10px 10px 14px;}
+  .targets-fixed{display:flex;gap:6px;}
+  .targets-dynamic{display:none;grid-template-columns:1fr 1fr;gap:8px;}
+  .tbtn{
+    flex:1;min-height:78px;border-radius:16px 16px 8px 8px;border:3px solid var(--line);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;
+    font-family:'Baloo 2';font-weight:800;background:rgba(255,255,255,.05);
+  }
+  .tbtn.j{border-color:var(--j);} .tbtn.q{border-color:var(--q);} .tbtn.x{border-color:var(--x);}
+  .tbtn .tanim{font-size:26px;}
+  .tbtn .tlabel{font-size:13px;margin-top:2px;}
+  .tbtn.j .tlabel{color:var(--j);} .tbtn.q .tlabel{color:var(--q);} .tbtn.x .tlabel{color:var(--x);}
+  .tbtn.hit{animation:hit .3s ease;}
+  @keyframes hit{0%{transform:scale(1);}40%{transform:scale(1.15);}100%{transform:scale(1);}}
+  .tbtn.miss{animation:missflash .4s ease;}
+  @keyframes missflash{0%,100%{filter:none;}40%{filter:drop-shadow(0 0 8px var(--red));}}
+  .tbtn.dyn .hz{font-size:22px;color:var(--ink);}
+  .tbtn.dyn .py{font-size:13px;color:var(--ink-soft);}
+
+  .feedback{min-height:24px;text-align:center;font-weight:700;font-size:14.5px;margin-top:12px;color:var(--ink);}
+  .feedback.ok{color:var(--green);} .feedback.bad{color:var(--red);}
+
+  /* RESULT */
+  .result-emoji{font-size:54px;text-align:center;}
+  .result-title{text-align:center;font-size:21px;font-weight:800;margin:6px 0 4px;color:var(--ink);}
+  .stars{text-align:center;font-size:32px;letter-spacing:6px;margin-bottom:12px;}
+  .result-score{text-align:center;color:var(--ink-soft);margin-bottom:16px;}
+  .btn-row{display:flex;gap:10px;}
+  .btn{flex:1;font-family:'Baloo 2';font-weight:700;border:none;border-radius:14px;padding:13px 10px;font-size:15px;cursor:pointer;}
+  .btn.primary{background:linear-gradient(160deg,var(--x),var(--x-dark));color:#fff;box-shadow:0 4px 0 var(--x-dark);}
+  .btn.primary:active{transform:translateY(3px);box-shadow:0 1px 0 var(--x-dark);}
+  .btn.ghost{background:rgba(255,255,255,.06);color:var(--ink);border:2px solid var(--line);}
+
+  /* Logo góc màn hình */
+  .teacher-badge{position:fixed;right:10px;bottom:10px;width:42px;height:42px;border-radius:50%;
+    overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.35);z-index:50;border:2px solid #fff;background:#fff;}
+  .teacher-badge img{width:100%;height:100%;object-fit:cover;display:block;}
+  .teacher-badge:active{transform:scale(.94);}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar">
+    <div class="brand">
+      <div class="name">🛸 Đấu Tàu Vũ Trụ J-Q-X</div>
+      <div class="sub">Luyện nghe & phát âm tiếng Trung cho bé · 给孩子的中文听力发音练习</div>
+    </div>
+    <div class="stat-pill">⭐ <span id="scoreDisplay">0</span></div>
+  </div>
+
+  <!-- ============ HOME ============ -->
+  <section id="screen-home" class="screen active">
+    <div class="card">
+      <div class="hero">
+        <div class="critters"><span class="critter">🚀</span><span class="critter">👾</span><span class="critter">🛸</span></div>
+        <h1>Bảo vệ trạm không gian! · 保卫太空站！</h1>
+        <p>Tàu địch đang tiến đến — nghe kỹ rồi bấm đúng trạm laser để bắn hạ! · 敌舰正在逼近——仔细听，按对激光站把它击落！</p>
+        <div class="rule-box">💡 j, q, x chỉ đi với vần bắt đầu bằng "i" hoặc "ü". Khi "ü" đứng sau j/q/x, bỏ 2 chấm, chỉ viết "u" — ví dụ 去 vẫn đọc "qü" nhưng viết <b>qu</b>.</div>
+      </div>
+      <div class="mode-list">
+        <div class="mode-card main" onclick="startGame('main')">
+          <div class="memoji">🛸</div>
+          <div>
+            <div class="mname">Đấu Tàu Vũ Trụ (j/q/x)</div>
+            <div class="mdesc">Bắn hạ tàu địch trước khi chúng lao xuống trạm.</div>
+          </div>
+        </div>
+        <div class="mode-card review" onclick="startGame('review')">
+          <div class="memoji">🎧</div>
+          <div>
+            <div class="mname">Ôn Tất Cả Âm Đã Học · 复习所有学过的发音</div>
+            <div class="mdesc">Vẫn là đấu tàu vũ trụ, nhưng trộn thêm nhiều âm khác đã học: b p m f, d t n l, g k h y, j q x. · 还是太空战舰游戏，但混入了更多学过的发音：b p m f、d t n l、g k h y、j q x。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GAME ============ -->
+  <section id="screen-game" class="screen">
+    <button class="backlink" onclick="goHome()">← Về trang chính · ← 返回主页</button>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="padding:16px 16px 0;">
+        <div class="hud">
+          <div class="hearts" id="arcadeHearts">❤️❤️❤️</div>
+          <div style="font-size:13px;color:var(--ink-soft);font-weight:600;">Tàu <span id="arcadeIdx">1</span>/<span id="arcadeTotal">12</span></div>
+        </div>
+      </div>
+      <div class="arena" id="arena">
+        <div class="listen-tag" id="listenTag">🔊 Đang nghe... · 🔊 正在听...</div>
+        <button class="replay-mini" onclick="replayAudio()">🔊</button>
+      </div>
+      <div class="targetbar">
+        <div class="targets-fixed" id="targetsFixed">
+          <div class="tbtn j" onclick="answer('j')"><div class="tanim">🔫</div><div class="tlabel">J</div></div>
+          <div class="tbtn q" onclick="answer('q')"><div class="tanim">🔫</div><div class="tlabel">Q</div></div>
+          <div class="tbtn x" onclick="answer('x')"><div class="tanim">🔫</div><div class="tlabel">X</div></div>
+        </div>
+        <div class="targets-dynamic" id="targetsDynamic"></div>
+      </div>
+      <div style="padding:0 16px 16px;">
+        <div class="feedback" id="arcadeFeedback"></div>
+        <button id="continueBtn" class="hidden" style="display:block;margin:8px auto 0;border:none;border-radius:20px;background:linear-gradient(135deg,#4fc3f7,#1e90c9);color:#fff;font-weight:800;font-size:16px;padding:12px 32px;cursor:pointer;box-shadow:0 6px 14px rgba(30,144,201,0.4);">▶ Tiếp tục · ▶ 继续</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ RESULT ============ -->
+  <section id="screen-result" class="screen">
+    <div class="card">
+      <div class="result-emoji" id="resultEmoji">🎉</div>
+      <div class="result-title" id="resultTitle">Hoàn thành! · 完成啦！</div>
+      <div class="stars" id="resultStars"></div>
+      <div class="result-score" id="resultScore"></div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="goHome()">Trang chính · 主页</button>
+        <button class="btn primary" onclick="startGame(lastMode)">Chơi lại</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<a class="teacher-badge" href="https://www.facebook.com/revenge.third" target="_blank" rel="noopener" title="Thiên Bình - Dạy Tiếng Trung">
+  <img src="data:image/jpeg;base64,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" alt="Thiên Bình Dạy Tiếng Trung">
+</a>
+
+<script>
+/* ============================================================
+   ĐẤU TÀU VŨ TRỤ J-Q-X — dữ liệu âm thanh
+   File mp3 đặt trong ../audio/ (thư mục dùng CHUNG cho cả repo — xem HUONG_DAN_TAO_MP3_VA_GITHUB.md)
+   ============================================================ */
+const AUDIO_BASE = "../audio/";
+
+// Mode chính: 10 bộ ba âm cùng vần
+const TRIPLETS = [
+  {final:"i",   j:{syl:"ji",   hz:"几", py:"jǐ",   mn:"mấy (hỏi số lượng)"}, q:{syl:"qi",   hz:"七",  py:"qī",   mn:"số 7"},        x:{syl:"xi",   hz:"西",  py:"xī",   mn:"hướng Tây"}},
+  {final:"ia",  j:{syl:"jia",  hz:"家", py:"jiā",  mn:"nhà, gia đình"},      q:{syl:"qia",  hz:"恰",  py:"qià",  mn:"vừa khớp"},     x:{syl:"xia",  hz:"虾",  py:"xiā",  mn:"con tôm"}},
+  {final:"ie",  j:{syl:"jie",  hz:"姐", py:"jiě",  mn:"chị gái"},            q:{syl:"qie",  hz:"茄",  py:"qié",  mn:"cà (rau củ)"},  x:{syl:"xie",  hz:"鞋",  py:"xié",  mn:"giày"}},
+  {final:"iao", j:{syl:"jiao", hz:"叫", py:"jiào", mn:"gọi, kêu"},           q:{syl:"qiao", hz:"桥",  py:"qiáo", mn:"cây cầu"},      x:{syl:"xiao", hz:"小",  py:"xiǎo", mn:"nhỏ"}},
+  {final:"iu",  j:{syl:"jiu",  hz:"九", py:"jiǔ",  mn:"số 9"},               q:{syl:"qiu",  hz:"秋",  py:"qiū",  mn:"mùa thu"},      x:{syl:"xiu",  hz:"秀",  py:"xiù",  mn:"xinh đẹp"}},
+  {final:"ian", j:{syl:"jian", hz:"见", py:"jiàn", mn:"gặp, thấy"},          q:{syl:"qian", hz:"钱",  py:"qián", mn:"tiền"},         x:{syl:"xian", hz:"先",  py:"xiān", mn:"trước"}},
+  {final:"in",  j:{syl:"jin",  hz:"今", py:"jīn",  mn:"hôm nay (今天)"},      q:{syl:"qin",  hz:"亲",  py:"qīn",  mn:"thân thiết"},   x:{syl:"xin",  hz:"心",  py:"xīn",  mn:"trái tim"}},
+  {final:"ing", j:{syl:"jing", hz:"京", py:"jīng", mn:"kinh đô (Bắc Kinh)"}, q:{syl:"qing", hz:"请",  py:"qǐng", mn:"mời, xin"},     x:{syl:"xing", hz:"星",  py:"xīng", mn:"ngôi sao"}},
+  {final:"ü",   j:{syl:"ju",   hz:"局", py:"jú",   mn:"cục, ván (chơi)"},    q:{syl:"qu",   hz:"去",  py:"qù",   mn:"đi"},           x:{syl:"xu",   hz:"许",  py:"xǔ",   mn:"cho phép, có lẽ"}},
+  {final:"üe",  j:{syl:"jue",  hz:"决", py:"jué",  mn:"quyết định"},         q:{syl:"que",  hz:"缺",  py:"quē",  mn:"thiếu"},        x:{syl:"xue",  hz:"雪",  py:"xuě",  mn:"tuyết"}}
+];
+
+// Mode Ôn Tất Cả: cộng dồn từ Game 1 (d/t/n/l + b/p/m/f/g/k/h/y)
+const QUADS_DTNL = [
+  {final:"a",  d:{syl:"da", hz:"大", py:"dà", mn:"to, lớn"},   t:{syl:"ta", hz:"他", py:"tā", mn:"anh ấy"},  n:{syl:"na", hz:"哪", py:"nǎ", mn:"đâu, nào"}, l:{syl:"la", hz:"拉", py:"lā", mn:"kéo"}},
+  {final:"i",  d:{syl:"di", hz:"弟", py:"dì", mn:"em trai"},   t:{syl:"ti", hz:"梯", py:"tī", mn:"cái thang"}, n:{syl:"ni", hz:"你", py:"nǐ", mn:"bạn, em"}, l:{syl:"li", hz:"里", py:"lǐ", mn:"bên trong"}},
+  {final:"u",  d:{syl:"du", hz:"读", py:"dú", mn:"đọc"},       t:{syl:"tu", hz:"兔", py:"tù", mn:"con thỏ"}, n:{syl:"nu", hz:"努", py:"nǔ", mn:"cố gắng"}, l:{syl:"lu", hz:"路", py:"lù", mn:"con đường"}},
+  {final:"ao", d:{syl:"dao",hz:"刀", py:"dāo",mn:"con dao"},   t:{syl:"tao",hz:"套", py:"tào",mn:"bộ, cái"}, n:{syl:"nao",hz:"脑", py:"nǎo",mn:"não"},      l:{syl:"lao",hz:"老", py:"lǎo",mn:"già"}},
+  {final:"ai", d:{syl:"dai",hz:"带", py:"dài",mn:"mang theo"}, t:{syl:"tai",hz:"太", py:"tài",mn:"quá"},     n:{syl:"nai",hz:"奶", py:"nǎi",mn:"sữa"},      l:{syl:"lai",hz:"来", py:"lái",mn:"đến"}}
+];
+const REVIEW_EXTRA_BPMFGKHY = [
+  {syl:"ba", final:"a",  hz:"八", py:"bā",  mn:"số 8"}, {syl:"bi", final:"i",  hz:"笔", py:"bǐ",  mn:"cây bút"}, {syl:"bao",final:"ao", hz:"包", py:"bāo", mn:"cái túi, gói"},
+  {syl:"pa", final:"a",  hz:"怕", py:"pà",  mn:"sợ"},   {syl:"pi", final:"i",  hz:"皮", py:"pí",  mn:"da"},      {syl:"pao",final:"ao", hz:"跑", py:"pǎo", mn:"chạy"},
+  {syl:"ma", final:"a",  hz:"妈", py:"mā",  mn:"mẹ"},   {syl:"mao",final:"ao", hz:"猫", py:"māo", mn:"con mèo"}, {syl:"mi", final:"i",  hz:"米", py:"mǐ",  mn:"gạo"},
+  {syl:"fa", final:"a",  hz:"发", py:"fā",  mn:"phát ra"},{syl:"fei",final:"ei", hz:"飞", py:"fēi", mn:"bay"},   {syl:"fu", final:"u",  hz:"福", py:"fú",  mn:"phúc, may mắn"},
+  {syl:"ge", final:"e",  hz:"哥", py:"gē",  mn:"anh trai"},{syl:"gou",final:"ou", hz:"狗", py:"gǒu", mn:"con chó"},{syl:"gao",final:"ao", hz:"高", py:"gāo", mn:"cao"},
+  {syl:"ke", final:"e",  hz:"渴", py:"kě",  mn:"khát"}, {syl:"kou",final:"ou", hz:"口", py:"kǒu", mn:"miệng"},   {syl:"kai",final:"ai", hz:"开", py:"kāi", mn:"mở"},
+  {syl:"he", final:"e",  hz:"喝", py:"hē",  mn:"uống"}, {syl:"hao",final:"ao", hz:"好", py:"hǎo", mn:"tốt, giỏi"},{syl:"hei",final:"ei", hz:"黑", py:"hēi", mn:"đen"},
+  {syl:"yi", final:"i",  hz:"一", py:"yī",  mn:"số 1"}, {syl:"you",final:"ou", hz:"有", py:"yǒu", mn:"có"},      {syl:"yao",final:"ao", hz:"要", py:"yào", mn:"muốn"},
+  {syl:"dou",final:"ou", hz:"都", py:"dōu", mn:"đều"}
+];
+
+let totalScore = 0, currentAudio = null, lastMode = "main";
+function scoreDisplay(){ document.getElementById("scoreDisplay").textContent = totalScore; }
+let cachedZhVoice = null;
+function initVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const pick=()=>{ const v=speechSynthesis.getVoices(); cachedZhVoice = v.find(x=>x.lang&&x.lang.toLowerCase().startsWith('zh'))||null; };
+  pick();
+  if(speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', pick);
+}
+let _fbActx;
+function playChime(){
+  try{
+    _fbActx = _fbActx || new (window.AudioContext||window.webkitAudioContext)();
+    if(_fbActx.state==='suspended') _fbActx.resume();
+    const ring=(f1,f2,dur,delay)=>{ setTimeout(()=>{
+      const o=_fbActx.createOscillator(), g=_fbActx.createGain();
+      o.type='sine'; o.frequency.setValueAtTime(f1,_fbActx.currentTime); o.frequency.exponentialRampToValueAtTime(f2,_fbActx.currentTime+dur);
+      g.gain.setValueAtTime(0.15,_fbActx.currentTime); g.gain.exponentialRampToValueAtTime(0.001,_fbActx.currentTime+dur);
+      o.connect(g); g.connect(_fbActx.destination); o.start(); o.stop(_fbActx.currentTime+dur);
+    }, delay); };
+    ring(520,520,0.12,0); ring(720,720,0.14,130);
+  }catch(e){}
+}
+function speakFallback(text){
+  playChime(); // dam bao co am thanh ngay du giong doc may co hoat dong hay khong
+  if(!text || !('speechSynthesis' in window)) return;
+  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang="zh-CN"; if(cachedZhVoice) u.voice=cachedZhVoice; u.rate=0.82; speechSynthesis.speak(u);}catch(e){}
+}
+function playFile(file, fallbackText, onStart){
+  try{
+    if(currentAudio){ currentAudio.pause(); currentAudio.onerror=null; }
+    const a = new Audio(AUDIO_BASE + file); currentAudio = a;
+    let started=false;
+    const notifyStart=()=>{ if(started) return; started=true; if(onStart) onStart(); };
+    let fallbackFired=false;
+    const useFallback=()=>{ if(fallbackFired) return; fallbackFired=true; speakFallback(fallbackText); notifyStart(); };
+    a.addEventListener("error", useFallback);
+    a.addEventListener("playing", notifyStart);
+    const p = a.play();
+    if(p && p.catch) p.catch(useFallback);
+    setTimeout(notifyStart, 1200);
+  }catch(e){ speakFallback(fallbackText); if(onStart) onStart(); }
+}
+function shuffle(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");}
+function goHome(){ clearTimer(); showScreen("screen-home"); }
+
+function tripletsFlat(){ const out=[]; TRIPLETS.forEach(t=>{ ["j","q","x"].forEach(k=>out.push({...t[k],side:k,final:t.final})); }); return out; }
+function quadsFlat(){ const out=[]; QUADS_DTNL.forEach(q=>{ ["d","t","n","l"].forEach(k=>out.push({...q[k],final:q.final})); }); return out; }
+
+/* ============================================================
+   ENGINE DÙNG CHUNG CHO CẢ 2 MODE
+   ============================================================ */
+let game = null;
+let bombTimeout = null;
+
+function goToNextWhenReady(){
+  // Cho be chu dong bam "Tiep tuc" sau khi da doc ky giai thich, khong ep thoi gian
+  const btn = document.getElementById('continueBtn');
+  if(!btn){ game.idx++; nextRound(); return; }
+  btn.classList.remove('hidden');
+  let advanced = false;
+  const doAdvance = ()=>{
+    if(advanced) return;
+    advanced = true;
+    clearTimeout(safetyTimer);
+    btn.classList.add('hidden');
+    btn.onclick = null;
+    game.idx++; nextRound();
+  };
+  btn.onclick = doAdvance;
+  const safetyTimer = setTimeout(doAdvance, 15000); // moc an toan, chi phong be quen bam
+}
+
+function clearTimer(){ if(bombTimeout){ clearTimeout(bombTimeout); bombTimeout=null; } }
+
+function buildDistractors(pool, target, n){
+  let d = pool.filter(x=> x.syl!==target.syl && x.final===target.final);
+  d = shuffle(d);
+  while(d.length<n){
+    const cand = pick(pool);
+    if(cand.syl!==target.syl && !d.some(x=>x.syl===cand.syl)) d.push(cand);
+  }
+  return d.slice(0,n);
+}
+
+function startGame(mode){
+  totalScore = 0; scoreDisplay(); lastMode = mode;
+  let queue;
+  if(mode==="main"){
+    queue = shuffle(tripletsFlat()).slice(0,12);
+    document.getElementById("targetsFixed").style.display = "flex";
+    document.getElementById("targetsDynamic").style.display = "none";
+  } else {
+    const pool = quadsFlat().concat(REVIEW_EXTRA_BPMFGKHY).concat(tripletsFlat());
+    queue = shuffle(pool).slice(0,12).map(t=>({target:t, pool}));
+    document.getElementById("targetsFixed").style.display = "none";
+    document.getElementById("targetsDynamic").style.display = "grid";
+  }
+  game = { mode, queue, idx:0, lives:3 };
+  document.getElementById("arcadeTotal").textContent = queue.length;
+  showScreen("screen-game");
+  nextRound();
+}
+function updateHearts(){ document.getElementById("arcadeHearts").textContent = "❤️".repeat(game.lives) + "🤍".repeat(3-game.lives); }
+
+function nextRound(){
+  clearTimer();
+  const cbtn=document.getElementById("continueBtn"); if(cbtn) cbtn.classList.add("hidden");
+  if(game.idx >= game.queue.length || game.lives<=0){ finishGame(); return; }
+  document.getElementById("arcadeIdx").textContent = game.idx+1;
+  updateHearts();
+  document.getElementById("arcadeFeedback").textContent = "";
+  document.getElementById("arcadeFeedback").className = "feedback";
+  document.querySelectorAll(".tbtn").forEach(b=>b.classList.remove("miss","hit"));
+
+  let item;
+  if(game.mode==="main"){
+    item = game.queue[game.idx];
+  } else {
+    const entry = game.queue[game.idx];
+    item = entry.target;
+    const opts = shuffle([item, ...buildDistractors(entry.pool, item, 3)]);
+    renderDynamicTargets(opts);
+  }
+  game.current = item;
+  game.answered = false;
+
+  const arena = document.getElementById("arena");
+  const old = arena.querySelector(".ship");
+  if(old) old.remove();
+  const s = document.createElement("div");
+  s.className = "ship"; s.id = "ship";
+  s.textContent = "👾";
+  arena.appendChild(s);
+
+  const holdMs = 900;
+  const dropMs = game.mode==="main" ? 4000 : 4400;
+
+  s.style.transition = "none"; s.style.top = "8px";
+  const tag = document.getElementById("listenTag");
+  tag.classList.add("show");
+
+  let holdDone = false, audioReady = false;
+  function tryMove(){
+    if(!holdDone || !audioReady) return;
+    tag.classList.remove("show");
+    s.style.transition = `top ${dropMs}ms linear`;
+    s.style.top = "190px";
+    bombTimeout = setTimeout(shipLands, dropMs);
+  }
+  playFile(item.syl+".mp3", item.hz, ()=>{ audioReady = true; tryMove(); });
+  setTimeout(()=>{ holdDone = true; tryMove(); }, holdMs);
+}
+
+function renderDynamicTargets(opts){
+  const wrap = document.getElementById("targetsDynamic");
+  wrap.innerHTML = "";
+  opts.forEach(opt=>{
+    const d = document.createElement("div");
+    d.className = "tbtn dyn";
+    d.innerHTML = `<div class="hz">${opt.hz}</div><div class="py">${opt.py}</div>`;
+    d.onclick = ()=>answer(opt.syl, d);
+    wrap.appendChild(d);
+  });
+}
+
+function replayAudio(){ if(game && game.current) playFile(game.current.syl+".mp3", game.current.hz); }
+
+function shootFrom(el){
+  const arena = document.getElementById("arena");
+  const arenaRect = arena.getBoundingClientRect();
+  const btnRect = el.getBoundingClientRect();
+  const startX = btnRect.left - arenaRect.left + btnRect.width/2;
+  const startY = arenaRect.height;
+  let endX = startX, endY = 20;
+  const ship = document.getElementById("ship");
+  if(ship){
+    const shipRect = ship.getBoundingClientRect();
+    endX = shipRect.left - arenaRect.left + shipRect.width/2;
+    endY = shipRect.top - arenaRect.top + shipRect.height/2;
+  }
+  const p = document.createElement("div");
+  p.className = "laser";
+  p.style.left = (startX - 3) + "px";
+  p.style.top = startY + "px";
+  p.style.setProperty("--dx", (endX-startX)+"px");
+  p.style.setProperty("--dy", (endY-startY)+"px");
+  arena.appendChild(p);
+  requestAnimationFrame(()=>p.classList.add("fly"));
+  setTimeout(()=>p.remove(), 300);
+}
+
+function answer(value, elArg){
+  if(!game || game.answered) return;
+  const item = game.current;
+  const ok = game.mode==="main" ? (item.side===value) : (item.syl===value);
+
+  const el = elArg || document.querySelector(`.targets-fixed .tbtn.${value}`);
+  if(el) shootFrom(el);
+
+  const fb = document.getElementById("arcadeFeedback");
+  if(ok){
+    game.answered = true;
+    clearTimer();
+    if(el) el.classList.add("hit");
+    const ship = document.getElementById("ship");
+    if(ship){ setTimeout(()=>{ ship.textContent="💥"; ship.classList.add("boom"); }, 240); }
+    totalScore++; scoreDisplay();
+    fb.textContent = pick(["Bắn trúng rồi! 🎉 · 打中了！🎉","Nổ tung! ⭐ · 爆炸了！⭐","Phi công giỏi quá! · 飞行员真厉害！"]);
+    fb.className = "feedback ok";
+    setTimeout(()=>playFile(item.syl+".mp3", item.hz), 300);
+    goToNextWhenReady();
+  } else {
+    game.answered = true;
+    if(el) el.classList.add("miss");
+    fb.textContent = "Bắn hụt rồi! Để xem tàu lao trúng đáp án nào nhé... · 打偏了！来看看敌舰冲向哪个答案……";
+    fb.className = "feedback bad";
+    setTimeout(()=>playFile(item.syl+".mp3", item.hz), 300);
+  }
+}
+
+function shipLands(){
+  game.answered = true;
+  game.lives--;
+  const item = game.current;
+  const ship = document.getElementById("ship");
+  if(ship) ship.remove();
+  const fb = document.getElementById("arcadeFeedback");
+  fb.textContent = "Tàu địch lọt qua rồi! Âm \""+item.py+"\" ("+item.hz+" — "+item.mn+") · 敌舰漏过去了";
+  fb.className = "feedback bad";
+  goToNextWhenReady();
+}
+
+function finishGame(){
+  clearTimer();
+  const total = game.queue.length;
+  const pct = total? totalScore/total : 0;
+  const stars = pct>=0.9?3:pct>=0.6?2:pct>=0.3?1:0;
+  document.getElementById("resultEmoji").textContent = stars===3?"🏆":stars>=1?"🎉":"💪";
+  document.getElementById("resultTitle").textContent =
+    stars===3?"Xuất sắc! · 太棒了！ Trạm không gian an toàn!": stars===2?"Giỏi lắm, gần hoàn hảo rồi! · 真棒，快完美了！": stars===1?"Tốt lắm, luyện thêm chút nữa nhé! · 很好，再练习一下吧！":"Cố lên nào, mình chiến đấu lại nhé!";
+  document.getElementById("resultStars").textContent = "⭐".repeat(stars)+"☆".repeat(3-stars);
+  document.getElementById("resultScore").textContent = `Đúng ${totalScore}/${total}`;
+  showScreen("screen-result");
+}
+initVoices();
+</script>
+</body>
+</html>

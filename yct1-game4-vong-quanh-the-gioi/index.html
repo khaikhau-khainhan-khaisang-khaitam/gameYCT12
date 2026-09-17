@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bắn Hạ Chữ — Vòng Quanh Thế Giới (YCT1 Bài 3)</title>
+<style>
+  :root{
+    --main:#ffb84f; --mainD:#e8912f;
+    --bg1:#fff6e6; --bg2:#fffaf0;
+    --ink:#33303e; --white:#ffffff; --bad:#ff5c5c;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;
+    font-family:"Baloo 2","Segoe UI",Arial,sans-serif;
+    background:linear-gradient(180deg,var(--bg1),var(--bg2));
+    color:var(--ink); user-select:none;}
+  #app{position:relative; width:100%; height:100dvh; display:flex; flex-direction:column;}
+
+  #header{display:flex; align-items:center; justify-content:space-between; padding:8px 54px; z-index:5;}
+  #livesBox,#scoreBox{background:rgba(255,255,255,0.8); border-radius:20px; padding:6px 14px;
+    font-weight:800; font-size:16px; box-shadow:0 3px 8px rgba(0,0,0,0.1); letter-spacing:2px;}
+
+  #playArea{position:relative; flex:1; margin:6px 8px; border-radius:22px;
+    background:linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.08));
+    overflow:hidden; z-index:2;}
+
+  .fallWord{position:absolute; top:0; transform:translateX(-50%);
+    padding:8px 16px; border-radius:16px; background:#fff;
+    box-shadow:0 6px 14px rgba(0,0,0,0.18); transition:opacity .25s, transform .25s;}
+  .fallWord.faded{opacity:0; transform:translateX(-50%) scale(0.7);}
+  .fallWord.pop{opacity:0; transform:translateX(-50%) scale(1.5);}
+  .fallWord.locked{box-shadow:0 0 0 3px var(--main), 0 6px 14px rgba(0,0,0,0.18);}
+  .fallWord.hitFlash{background:#fff3c4;}
+  .fwHanzi{font-size:clamp(22px,7vw,32px); font-weight:800; color:var(--mainD); text-align:center; line-height:1.1;}
+  .hpBar{width:100%; height:6px; border-radius:4px; background:rgba(0,0,0,0.12); margin-top:5px; overflow:hidden;}
+  .hpFill{height:100%; background:linear-gradient(90deg,var(--main),var(--mainD)); width:100%; transition:width .18s ease;}
+
+  #cannon{position:absolute; bottom:4px; left:50%; transform:translateX(-50%);
+    font-size:24px; z-index:4; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.25));}
+  .bullet{position:absolute; width:10px; height:10px; border-radius:50%;
+    background:radial-gradient(circle,#fff,var(--main)); box-shadow:0 0 6px var(--main); z-index:6; pointer-events:none;}
+
+  #confettiLayer{position:absolute; inset:0; pointer-events:none; z-index:8; overflow:hidden;}
+  .confetti-piece{position:absolute; top:-20px; font-size:18px;}
+
+  #controls{z-index:5; padding:6px 10px 10px;}
+  #feedbackText{text-align:center; min-height:20px; font-size:14px; font-weight:800; color:var(--mainD); margin-bottom:4px;}
+  #inputRow{display:flex; align-items:center; gap:8px; max-width:480px; margin:0 auto;}
+  #pinyinInput{flex:1; font-size:22px; padding:10px 14px; border-radius:16px; border:3px solid var(--main);
+    outline:none; text-align:center; letter-spacing:1px; font-weight:700; color:var(--ink); background:#fff;}
+  #pinyinInput:focus{border-color:var(--mainD); box-shadow:0 0 0 4px rgba(0,0,0,0.08);}
+  #pinyinInput.errorShake{animation:shake .35s;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .iconBtn{border:none; border-radius:14px; width:46px; height:46px; font-size:20px;
+    background:var(--white); box-shadow:0 3px 8px rgba(0,0,0,0.12); cursor:pointer; flex-shrink:0;}
+  .iconBtn:active{transform:scale(0.92);}
+
+  .overlay{position:fixed; inset:0; z-index:50; background:rgba(50,40,60,0.55);
+    display:flex; align-items:center; justify-content:center; padding:16px;}
+  .hidden{display:none !important;}
+  .panel{background:#fff; border-radius:26px; padding:24px 20px; max-width:420px; width:100%;
+    text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.25); max-height:88vh; overflow-y:auto;}
+  .panel h1{font-size:22px; margin:6px 0; color:var(--mainD);}
+  .panel p{font-size:14px; line-height:1.5; margin:6px 0;}
+  .bigBtn{margin-top:14px; border:none; color:#fff; font-weight:800; font-size:18px;
+    padding:13px 28px; border-radius:20px; cursor:pointer;
+    background:linear-gradient(135deg,var(--main),var(--mainD)); box-shadow:0 8px 16px rgba(0,0,0,0.25);}
+  .bigBtn:active{transform:scale(0.96);}
+  #endList{text-align:left; max-height:180px; overflow-y:auto; margin:10px 0; font-size:14px;
+    background:#faf8ff; border-radius:14px; padding:10px 14px;}
+  #endList div{padding:2px 0;}
+
+  #logoLink{position:fixed; top:8px; left:8px; z-index:60; width:38px; height:38px; border-radius:50%;
+    background:#1877f2; color:#fff; display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:16px; text-decoration:none; box-shadow:0 3px 8px rgba(0,0,0,0.25); opacity:0.88;}
+  #muteBtn{position:fixed; top:8px; right:8px; z-index:60; border:none; width:38px; height:38px;
+    border-radius:50%; background:#fff; box-shadow:0 3px 8px rgba(0,0,0,0.2); font-size:16px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <a id="logoLink" href="https://www.facebook.com/revenge.third" target="_blank" rel="noopener">f</a>
+  <button id="muteBtn">🔊</button>
+
+  <div id="header">
+    <div id="livesBox">❤️❤️❤️</div>
+    <div id="scoreBox">⭐ <span id="scoreVal">0</span></div>
+  </div>
+
+  <div id="playArea"><div id="cannon">🔫</div></div>
+  <div id="confettiLayer"></div>
+
+  <div id="controls">
+    <div id="feedbackText"></div>
+    <div id="inputRow">
+      <button id="listenBtn" class="iconBtn">🔊</button>
+      <input id="pinyinInput" type="text" placeholder="gõ pinyin... · 输入拼音..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button id="backspaceBtn" class="iconBtn">⌫</button>
+    </div>
+  </div>
+
+  <div id="startOverlay" class="overlay">
+    <div class="panel">
+      <div style="font-size:48px;">🌍🚀</div>
+      <h1>Bắn Hạ Chữ — Vòng Quanh Thế Giới</h1>
+      <p>Ôn từ quốc tịch, con người — · 复习国籍、人物词汇 — <b>Bài 3 YCT1</b>.</p>
+      <p style="font-size:13px; color:#8a7a99;">Chữ Hán rơi xuống — gõ đúng · 汉字往下掉——正确输入 <b>pinyin không dấu · 不带声调的拼音</b> (âm <b>ü</b> gõ là · 要打成 <b>v</b>). Cứ gõ đúng 1 âm tiết là súng 🔫 bắn 1 viên đạn trúng chữ đó, bắn đủ số âm tiết thì hạ được chữ! Gõ sai <b>3 lần · 3次</b> là thua! · 就算输！<br><span style="opacity:0.85;">汉字往下掉——正确输入不带声调的拼音（"ü"打成"v"）。每打对1个音节，枪🔫就会发射1颗子弹击中该字，打完所有音节即可击落！打错3次就算输！</span></p>
+      <button id="startBtn" class="bigBtn">Bắt đầu 🚀 · 开始 🚀</button>
+    </div>
+  </div>
+
+  <div id="endOverlay" class="overlay hidden">
+    <div class="panel">
+      <div id="endEmoji" style="font-size:52px;">🏆</div>
+      <h1 id="endTitle">Xong rồi! · 完成了！</h1>
+      <p id="endDesc"></p>
+      <div id="endList"></div>
+      <button id="replayBtn" class="bigBtn">Chơi lại 🔁 · 再玩一次 🔁</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ DATA ============ */
+const WORDS = [
+  {hanzi:"中国", syl:["zhong", "guo"], audio:"zhongguo", vi:"Trung Quốc"},
+  {hanzi:"中国人", syl:["zhong", "guo", "ren"], audio:"zhongguoren", vi:"Người Trung Quốc"},
+  {hanzi:"比利时", syl:["bi", "li", "shi"], audio:"bilishi", vi:"Bỉ"},
+  {hanzi:"比利时人", syl:["bi", "li", "shi", "ren"], audio:"bilishiren", vi:"Người Bỉ"},
+  {hanzi:"谁", syl:["shei"], audio:"shei", vi:"Ai"},
+  {hanzi:"哪", syl:["na"], audio:"na", vi:"Nào"},
+  {hanzi:"国", syl:["guo"], audio:"guo", vi:"Nước, quốc gia"},
+  {hanzi:"漂亮", syl:["piao", "liang"], audio:"piaoliang", vi:"Xinh đẹp"}
+];
+const AUDIO_BASE = "../audio/yct1c8_";
+const MAX_LIVES = 3;
+const MAX_CONCURRENT = 3;
+const FALL_DURATION = 17000;
+const SPAWN_GAP = 2400;
+WORDS.forEach(w=>{ let c=0; w.cum=[]; w.syl.forEach(s=>{ c+=s.length; w.cum.push(c); }); w.target=w.syl.join(''); });
+
+/* ============ STATE ============ */
+let queue=[], active=[], lives=MAX_LIVES, score=0, muted=false, ended=false, spawnTimer=null;
+let destroyedSet = new Set();
+let lockedObj = null;
+let actx=null, cachedZhVoice=null;
+
+/* ============ DOM ============ */
+const playArea=document.getElementById('playArea');
+const pinyinInput=document.getElementById('pinyinInput');
+const livesBox=document.getElementById('livesBox');
+const scoreVal=document.getElementById('scoreVal');
+const feedbackText=document.getElementById('feedbackText');
+const confettiLayer=document.getElementById('confettiLayer');
+const startOverlay=document.getElementById('startOverlay');
+const endOverlay=document.getElementById('endOverlay');
+
+/* ============ AUDIO ============ */
+function initVoices(){
+  const pick=()=>{ const vs=speechSynthesis.getVoices();
+    cachedZhVoice = vs.find(v=>v.lang && v.lang.toLowerCase().startsWith('zh')) || null; };
+  pick();
+  if('speechSynthesis' in window) speechSynthesis.onvoiceschanged = pick;
+}
+function speakFallback(hanzi){
+  try{
+    if(!('speechSynthesis' in window)) return;
+    const u=new SpeechSynthesisUtterance(hanzi);
+    u.lang='zh-CN'; if(cachedZhVoice) u.voice=cachedZhVoice; u.rate=0.85;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function playWordAudio(word){
+  if(muted) return;
+  try{
+    const audio=new Audio(AUDIO_BASE+word.audio+".mp3");
+    audio.play().catch(()=>speakFallback(word.hanzi));
+    audio.addEventListener('error', ()=>speakFallback(word.hanzi));
+  }catch(e){ speakFallback(word.hanzi); }
+}
+let audioCtxRef=null;
+function beep(freqStart,freqEnd,dur,type){
+  try{
+    audioCtxRef = audioCtxRef || new (window.AudioContext||window.webkitAudioContext)();
+    const o=audioCtxRef.createOscillator(), g=audioCtxRef.createGain();
+    o.type=type||'sine'; o.frequency.setValueAtTime(freqStart, audioCtxRef.currentTime);
+    o.frequency.exponentialRampToValueAtTime(Math.max(freqEnd,1), audioCtxRef.currentTime+dur);
+    g.gain.setValueAtTime(0.18, audioCtxRef.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtxRef.currentTime+dur);
+    o.connect(g); g.connect(audioCtxRef.destination);
+    o.start(); o.stop(audioCtxRef.currentTime+dur);
+  }catch(e){}
+}
+const sfxCorrect=()=>beep(500,900,0.28,'triangle');
+const sfxMiss=()=>beep(320,180,0.4,'sawtooth');
+const sfxWin=()=>beep(400,1200,0.6,'triangle');
+const sfxLose=()=>beep(260,80,0.6,'sawtooth');
+
+/* ============ CONFETTI ============ */
+function burstConfetti(x,y,count){
+  const emojis=["🎉","✨","⭐","💖","🎊"];
+  for(let i=0;i<(count||14);i++){
+    const p=document.createElement('div'); p.className='confetti-piece';
+    p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.left=x+'px'; p.style.top=y+'px';
+    const dx=(Math.random()-0.5)*220, dy=120+Math.random()*160, rot=(Math.random()-0.5)*360;
+    p.animate([{transform:'translate(0,0) rotate(0deg)', opacity:1},
+      {transform:`translate(${dx}px, ${dy}px) rotate(${rot}deg)`, opacity:0}],
+      {duration:900+Math.random()*500, easing:'ease-out'});
+    confettiLayer.appendChild(p);
+    setTimeout(()=>p.remove(),1500);
+  }
+}
+
+/* ============ HELPERS ============ */
+function shuffle(arr){ const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a; }
+function normalize(s){
+  return s.toLowerCase()
+    .replace(/ü|ǖ|ǘ|ǚ|ǜ/gi,'v')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^a-z]/g,'');
+}
+function updateLives(){
+  livesBox.textContent = '❤️'.repeat(Math.max(0,lives)) + '🖤'.repeat(MAX_LIVES-Math.max(0,lives));
+}
+function updateScore(){ scoreVal.textContent=score; }
+
+/* ============ GAME FLOW ============ */
+function startGame(){
+  queue=shuffle(WORDS); active=[]; lives=MAX_LIVES; score=0; ended=false;
+  destroyedSet=new Set(); lockedObj=null;
+  updateLives(); updateScore();
+  feedbackText.textContent='';
+  startOverlay.classList.add('hidden');
+  playArea.innerHTML='';
+  pinyinInput.value=''; pinyinInput.focus();
+  spawnLoop();
+}
+
+function spawnLoop(){
+  if(ended) return;
+  if(active.length<MAX_CONCURRENT && queue.length>0){
+    spawnWord(queue.shift());
+  }
+  spawnTimer=setTimeout(spawnLoop, SPAWN_GAP);
+}
+
+function spawnWord(word){
+  const el=document.createElement('div');
+  el.className='fallWord';
+  const hpHtml = word.syl.length>1 ? '<div class="hpBar"><div class="hpFill"></div></div>' : '';
+  el.innerHTML=`<div class="fwHanzi">${word.hanzi}</div>${hpHtml}`;
+  const leftPct = 14 + Math.random()*72;
+  el.style.left=leftPct+'%';
+  playArea.appendChild(el);
+  const obj={word, el, removed:false, hitCount:0, start:performance.now(), duration:FALL_DURATION+(Math.random()*4000-2000)};
+  active.push(obj);
+  playWordAudio(word);
+  function step(now){
+    if(obj.removed) return;
+    const areaH=playArea.clientHeight;
+    const t=Math.min(1,(now-obj.start)/obj.duration);
+    el.style.top=(t*(areaH-56))+'px';
+    if(t>=1){ missFall(obj); return; }
+    obj.raf=requestAnimationFrame(step);
+  }
+  obj.raf=requestAnimationFrame(step);
+}
+
+function removeActive(obj){
+  if(obj.removed) return;
+  obj.removed=true;
+  if(obj.raf) cancelAnimationFrame(obj.raf);
+  active=active.filter(a=>a!==obj);
+  if(lockedObj===obj) lockedObj=null;
+  setTimeout(()=>obj.el.remove(),260);
+}
+
+function missFall(obj){
+  sfxMiss();
+  obj.el.classList.add('faded');
+  queue.push(obj.word);
+  removeActive(obj);
+}
+
+function updateHealthBar(obj){
+  const fill = obj.el.querySelector('.hpFill');
+  if(!fill) return;
+  const left = obj.word.syl.length - obj.hitCount;
+  fill.style.width = (100*left/obj.word.syl.length)+'%';
+}
+
+function fireBullet(target){
+  const areaRect = playArea.getBoundingClientRect();
+  const cannonEl = document.getElementById('cannon');
+  const cRect = cannonEl.getBoundingClientRect();
+  const tRect = target.el.getBoundingClientRect();
+  const b=document.createElement('div');
+  b.className='bullet';
+  const startX = cRect.left - areaRect.left + cRect.width/2 - 5;
+  const startY = cRect.top - areaRect.top;
+  b.style.left = startX+'px';
+  b.style.top = startY+'px';
+  playArea.appendChild(b);
+  const endX = tRect.left - areaRect.left + tRect.width/2 - 5;
+  const endY = tRect.top - areaRect.top + tRect.height/2;
+  const anim = b.animate([
+    {transform:'translate(0,0)', opacity:1},
+    {transform:`translate(${endX-startX}px, ${endY-startY}px)`, opacity:1}
+  ], {duration:200, easing:'ease-in'});
+  anim.onfinish = ()=>{
+    b.remove();
+    if(target.removed) return;
+    target.el.classList.add('hitFlash');
+    setTimeout(()=>target.el && target.el.classList.remove('hitFlash'),150);
+  };
+}
+
+function correctHit(obj){
+  score+=10; updateScore();
+  sfxCorrect();
+  const rect=obj.el.getBoundingClientRect();
+  burstConfetti(rect.left+rect.width/2, rect.top+rect.height/2, 14);
+  obj.el.classList.remove('locked');
+  obj.el.classList.add('pop');
+  destroyedSet.add(obj.word.target);
+  removeActive(obj);
+  pinyinInput.value='';
+  feedbackText.textContent='';
+  checkWin();
+}
+
+function wrongInput(){
+  lives--; updateLives();
+  sfxMiss();
+  pinyinInput.classList.add('errorShake');
+  setTimeout(()=>pinyinInput.classList.remove('errorShake'),350);
+  pinyinInput.value='';
+  if(lockedObj){ lockedObj.el.classList.remove('locked'); lockedObj=null; }
+  if(lives<=0) endGame(false);
+}
+
+function checkWin(){
+  if(destroyedSet.size===WORDS.length){ endGame(true); }
+}
+
+function endGame(won){
+  if(ended) return;
+  ended=true;
+  clearTimeout(spawnTimer);
+  active.slice().forEach(a=>removeActive(a));
+  if(won){
+    sfxWin();
+    const rect=playArea.getBoundingClientRect();
+    burstConfetti(rect.left+rect.width/2, rect.top+40, 40);
+    document.getElementById('endEmoji').textContent='🏆';
+    document.getElementById('endTitle').textContent='Xuất sắc! · 太棒了！';
+    document.getElementById('endDesc').textContent=`Bé đã bắn hạ đúng cả ${WORDS.length} từ! · 你成功击落了全部 ${WORDS.length} 个词！`;
+  } else {
+    sfxLose();
+    document.getElementById('endEmoji').textContent='💪';
+    document.getElementById('endTitle').textContent='Cố lên nào! · 加油！';
+    document.getElementById('endDesc').textContent=`Bé đã bắn hạ ${destroyedSet.size}/${WORDS.length} từ. Chơi lại để giỏi hơn nhé! · 你击落了 ${destroyedSet.size}/${WORDS.length} 个词，再玩一次会更棒！`;
+  }
+  const list=document.getElementById('endList'); list.innerHTML='';
+  WORDS.forEach(w=>{
+    const ok=destroyedSet.has(w.target);
+    const div=document.createElement('div');
+    div.textContent=(ok?'✅ ':'⬜ ')+w.hanzi+' — '+w.vi;
+    list.appendChild(div);
+  });
+  setTimeout(()=>{ endOverlay.classList.remove('hidden'); }, 500);
+}
+
+/* ============ INPUT ============ */
+pinyinInput.addEventListener('input', ()=>{
+  if(ended) return;
+  const val=normalize(pinyinInput.value);
+  if(val.length===0){
+    if(lockedObj){ lockedObj.el.classList.remove('locked'); lockedObj=null; }
+    return;
+  }
+  let target=null;
+  if(lockedObj && !lockedObj.removed && lockedObj.word.target.startsWith(val)){
+    target=lockedObj;
+  } else {
+    if(lockedObj){ lockedObj.el.classList.remove('locked'); lockedObj=null; }
+    const candidates=active.filter(a=>a.word.target.startsWith(val));
+    if(candidates.length===0){ wrongInput(); return; }
+    if(candidates.length>1){ return; } // ambiguous prefix shared by several words — wait for more letters
+    target=candidates[0];
+    lockedObj=target;
+    target.el.classList.add('locked');
+  }
+  const newHits = target.word.cum.filter(c=>c<=val.length).length;
+  if(newHits>target.hitCount){
+    for(let i=target.hitCount;i<newHits;i++){ fireBullet(target); }
+    target.hitCount=newHits;
+    updateHealthBar(target);
+    if(target.hitCount>=target.word.syl.length){ correctHit(target); }
+  }
+});
+document.getElementById('backspaceBtn').onclick=()=>{
+  pinyinInput.value=pinyinInput.value.slice(0,-1);
+  pinyinInput.focus();
+};
+document.getElementById('listenBtn').onclick=()=>{
+  if(active.length===0) return;
+  let lowest=active[0];
+  active.forEach(a=>{ if(parseFloat(a.el.style.top||0) > parseFloat(lowest.el.style.top||0)) lowest=a; });
+  playWordAudio(lowest.word);
+};
+
+document.getElementById('startBtn').onclick=function(){
+  try{ actx=actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); }catch(e){}
+  startGame();
+};
+document.getElementById('replayBtn').onclick=()=>{
+  endOverlay.classList.add('hidden');
+  startGame();
+};
+document.getElementById('muteBtn').onclick=function(){
+  muted=!muted;
+  this.textContent = muted ? '🔇' : '🔊';
+};
+
+/* ============ INIT ============ */
+initVoices();
+</script>
+</body>
+</html>

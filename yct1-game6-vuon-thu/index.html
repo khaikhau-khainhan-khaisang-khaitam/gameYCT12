@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ghép Thẻ Vườn Thú · 配对卡片 · 动物园 — Con Vật (YCT1 Bài 7)</title>
+<style>
+  :root{
+    --sky1:#e2f7d2; --sky2:#f3ffe8;
+    --star:#ffd166; --starD:#e8a900;
+    --pink:#7bc043; --pinkD:#559926;
+    --ink:#2d3a1f; --white:#fff;
+    --cardBack1:#7bc043; --cardBack2:#4d8a1f;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;
+    font-family:"Baloo 2","Segoe UI",Arial,sans-serif;
+    background:linear-gradient(180deg,var(--sky1),var(--sky2));
+    color:var(--ink); user-select:none;}
+  #app{position:relative; width:100%; height:100dvh; display:flex; flex-direction:column;}
+
+  .bg-star{position:absolute; font-size:20px; opacity:0.5; pointer-events:none;
+    animation: twinkle 2.4s ease-in-out infinite;}
+  @keyframes twinkle{0%,100%{opacity:0.2;transform:scale(0.9);}50%{opacity:0.7;transform:scale(1.15);}}
+
+  #header{display:flex; align-items:center; justify-content:space-between; padding:8px 54px; z-index:5;}
+  #roundBadge{background:rgba(255,255,255,0.8); border-radius:20px; padding:6px 14px; font-weight:800; font-size:14px; box-shadow:0 3px 8px rgba(0,0,0,0.1);}
+  #movesBadge{background:rgba(255,255,255,0.8); border-radius:20px; padding:6px 14px; font-weight:800; font-size:14px; box-shadow:0 3px 8px rgba(0,0,0,0.1);}
+
+  #boardWrap{flex:1; overflow-y:auto; padding:6px 10px 14px; display:flex; flex-direction:column; justify-content:center;}
+  #board{
+    display:grid; gap:10px; max-width:640px; width:100%; margin:0 auto;
+  }
+  .card{
+    position:relative; aspect-ratio:3/4; cursor:pointer;
+    perspective:600px;
+  }
+  .cardInner{
+    position:relative; width:100%; height:100%; transition:transform .45s;
+    transform-style:preserve-3d;
+  }
+  .card.flipped .cardInner{ transform:rotateY(180deg); }
+  .card.matched .cardInner{ transform:rotateY(180deg); }
+  .cardFace{
+    position:absolute; inset:0; backface-visibility:hidden;
+    border-radius:12px; display:flex; align-items:center; justify-content:center;
+    flex-direction:column; padding:4px; text-align:center;
+    box-shadow:0 3px 8px rgba(0,0,0,0.15);
+  }
+  .cardBack{
+    background:linear-gradient(160deg,var(--cardBack1),var(--cardBack2));
+    font-size:22px; color:#fff;
+  }
+  .cardFront{
+    background:#fff; transform:rotateY(180deg);
+    border:3px solid #ffe08a;
+  }
+  .cardFront .fHanzi{font-size:clamp(16px,5vw,26px); font-weight:800; color:var(--pinkD); line-height:1.1;}
+  .cardFront .fSub{font-size:clamp(9px,2.4vw,12px); color:#9d8fae; font-weight:700; margin-top:2px;}
+  .cardFront .fIcon{font-size:clamp(20px,6vw,34px);}
+  .cardFront .fIcon.longText{font-size:clamp(11px,3.2vw,15px); line-height:1.25; font-weight:800; word-break:break-word;}
+  .card.matched .cardFront{border-color:#8ee68e; background:#f2fff2;}
+  .card.wrongShake .cardInner{animation: shake .4s;}
+  @keyframes shake{0%,100%{transform:rotateY(180deg) translateX(0);}25%{transform:rotateY(180deg) translateX(-6px);}75%{transform:rotateY(180deg) translateX(6px);}}
+
+  #confettiLayer{position:fixed; inset:0; pointer-events:none; z-index:40; overflow:hidden;}
+  .confetti-piece{position:absolute; top:-20px; font-size:18px;}
+
+  .overlay{position:fixed; inset:0; z-index:50; background:rgba(57,50,90,0.55);
+    display:flex; align-items:center; justify-content:center; padding:16px;}
+  .hidden{display:none !important;}
+  .panel{background:#fff; border-radius:26px; padding:24px 20px; max-width:420px; width:100%;
+    text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.25); max-height:88vh; overflow-y:auto;}
+  .panel h1{font-size:22px; margin:6px 0; color:var(--pinkD);}
+  .panel p{font-size:14px; line-height:1.5; margin:6px 0;}
+  .bigBtn{margin-top:14px; border:none; color:#fff; font-weight:800; font-size:18px;
+    padding:13px 28px; border-radius:20px; cursor:pointer;
+    background:linear-gradient(135deg,var(--pink),var(--pinkD)); box-shadow:0 8px 16px rgba(255,92,138,0.35);}
+  .bigBtn:active{transform:scale(0.96);}
+  .starsRow{font-size:36px; margin:10px 0;}
+  .starsRow span{opacity:0.25; transition:opacity .3s, transform .3s;}
+  .starsRow span.on{opacity:1; transform:scale(1.15);}
+
+  #logoLink{position:fixed; top:8px; left:8px; z-index:60; width:38px; height:38px; border-radius:50%;
+    background:#1877f2; color:#fff; display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:16px; text-decoration:none; box-shadow:0 3px 8px rgba(0,0,0,0.25); opacity:0.88;}
+  #muteBtn{position:fixed; top:8px; right:8px; z-index:60; border:none; width:38px; height:38px;
+    border-radius:50%; background:#fff; box-shadow:0 3px 8px rgba(0,0,0,0.2); font-size:16px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <a id="logoLink" href="https://www.facebook.com/revenge.third" target="_blank" rel="noopener">f</a>
+  <button id="muteBtn">🔊</button>
+
+  <div id="header">
+    <div id="roundBadge">Vòng 1/3</div>
+    <div id="movesBadge">🔄 0 lượt</div>
+  </div>
+
+  <div id="boardWrap"><div id="board"></div></div>
+  <div id="confettiLayer"></div>
+
+  <!-- START -->
+  <div id="startOverlay" class="overlay">
+    <div class="panel">
+      <div style="font-size:48px;">🐶🐱🐦🐟</div>
+      <h1>Ghép Thẻ Vườn Thú · 配对卡片 · 动物园</h1>
+      <p>Ôn tên các con vật — · 复习动物名称 — <b>Bài 7 YCT1</b>.</p>
+      <p style="font-size:13px; color:#8a7a99;">Lật 2 thẻ để tìm đúng cặp: 1 thẻ chữ Hán 🔊 (chạm để nghe), 1 thẻ hình con vật. Càng ít lượt càng nhiều sao ⭐!</p>
+      <button id="startBtn" class="bigBtn">Bắt đầu 🚀 · 开始 🚀</button>
+    </div>
+  </div>
+
+  <!-- ROUND INTRO -->
+  <div id="roundIntroOverlay" class="overlay hidden">
+    <div class="panel">
+      <div id="roundIntroEmoji" style="font-size:44px;">🔢</div>
+      <h1 id="roundIntroTitle">Vòng 1: Số đếm 1-5</h1>
+      <p id="roundIntroDesc"></p>
+      <button id="roundStartBtn" class="bigBtn">Chơi vòng này 🎮 · 开始本轮 🎮</button>
+    </div>
+  </div>
+
+  <!-- ROUND COMPLETE -->
+  <div id="roundDoneOverlay" class="overlay hidden">
+    <div class="panel">
+      <div style="font-size:44px;">🎉</div>
+      <h1>Xong vòng này! · 本轮结束！</h1>
+      <div class="starsRow"><span id="s1">⭐</span><span id="s2">⭐</span><span id="s3">⭐</span></div>
+      <p id="roundDoneDesc"></p>
+      <button id="roundNextBtn" class="bigBtn">Tiếp tục ▶ · 继续 ▶</button>
+    </div>
+  </div>
+
+  <!-- FINAL -->
+  <div id="endOverlay" class="overlay hidden">
+    <div class="panel">
+      <div style="font-size:48px;">🏆🌟🎈</div>
+      <h1>Hoàn thành trò chơi! · 游戏完成！</h1>
+      <div class="starsRow" id="finalStarsRow"></div>
+      <p id="endDesc"></p>
+      <button id="replayBtn" class="bigBtn">Chơi lại 🔁 · 再玩一次 🔁</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ DATA: cac vong choi (Bai 1 - so dem 1-10 + chao hoi) ============ */
+const AUDIO_BASE = "../audio/yct1c22_";
+const ROUNDS = [
+  { title:"Vòng 1: Con vật của bé · 第1轮：可爱的动物", emoji:"🐾", desc:"Ghép chữ Hán với đúng con vật! · 把汉字和正确的动物配对！",
+    pairs:[
+      {hanzi:"猫", pinyin:"māo", icon:"🐱", audio:"mao"},
+      {hanzi:"狗", pinyin:"gǒu", icon:"🐶", audio:"gou"},
+      {hanzi:"鸟", pinyin:"niǎo", icon:"🐦", audio:"niao"},
+      {hanzi:"鱼", pinyin:"yú", icon:"🐟", audio:"yu"},
+    ]},
+];
+
+/* ============ STATE ============ */
+let roundIdx = 0;
+let cards = [];
+let flipped = [];
+let matchedCount = 0;
+let moves = 0;
+let lockBoard = false;
+let starsPerRound = [];
+let muted = false;
+
+/* ============ DOM ============ */
+const board = document.getElementById('board');
+const roundBadge = document.getElementById('roundBadge');
+const movesBadge = document.getElementById('movesBadge');
+const startOverlay = document.getElementById('startOverlay');
+const roundIntroOverlay = document.getElementById('roundIntroOverlay');
+const roundDoneOverlay = document.getElementById('roundDoneOverlay');
+const endOverlay = document.getElementById('endOverlay');
+const confettiLayer = document.getElementById('confettiLayer');
+
+/* ============ BACKGROUND STARS ============ */
+function initBgStars(){
+  for(let i=0;i<10;i++){
+    const s = document.createElement('div');
+    s.className='bg-star'; s.textContent=['🐾','🌿','🍃'][i%3];
+    s.style.left=(Math.random()*95)+'%';
+    s.style.top=(Math.random()*90)+'%';
+    s.style.animationDelay=(-Math.random()*2.4)+'s';
+    document.getElementById('app').prepend(s);
+  }
+}
+
+/* ============ AUDIO (guaranteed non-silent fallback) ============ */
+let cachedZhVoice = null;
+function initVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const pick=()=>{ const v=speechSynthesis.getVoices(); cachedZhVoice = v.find(x=>x.lang&&x.lang.toLowerCase().startsWith('zh'))||null; };
+  pick();
+  if(speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', pick);
+}
+let actx;
+function beep(f1,f2,dur,type){
+  if(muted) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended') actx.resume();
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type=type||'sine';
+    o.frequency.setValueAtTime(f1,actx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(f2,actx.currentTime+dur);
+    g.gain.setValueAtTime(0.15,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+const sfxMatch = ()=>beep(500,950,0.3,'triangle');
+const sfxWrong = ()=>beep(280,180,0.3,'sawtooth');
+const sfxWin = ()=>beep(400,1300,0.6,'triangle');
+function playChime(){ beep(520,520,0.12,'sine'); setTimeout(()=>beep(720,720,0.14,'sine'),130); }
+
+function speakFallback(text, onDone){
+  if(muted){ if(onDone) onDone(); return; }
+  let done=false; const finish=()=>{ if(!done){done=true; if(onDone) onDone();} };
+  playChime();
+  try{
+    if('speechSynthesis' in window){
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang='zh-CN'; if(cachedZhVoice) u.voice=cachedZhVoice; u.rate=0.8;
+      u.onend=finish; u.onerror=finish;
+      setTimeout(()=>speechSynthesis.speak(u), 160);
+      setTimeout(finish, 2400);
+      return;
+    }
+  }catch(e){}
+  finish();
+}
+function playWordAudio(pair){
+  if(muted) return;
+  try{
+    const audio = new Audio(AUDIO_BASE + pair.audio + ".mp3");
+    audio.play().catch(()=> speakFallback(pair.hanzi));
+    audio.addEventListener('error', ()=> speakFallback(pair.hanzi));
+  }catch(e){ speakFallback(pair.hanzi); }
+}
+
+/* ============ CONFETTI ============ */
+function burstConfetti(x,y,count){
+  const emojis=["🎉","✨","⭐","💖","🎊"];
+  for(let i=0;i<(count||14);i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece'; p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.left=x+'px'; p.style.top=y+'px';
+    const dx=(Math.random()-0.5)*200, dy=100+Math.random()*140, rot=(Math.random()-0.5)*300;
+    p.animate([{transform:'translate(0,0) rotate(0deg)',opacity:1},{transform:`translate(${dx}px,${dy}px) rotate(${rot}deg)`,opacity:0}],
+      {duration:800+Math.random()*400, easing:'ease-out'});
+    confettiLayer.appendChild(p);
+    setTimeout(()=>p.remove(),1300);
+  }
+}
+
+/* ============ GAME LOGIC ============ */
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function startGame(){
+  roundIdx = 0; starsPerRound = [];
+  startOverlay.classList.add('hidden');
+  showRoundIntro();
+}
+
+function showRoundIntro(){
+  const r = ROUNDS[roundIdx];
+  document.getElementById('roundIntroEmoji').textContent = r.emoji;
+  document.getElementById('roundIntroTitle').textContent = r.title;
+  document.getElementById('roundIntroDesc').textContent = r.desc;
+  roundBadge.textContent = `Vòng ${roundIdx+1}/${ROUNDS.length} · 第${roundIdx+1}/${ROUNDS.length}轮`;
+  roundIntroOverlay.classList.remove('hidden');
+}
+
+function setupRound(){
+  const r = ROUNDS[roundIdx];
+  matchedCount = 0; moves = 0; flipped = []; lockBoard = false;
+  movesBadge.textContent = '🔄 0 lượt · 0 次';
+
+  let deck = [];
+  r.pairs.forEach((p,idx)=>{
+    deck.push({matchId:idx, kind:'hanzi', pair:p});
+    deck.push({matchId:idx, kind:'icon', pair:p});
+  });
+  cards = shuffle(deck);
+
+  const n = cards.length;
+  const cols = n<=8 ? 4 : (n<=12 ? 4 : (n<=20 ? 5 : 6));
+  board.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+  board.innerHTML = '';
+  cards.forEach((c, i)=>{
+    const el = document.createElement('div');
+    el.className='card';
+    el.dataset.idx = i;
+    const isLongText = /[a-zA-ZÀ-ỹ]{4,}/.test(c.pair.icon||'');
+    const front = c.kind==='hanzi'
+      ? `<div class="fHanzi">${c.pair.hanzi}</div><div class="fSub">🔊 ${c.pair.pinyin}</div>`
+      : `<div class="fIcon${isLongText?' longText':''}">${c.pair.icon}</div>`;
+    el.innerHTML = `
+      <div class="cardInner">
+        <div class="cardFace cardBack">?</div>
+        <div class="cardFace cardFront">${front}</div>
+      </div>`;
+    el.onclick = ()=> flipCard(i);
+    board.appendChild(el);
+  });
+}
+
+function flipCard(i){
+  if(lockBoard) return;
+  const el = board.children[i];
+  if(el.classList.contains('flipped') || el.classList.contains('matched')) return;
+  if(flipped.length>=2) return;
+
+  el.classList.add('flipped');
+  flipped.push(i);
+  const c = cards[i];
+  if(c.kind==='hanzi'){ playWordAudio(c.pair); }
+
+  if(flipped.length===2){
+    moves++;
+    movesBadge.textContent = `🔄 ${moves} lượt · ${moves} 次`;
+    const [a,b] = flipped;
+    if(cards[a].matchId === cards[b].matchId){
+      lockBoard = true;
+      setTimeout(()=>{
+        board.children[a].classList.add('matched');
+        board.children[b].classList.add('matched');
+        sfxMatch();
+        const rect = board.children[b].getBoundingClientRect();
+        burstConfetti(rect.left+rect.width/2, rect.top+rect.height/2, 10);
+        matchedCount++;
+        flipped = [];
+        lockBoard = false;
+        if(matchedCount === ROUNDS[roundIdx].pairs.length){
+          setTimeout(finishRound, 500);
+        }
+      }, 500);
+    } else {
+      lockBoard = true;
+      sfxWrong();
+      board.children[a].classList.add('wrongShake');
+      board.children[b].classList.add('wrongShake');
+      setTimeout(()=>{
+        board.children[a].classList.remove('flipped','wrongShake');
+        board.children[b].classList.remove('flipped','wrongShake');
+        flipped = [];
+        lockBoard = false;
+      }, 900);
+    }
+  }
+}
+
+function computeStars(numPairs, movesUsed){
+  if(movesUsed <= Math.ceil(numPairs*1.3)) return 3;
+  if(movesUsed <= numPairs*2) return 2;
+  return 1;
+}
+
+function finishRound(){
+  const numPairs = ROUNDS[roundIdx].pairs.length;
+  const stars = computeStars(numPairs, moves);
+  starsPerRound.push(stars);
+  sfxWin();
+
+  ['s1','s2','s3'].forEach((id,i)=>{
+    document.getElementById(id).classList.toggle('on', i<stars);
+  });
+  document.getElementById('roundDoneDesc').textContent = `Bé dùng ${moves} lượt để ghép ${numPairs} cặp thẻ!`;
+  roundDoneOverlay.classList.remove('hidden');
+}
+
+document.getElementById('roundStartBtn').onclick = ()=>{
+  roundIntroOverlay.classList.add('hidden');
+  setupRound();
+};
+document.getElementById('roundNextBtn').onclick = ()=>{
+  roundDoneOverlay.classList.add('hidden');
+  roundIdx++;
+  if(roundIdx < ROUNDS.length){
+    showRoundIntro();
+  } else {
+    finishGame();
+  }
+};
+
+function finishGame(){
+  const totalStars = starsPerRound.reduce((a,b)=>a+b,0);
+  const maxStars = ROUNDS.length*3;
+  const row = document.getElementById('finalStarsRow');
+  row.innerHTML='';
+  for(let i=0;i<maxStars;i++){
+    const span = document.createElement('span');
+    span.textContent='⭐';
+    span.style.opacity = i<totalStars ? '1':'0.25';
+    span.style.fontSize='30px';
+    row.appendChild(span);
+  }
+  document.getElementById('endDesc').textContent = `Bé đạt ${totalStars}/${maxStars} sao qua ${ROUNDS.length} vòng chơi. Giỏi lắm!`;
+  endOverlay.classList.remove('hidden');
+}
+
+document.getElementById('startBtn').onclick = function(){
+  try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); }catch(e){}
+  startGame();
+};
+document.getElementById('replayBtn').onclick = ()=>{
+  endOverlay.classList.add('hidden');
+  startGame();
+};
+document.getElementById('muteBtn').onclick = function(){
+  muted = !muted;
+  this.textContent = muted ? '🔇' : '🔊';
+};
+
+initBgStars();
+initVoices();
+</script>
+</body>
+</html>

@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Đường Đua Sinh Nhật — Ôn tập Bài 1-5 (YCT1)</title>
+<style>
+  :root{
+    --pink:#ff8fb1;
+    --pink-dark:#ff5c8a;
+    --yellow:#ffd166;
+    --blue:#6ec6ff;
+    --purple:#b088f9;
+    --green:#7ee787;
+    --bg1:#fff0f6;
+    --bg2:#fff9e6;
+    --ink:#4a3a5a;
+    --white:#ffffff;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family: "Baloo 2","Segoe UI",Arial,sans-serif;
+    background: linear-gradient(180deg,var(--bg1) 0%, var(--bg2) 100%);
+    overflow:hidden;
+    color:var(--ink);
+    user-select:none;
+  }
+  #app{
+    position:relative;
+    width:100%;
+    height:100dvh;
+    max-height:100dvh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* floating background balloons (decor only) */
+  .bg-balloon{
+    position:absolute;
+    bottom:-120px;
+    font-size:42px;
+    opacity:0.55;
+    animation: floatUp linear infinite;
+    pointer-events:none;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,0.08));
+  }
+  @keyframes floatUp{
+    0%{transform:translateY(0) translateX(0) rotate(0deg);}
+    50%{transform:translateY(-55vh) translateX(20px) rotate(8deg);}
+    100%{transform:translateY(-115vh) translateX(-10px) rotate(-6deg);}
+  }
+
+  /* header */
+  #header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 54px;
+    gap:8px;
+    z-index:5;
+  }
+  #cakeWrap{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:rgba(255,255,255,0.75);
+    border-radius:20px;
+    padding:6px 12px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.08);
+  }
+  #cakeEmoji{font-size:26px;}
+  #candles{display:flex; gap:2px; font-size:15px;}
+  .candle{opacity:0.25; transition:opacity .3s, transform .3s;}
+  .candle.lit{opacity:1; transform:scale(1.15);}
+
+  #scoreBox{
+    background:rgba(255,255,255,0.75);
+    border-radius:20px;
+    padding:6px 14px;
+    font-weight:700;
+    box-shadow:0 3px 10px rgba(0,0,0,0.08);
+    font-size:15px;
+    white-space:nowrap;
+  }
+
+  /* play area */
+  #playArea{
+    position:relative;
+    flex:1;
+    margin:0 8px;
+    border-radius:22px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.1));
+    overflow:hidden;
+    z-index:2;
+  }
+
+  #wordCard{
+    position:absolute;
+    left:50%;
+    top:0%;
+    transform:translate(-50%,-50%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:2px;
+    padding:10px 20px;
+    border-radius:24px;
+    background: linear-gradient(160deg,#ffffff, #fff3f9);
+    box-shadow:0 8px 18px rgba(255,92,138,0.28), 0 0 0 4px rgba(255,255,255,0.6) inset;
+    transition: box-shadow .2s;
+    opacity:0;
+  }
+  #wordCard.show{opacity:1;}
+  #wordCard .ribbon{
+    position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+    font-size:20px;
+  }
+  #wordIcon{font-size:44px; line-height:1;}
+  #wordHanzi{font-size:44px; font-weight:800; color:var(--pink-dark); line-height:1.1;}
+
+  #timerRing{
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    border-radius:24px;
+    pointer-events:none;
+  }
+
+  .spark{
+    position:absolute;
+    font-size:26px;
+    pointer-events:none;
+    z-index:9;
+  }
+
+  #confettiLayer{
+    position:absolute; inset:0; pointer-events:none; z-index:8; overflow:hidden;
+  }
+  .confetti-piece{
+    position:absolute; top:-20px; font-size:18px; will-change:transform;
+  }
+
+  /* bottom control panel */
+  #controls{
+    z-index:5;
+    padding:8px 10px 10px;
+  }
+  #inputRow{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    max-width:520px;
+    margin:0 auto 8px;
+  }
+  #pinyinInput{
+    flex:1;
+    font-size:22px;
+    padding:10px 14px;
+    border-radius:16px;
+    border:3px solid var(--pink);
+    outline:none;
+    text-align:center;
+    letter-spacing:1px;
+    font-weight:700;
+    color:var(--ink);
+    background:#fff;
+  }
+  #pinyinInput:focus{border-color:var(--pink-dark); box-shadow:0 0 0 4px rgba(255,92,138,0.18);}
+  .iconBtn{
+    border:none; border-radius:14px;
+    width:46px; height:46px;
+    font-size:20px;
+    background:var(--white);
+    box-shadow:0 3px 8px rgba(0,0,0,0.12);
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .iconBtn:active{transform:scale(0.92);}
+  #hintText{
+    text-align:center;
+    min-height:20px;
+    font-size:14px;
+    color:var(--pink-dark);
+    font-weight:700;
+    margin-bottom:4px;
+  }
+
+  #keyboard{
+    max-width:560px;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+  .kbRow{display:flex; justify-content:center; gap:4px;}
+  .key{
+    flex:1;
+    max-width:36px;
+    height:38px;
+    border:none;
+    border-radius:8px;
+    background:#fff;
+    box-shadow:0 2px 4px rgba(0,0,0,0.12);
+    font-weight:700;
+    font-size:15px;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .key:active{ background:var(--pink); color:#fff; transform:scale(0.95); }
+  .key.wide{max-width:80px; font-size:12px;}
+
+  /* overlays */
+  .overlay{
+    position:fixed; inset:0; z-index:50;
+    background:rgba(74,58,90,0.55);
+    display:flex; align-items:center; justify-content:center;
+    padding:16px;
+  }
+  .hidden{display:none !important;}
+  .panel{
+    background:#fff;
+    border-radius:28px;
+    padding:26px 22px;
+    max-width:420px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 20px 40px rgba(0,0,0,0.25);
+  }
+  .panel h1{font-size:24px; margin:4px 0 6px; color:var(--pink-dark);}
+  .panel p{font-size:15px; line-height:1.5; margin:6px 0;}
+  .bigBtn{
+    margin-top:14px;
+    border:none;
+    background: linear-gradient(135deg,var(--pink),var(--pink-dark));
+    color:#fff;
+    font-weight:800;
+    font-size:19px;
+    padding:14px 30px;
+    border-radius:22px;
+    box-shadow:0 8px 18px rgba(255,92,138,0.4);
+    cursor:pointer;
+  }
+  .bigBtn:active{transform:scale(0.96);}
+  .bigBtn.alt{ background: linear-gradient(135deg,var(--blue),#3d9be0); box-shadow:0 8px 18px rgba(61,155,224,0.4);}
+  .demoRow{display:flex; align-items:center; justify-content:center; gap:14px; margin:14px 0;}
+  .demoRow .ex{font-size:34px;}
+
+  #speakModal .micBtn{
+    width:84px; height:84px; border-radius:50%;
+    border:none;
+    background: linear-gradient(135deg,var(--purple),#8a5cf5);
+    color:#fff; font-size:34px;
+    box-shadow:0 8px 20px rgba(138,92,245,0.4);
+    margin:10px auto;
+    display:block;
+  }
+  #speakModal .micBtn.recording{ animation:pulseMic 0.9s infinite; background:linear-gradient(135deg,#ff5c5c,#d63a3a);}
+  @keyframes pulseMic{0%{box-shadow:0 0 0 0 rgba(255,92,92,0.5);}70%{box-shadow:0 0 0 18px rgba(255,92,92,0);}100%{box-shadow:0 0 0 0 rgba(255,92,92,0);}}
+
+  #summaryList{
+    text-align:left;
+    max-height:180px;
+    overflow-y:auto;
+    margin:10px 0;
+    font-size:14px;
+    background:#fff6fa;
+    border-radius:14px;
+    padding:10px 14px;
+  }
+  #summaryList div{padding:2px 0;}
+
+  #logoLink{
+    position:fixed;
+    top:8px; left:8px;
+    z-index:60;
+    width:38px; height:38px;
+    border-radius:50%;
+    background:#1877f2;
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900;
+    font-size:16px;
+    text-decoration:none;
+    box-shadow:0 3px 8px rgba(0,0,0,0.25);
+    opacity:0.88;
+  }
+  #logoLink:active{ transform:scale(0.94); }
+
+  #muteBtn{
+    position:fixed; top:8px; right:8px; z-index:60;
+  }
+
+  @media (max-height:640px){
+    #wordIcon{font-size:34px;}
+    #wordHanzi{font-size:34px;}
+    .key{height:32px;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <a id="logoLink" href="https://www.facebook.com/revenge.third" target="_blank" rel="noopener">f</a>
+  <button id="muteBtn" class="iconBtn">🔊</button>
+
+  <div id="header">
+    <div id="cakeWrap">
+      <span id="cakeEmoji">🎂</span>
+      <div id="candles"></div>
+    </div>
+    <div id="scoreBox">⭐ <span id="scoreVal">0</span></div>
+  </div>
+
+  <div id="playArea">
+    <div id="confettiLayer"></div>
+    <div id="wordCard">
+      <span class="ribbon">🎁</span>
+      <div id="wordIcon">🎁</div>
+      <div id="wordHanzi">你好</div>
+    </div>
+  </div>
+
+  <div id="controls">
+    <div id="hintText"></div>
+    <div id="inputRow">
+      <button id="listenBtn" class="iconBtn">🔊</button>
+      <input id="pinyinInput" type="text" placeholder="gõ pinyin ở đây..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button id="hintBtn" class="iconBtn">💡</button>
+      <button id="backspaceBtn" class="iconBtn">⌫</button>
+    </div>
+    <div id="keyboard"></div>
+  </div>
+
+  <!-- START OVERLAY -->
+  <div id="startOverlay" class="overlay">
+    <div class="panel">
+      <div style="font-size:52px;">🎉🎂🎈</div>
+      <h1>Đường Đua Sinh Nhật</h1>
+      <p>Ôn tập <b>Bài 1-5</b>: chào hỏi, tên, số đếm, tuổi, gia đình.</p>
+      <div class="demoRow">
+        <div class="ex">🎁</div>
+        <div style="font-size:26px;">➜</div>
+        <div style="font-size:16px; text-align:left;">
+          Nghe từ, gõ <b>pinyin</b> (không dấu)<br>trước khi món quà rơi xuống!
+        </div>
+      </div>
+      <p style="font-size:13px; color:#8a7a99;">Bé có thể bấm 🔊 để nghe lại, 💡 để xin gợi ý. · 你可以按🔊再听一次，按💡获取提示。</p>
+      <button id="startBtn" class="bigBtn">Bắt đầu chơi 🚀 · 开始游戏 🚀</button>
+    </div>
+  </div>
+
+  <!-- SPEAK-ALONG MODAL -->
+  <div id="speakModal" class="overlay hidden">
+    <div class="panel">
+      <div style="font-size:40px;">🎤</div>
+      <h1 style="font-size:20px;">Bé nói theo nhé! · 跟着说一遍吧！</h1>
+      <div style="font-size:34px; font-weight:800; color:var(--pink-dark);" id="speakHanzi">你好</div>
+      <button id="speakListenBtn" class="bigBtn alt" style="font-size:15px; padding:10px 18px;">🔊 Nghe mẫu · 🔊 听示范</button>
+      <button id="micBtn" class="micBtn">🎤</button>
+      <p id="micStatus" style="font-size:13px; color:#8a7a99;">Nhấn micro để ghi âm giọng của bé · 按麦克风录下你的声音</p>
+      <audio id="playbackAudio" class="hidden"></audio>
+      <button id="speakContinueBtn" class="bigBtn">Tiếp tục chơi 🎈 · 继续游戏 🎈</button>
+    </div>
+  </div>
+
+  <!-- END OVERLAY -->
+  <div id="endOverlay" class="overlay hidden">
+    <div class="panel">
+      <div style="font-size:52px;">🏆🎂✨</div>
+      <h1>Xong rồi, giỏi quá! · 完成啦，真棒！</h1>
+      <p>Bé đã học được <b id="endCount">0</b>/30 từ trong buổi ôn tập này.</p>
+      <div id="summaryList"></div>
+      <button id="replayBtn" class="bigBtn">Chơi lại 🔁 · 再玩一次 🔁</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============ DATA: YCT1 Bài 1-5 review pool ============ */
+const WORDS = [
+  {hanzi:"一", pinyin:"yi", icon:"1️⃣", vi:"một", audio:"yi"},
+  {hanzi:"二", pinyin:"er", icon:"2️⃣", vi:"hai", audio:"er"},
+  {hanzi:"三", pinyin:"san", icon:"3️⃣", vi:"ba", audio:"san"},
+  {hanzi:"四", pinyin:"si", icon:"4️⃣", vi:"bốn", audio:"si"},
+  {hanzi:"五", pinyin:"wu", icon:"5️⃣", vi:"năm", audio:"wu"},
+  {hanzi:"六", pinyin:"liu", icon:"6️⃣", vi:"sáu", audio:"liu"},
+  {hanzi:"七", pinyin:"qi", icon:"7️⃣", vi:"bảy", audio:"qi"},
+  {hanzi:"八", pinyin:"ba", icon:"8️⃣", vi:"tám", audio:"ba"},
+  {hanzi:"九", pinyin:"jiu", icon:"9️⃣", vi:"chín", audio:"jiu"},
+  {hanzi:"十", pinyin:"shi", icon:"🔟", vi:"mười", audio:"shi"},
+  {hanzi:"你好", pinyin:"nihao", icon:"🙋", vi:"Xin chào", audio:"nihao"},
+  {hanzi:"再见", pinyin:"zaijian", icon:"👋", vi:"Tạm biệt", audio:"zaijian"},
+  {hanzi:"老师", pinyin:"laoshi", icon:"👩‍🏫", vi:"Giáo viên", audio:"laoshi"},
+  {hanzi:"我", pinyin:"wo", icon:"🧍", vi:"Tôi", audio:"wo"},
+  {hanzi:"你", pinyin:"ni", icon:"👉", vi:"Bạn", audio:"ni"},
+  {hanzi:"名字", pinyin:"mingzi", icon:"📛", vi:"Tên", audio:"mingzi"},
+  {hanzi:"认识", pinyin:"renshi", icon:"🤝", vi:"Quen biết", audio:"renshi"},
+  {hanzi:"高兴", pinyin:"gaoxing", icon:"😄", vi:"Vui", audio:"gaoxing"},
+  {hanzi:"岁", pinyin:"sui", icon:"🎂", vi:"tuổi", audio:"sui"},
+  {hanzi:"几岁", pinyin:"jisui", icon:"🎈", vi:"mấy tuổi", audio:"jisui"},
+  {hanzi:"爸爸", pinyin:"baba", icon:"👨", vi:"Bố", audio:"baba"},
+  {hanzi:"妈妈", pinyin:"mama", icon:"👩", vi:"Mẹ", audio:"mama"},
+  {hanzi:"哥哥", pinyin:"gege", icon:"🧑", vi:"Anh trai", audio:"gege"},
+  {hanzi:"姐姐", pinyin:"jiejie", icon:"👧", vi:"Chị gái", audio:"jiejie"},
+  {hanzi:"弟弟", pinyin:"didi", icon:"🧒", vi:"Em trai", audio:"didi"},
+  {hanzi:"妹妹", pinyin:"meimei", icon:"👶", vi:"Em gái", audio:"meimei"},
+  {hanzi:"爷爷", pinyin:"yeye", icon:"👴", vi:"Ông nội", audio:"yeye"},
+  {hanzi:"奶奶", pinyin:"nainai", icon:"👵", vi:"Bà nội", audio:"nainai"},
+  {hanzi:"家", pinyin:"jia", icon:"🏠", vi:"Nhà", audio:"jia"},
+  {hanzi:"人", pinyin:"ren", icon:"👤", vi:"Người", audio:"ren"},
+];
+const AUDIO_BASE = "../audio/yct1_";
+const TOTAL_WORDS = WORDS.length;
+const WORDS_PER_CANDLE = 3;
+const CANDLE_COUNT = Math.ceil(TOTAL_WORDS / WORDS_PER_CANDLE);
+const FALL_DURATION = 12000; // ms
+const HINT_DELAY = 5000; // ms before hint becomes available
+const MAX_PASSES = 2;
+
+/* ============ STATE ============ */
+let queue = [];
+let retryQueue = [];
+let passNumber = 1;
+let currentWord = null;
+let fallStartTime = null;
+let fallRAF = null;
+let score = 0;
+let learnedCount = 0;
+let firstTryCorrect = new Set();
+let neededRetry = new Set();
+let correctSinceSpeak = 0;
+let muted = false;
+let hintTimer = null;
+let hintUsed = false;
+let currentAudioEl = null;
+
+/* ============ DOM refs ============ */
+const wordCard = document.getElementById('wordCard');
+const wordIcon = document.getElementById('wordIcon');
+const wordHanzi = document.getElementById('wordHanzi');
+const playArea = document.getElementById('playArea');
+const pinyinInput = document.getElementById('pinyinInput');
+const scoreVal = document.getElementById('scoreVal');
+const candlesEl = document.getElementById('candles');
+const hintText = document.getElementById('hintText');
+const confettiLayer = document.getElementById('confettiLayer');
+const startOverlay = document.getElementById('startOverlay');
+const endOverlay = document.getElementById('endOverlay');
+const speakModal = document.getElementById('speakModal');
+
+/* ============ INIT DECOR ============ */
+function initBalloons(){
+  const emojis = ["🎈","🎈","🎉","🎊","🎁"];
+  for(let i=0;i<7;i++){
+    const b = document.createElement('div');
+    b.className='bg-balloon';
+    b.textContent = emojis[i % emojis.length];
+    b.style.left = (Math.random()*90+2)+'%';
+    b.style.animationDuration = (14+Math.random()*10)+'s';
+    b.style.animationDelay = (-Math.random()*14)+'s';
+    b.style.fontSize = (28+Math.random()*24)+'px';
+    document.getElementById('app').prepend(b);
+  }
+}
+
+function initCandles(){
+  candlesEl.innerHTML='';
+  for(let i=0;i<CANDLE_COUNT;i++){
+    const c = document.createElement('span');
+    c.className='candle';
+    c.textContent='🕯️';
+    candlesEl.appendChild(c);
+  }
+}
+function updateCandles(){
+  const lit = Math.floor(learnedCount / WORDS_PER_CANDLE);
+  const els = candlesEl.querySelectorAll('.candle');
+  els.forEach((el,i)=>{ el.classList.toggle('lit', i < lit); });
+}
+
+/* ============ ON-SCREEN KEYBOARD ============ */
+function initKeyboard(){
+  const rows = ["qwertyuiop","asdfghjkl","zxcvbnm"];
+  const kb = document.getElementById('keyboard');
+  rows.forEach((row,idx)=>{
+    const rowEl = document.createElement('div');
+    rowEl.className='kbRow';
+    if(idx===2){
+      const clearBtn = document.createElement('button');
+      clearBtn.className='key wide';
+      clearBtn.textContent='Xoá hết · 清空';
+      clearBtn.onclick=()=>{ pinyinInput.value=''; pinyinInput.focus(); };
+      rowEl.appendChild(clearBtn);
+    }
+    row.split('').forEach(ch=>{
+      const btn = document.createElement('button');
+      btn.className='key';
+      btn.textContent=ch;
+      btn.onclick=()=>{ pinyinInput.value += ch; checkInput(); pinyinInput.focus(); };
+      rowEl.appendChild(btn);
+    });
+    kb.appendChild(rowEl);
+  });
+}
+
+/* ============ AUDIO ============ */
+function playWordAudio(word, onStart){
+  let started = false;
+  const fallback = ()=>{
+    if(started) return;
+    started = true;
+    if(onStart) onStart();
+  };
+  if(muted){ fallback(); return; }
+  try{
+    const audio = new Audio(AUDIO_BASE + word.audio + ".mp3");
+    currentAudioEl = audio;
+    let fallbackTimer = setTimeout(fallback, 1200);
+    audio.addEventListener('playing', ()=>{
+      clearTimeout(fallbackTimer);
+      fallback();
+    });
+    audio.addEventListener('error', ()=>{
+      clearTimeout(fallbackTimer);
+      speakFallback(word.hanzi, fallback);
+    });
+    audio.play().catch(()=>{
+      clearTimeout(fallbackTimer);
+      speakFallback(word.hanzi, fallback);
+    });
+  }catch(e){
+    speakFallback(word.hanzi, fallback);
+  }
+}
+let cachedZhVoice = null;
+function initVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const pick = ()=>{
+    const voices = speechSynthesis.getVoices();
+    cachedZhVoice = voices.find(v=>v.lang && v.lang.toLowerCase().startsWith('zh')) || null;
+  };
+  pick();
+  if(speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', pick);
+}
+function playChime(){
+  // Am thanh nhan dien duoc luon phat ra, khong bao gio im lang (kho co file mp3)
+  beep(520,520,0.12,'sine');
+  setTimeout(()=>beep(720,720,0.14,'sine'), 130);
+}
+function speakFallback(hanzi, cb){
+  if(muted){ if(cb) cb(); return; }
+  let done = false;
+  const finish = ()=>{ if(!done){ done=true; if(cb) cb(); } };
+  playChime(); // dam bao co am thanh ngay lap tuc du TTS co hoat dong hay khong
+  try{
+    if('speechSynthesis' in window){
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(hanzi);
+      u.lang='zh-CN';
+      if(cachedZhVoice) u.voice = cachedZhVoice;
+      u.rate=0.8;
+      u.onend = finish;
+      u.onerror = finish;
+      setTimeout(()=>speechSynthesis.speak(u), 160);
+      setTimeout(finish, 2400); // luoi an toan neu su kien khong bao gio bao ve
+      return;
+    }
+  }catch(e){}
+  finish();
+}
+function replayCurrentAudio(){
+  if(!currentWord) return;
+  playWordAudio(currentWord, ()=>{});
+}
+
+/* ============ SFX (synthesized, no files needed) ============ */
+let actx;
+function beep(freqStart, freqEnd, dur, type){
+  if(muted) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state === 'suspended') actx.resume();
+    const o = actx.createOscillator();
+    const g = actx.createGain();
+    o.type = type||'sine';
+    o.frequency.setValueAtTime(freqStart, actx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(freqEnd, actx.currentTime+dur);
+    g.gain.setValueAtTime(0.15, actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, actx.currentTime+dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+const sfxCorrect = ()=>beep(500,900,0.28,'triangle');
+const sfxMiss = ()=>beep(320,180,0.4,'sawtooth');
+const sfxWin = ()=>beep(400,1200,0.6,'triangle');
+
+/* ============ CONFETTI ============ */
+function burstConfetti(x,y,count){
+  const emojis=["🎉","✨","🎊","💖","⭐"];
+  for(let i=0;i<(count||14);i++){
+    const p = document.createElement('div');
+    p.className='confetti-piece';
+    p.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.left = x+'px';
+    p.style.top = y+'px';
+    const dx = (Math.random()-0.5)*220;
+    const dy = 120+Math.random()*160;
+    const rot = (Math.random()-0.5)*360;
+    p.animate([
+      {transform:'translate(0,0) rotate(0deg)', opacity:1},
+      {transform:`translate(${dx}px, ${dy}px) rotate(${rot}deg)`, opacity:0}
+    ], {duration: 900+Math.random()*500, easing:'ease-out'});
+    confettiLayer.appendChild(p);
+    setTimeout(()=>p.remove(), 1500);
+  }
+}
+
+/* ============ GAME FLOW ============ */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function startGame(){
+  queue = shuffle(WORDS);
+  retryQueue = [];
+  passNumber = 1;
+  score = 0;
+  learnedCount = 0;
+  firstTryCorrect = new Set();
+  neededRetry = new Set();
+  correctSinceSpeak = 0;
+  scoreVal.textContent = score;
+  initCandles();
+  updateCandles();
+  startOverlay.classList.add('hidden');
+  nextWord();
+}
+
+function nextWord(){
+  clearTimeout(hintTimer);
+  hintText.textContent='';
+  hintUsed = false;
+  pinyinInput.value='';
+
+  if(queue.length===0){
+    if(retryQueue.length>0 && passNumber < MAX_PASSES){
+      queue = shuffle(retryQueue);
+      retryQueue = [];
+      passNumber++;
+    } else {
+      finishGame();
+      return;
+    }
+  }
+
+  currentWord = queue.shift();
+  wordHanzi.textContent = currentWord.hanzi;
+  wordIcon.textContent = currentWord.icon;
+  wordCard.classList.remove('show');
+  wordCard.style.top = '0%';
+  wordCard.style.transition = 'none';
+
+  const holdStart = Date.now();
+  playWordAudio(currentWord, ()=>{
+    const elapsed = Date.now()-holdStart;
+    const remainingHold = Math.max(0, 900-elapsed);
+    setTimeout(()=>{
+      wordCard.classList.add('show');
+      beginFall();
+    }, remainingHold);
+  });
+
+  pinyinInput.focus();
+
+  hintTimer = setTimeout(()=>{
+    hintText.textContent = '💡 Có thể bấm nút gợi ý! · 💡 可以按提示按钮哦！';
+  }, HINT_DELAY);
+}
+
+function beginFall(){
+  fallStartTime = performance.now();
+  const areaHeight = playArea.clientHeight;
+  const cardHeight = wordCard.offsetHeight;
+  const maxTop = areaHeight - cardHeight - 10;
+
+  function step(now){
+    const t = Math.min(1, (now - fallStartTime)/FALL_DURATION);
+    const topPx = t * maxTop;
+    wordCard.style.top = topPx+'px';
+    wordCard.style.transform = 'translate(-50%,0)';
+    if(t >= 1){
+      handleMiss();
+      return;
+    }
+    fallRAF = requestAnimationFrame(step);
+  }
+  fallRAF = requestAnimationFrame(step);
+}
+
+function stopFall(){
+  if(fallRAF) cancelAnimationFrame(fallRAF);
+  fallRAF = null;
+}
+
+function normalize(s){
+  return s.toLowerCase().replace(/\s+/g,'').trim();
+}
+
+function checkInput(){
+  if(!currentWord) return;
+  const val = normalize(pinyinInput.value);
+  if(val.length===0) return;
+  if(val === currentWord.pinyin){
+    handleCorrect();
+  }
+}
+pinyinInput.addEventListener('input', checkInput);
+pinyinInput.addEventListener('keydown', (e)=>{
+  if(e.key==='Enter') checkInput();
+});
+document.getElementById('backspaceBtn').onclick = ()=>{
+  pinyinInput.value = pinyinInput.value.slice(0,-1);
+  pinyinInput.focus();
+};
+document.getElementById('listenBtn').onclick = replayCurrentAudio;
+document.getElementById('hintBtn').onclick = ()=>{
+  if(!currentWord) return;
+  hintUsed = true;
+  const len = Math.min(2, currentWord.pinyin.length);
+  hintText.textContent = '💡 Bắt đầu bằng: "'+currentWord.pinyin.slice(0,len)+'..."';
+};
+
+function handleCorrect(){
+  stopFall();
+  sfxCorrect();
+
+  const rect = wordCard.getBoundingClientRect();
+  burstConfetti(rect.left+rect.width/2, rect.top+rect.height/2, 16);
+
+  score += hintUsed ? 5 : 10;
+  scoreVal.textContent = score;
+
+  if(!firstTryCorrect.has(currentWord.pinyin) && !neededRetry.has(currentWord.pinyin)){
+    firstTryCorrect.add(currentWord.pinyin);
+    learnedCount++;
+  } else if(neededRetry.has(currentWord.pinyin) && !firstTryCorrect.has(currentWord.pinyin)){
+    firstTryCorrect.add(currentWord.pinyin);
+    learnedCount++;
+  }
+  updateCandles();
+
+  correctSinceSpeak++;
+  wordCard.style.transition = 'opacity .25s, transform .25s';
+  wordCard.style.opacity = '0';
+  wordCard.style.transform += ' scale(1.3)';
+
+  setTimeout(()=>{
+    if(correctSinceSpeak >= 5){
+      correctSinceSpeak = 0;
+      openSpeakModal();
+    } else {
+      nextWord();
+    }
+  }, 500);
+}
+
+function handleMiss(){
+  sfxMiss();
+  neededRetry.add(currentWord.pinyin);
+  retryQueue.push(currentWord);
+  wordCard.style.transition = 'transform .35s ease-in, opacity .35s';
+  wordCard.style.transform += ' translateY(20px) rotate(12deg)';
+  wordCard.style.opacity='0.2';
+  setTimeout(nextWord, 500);
+}
+
+/* ============ SPEAK-ALONG MODAL ============ */
+let mediaRecorder, recordedChunks=[], recStream;
+function openSpeakModal(){
+  document.getElementById('speakHanzi').textContent = currentWord ? currentWord.hanzi : '你好';
+  document.getElementById('micStatus').textContent = 'Nhấn micro để ghi âm giọng của bé · 按麦克风录下你的声音';
+  document.getElementById('playbackAudio').classList.add('hidden');
+  speakModal.classList.remove('hidden');
+}
+document.getElementById('speakListenBtn').onclick = ()=>{
+  if(currentWord) playWordAudio(currentWord, ()=>{});
+};
+document.getElementById('speakContinueBtn').onclick = ()=>{
+  speakModal.classList.add('hidden');
+  stopRecordingIfActive();
+  nextWord();
+};
+const micBtn = document.getElementById('micBtn');
+micBtn.onclick = async ()=>{
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    document.getElementById('micStatus').textContent = 'Trình duyệt chưa hỗ trợ ghi âm, mình học tiếp nhé! · 浏览器不支持录音，我们继续学习吧！';
+    return;
+  }
+  if(micBtn.classList.contains('recording')){
+    stopRecordingIfActive();
+    return;
+  }
+  try{
+    recStream = await navigator.mediaDevices.getUserMedia({audio:true});
+    recordedChunks=[];
+    mediaRecorder = new MediaRecorder(recStream);
+    mediaRecorder.ondataavailable = e=>recordedChunks.push(e.data);
+    mediaRecorder.onstop = ()=>{
+      const blob = new Blob(recordedChunks, {type:'audio/webm'});
+      const url = URL.createObjectURL(blob);
+      const pa = document.getElementById('playbackAudio');
+      pa.src = url;
+      pa.classList.remove('hidden');
+      pa.play().catch(()=>{});
+      document.getElementById('micStatus').textContent = 'Bé nghe lại giọng của mình nè! 🎧 · 听听你自己的声音吧！🎧';
+    };
+    mediaRecorder.start();
+    micBtn.classList.add('recording');
+    document.getElementById('micStatus').textContent = 'Đang ghi âm... nhấn lại để dừng · 正在录音……再按一次停止';
+  }catch(e){
+    document.getElementById('micStatus').textContent = 'Bé chưa cho phép dùng micro, mình học tiếp nhé! · 还没允许使用麦克风，我们继续学习吧！';
+  }
+};
+function stopRecordingIfActive(){
+  if(mediaRecorder && mediaRecorder.state==='recording'){
+    mediaRecorder.stop();
+  }
+  if(recStream){
+    recStream.getTracks().forEach(t=>t.stop());
+  }
+  micBtn.classList.remove('recording');
+}
+
+/* ============ END GAME ============ */
+function finishGame(){
+  sfxWin();
+  const rect = playArea.getBoundingClientRect();
+  burstConfetti(rect.left+rect.width/2, rect.top+40, 40);
+  document.getElementById('endCount').textContent = learnedCount;
+
+  const list = document.getElementById('summaryList');
+  list.innerHTML='';
+  WORDS.forEach(w=>{
+    const ok = firstTryCorrect.has(w.pinyin) && !neededRetry.has(w.pinyin);
+    const div = document.createElement('div');
+    div.textContent = (ok ? '✅ ' : '🔁 ') + w.hanzi + ' (' + w.pinyin + ') — ' + w.vi;
+    list.appendChild(div);
+  });
+
+  setTimeout(()=>{ endOverlay.classList.remove('hidden'); }, 600);
+}
+
+document.getElementById('startBtn').onclick = function(){
+  try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); }catch(e){}
+  startGame();
+};
+document.getElementById('replayBtn').onclick = ()=>{
+  endOverlay.classList.add('hidden');
+  startGame();
+};
+
+document.getElementById('muteBtn').onclick = function(){
+  muted = !muted;
+  this.textContent = muted ? '🔇' : '🔊';
+};
+
+/* ============ INIT ============ */
+initBalloons();
+initKeyboard();
+initVoices();
+</script>
+</body>
+</html>

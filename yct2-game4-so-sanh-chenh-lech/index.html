@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Sắp Xếp Câu So Sánh Chênh Lệch · 排句子 · 差比句 — 比...岁 (YCT2 Bài 8)</title>
+<style>
+  :root{
+    --bg1:#e0f7ff; --bg2:#f0fbff;
+    --accent:#3d9be0; --accentD:#2678b8;
+    --pink:#ff8fb1; --pinkD:#ff5c8a;
+    --ink:#2d3a4a; --white:#fff;
+    --green:#6fce7f;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;
+    font-family:"Baloo 2","Segoe UI",Arial,sans-serif;
+    background:linear-gradient(180deg,var(--bg1),var(--bg2));
+    color:var(--ink); user-select:none;}
+  #app{position:relative; width:100%; height:100dvh; display:flex; flex-direction:column;}
+
+  .bg-cloud{position:absolute; font-size:30px; opacity:0.45; pointer-events:none;
+    animation: drift 22s linear infinite;}
+  @keyframes drift{0%{transform:translateX(-10vw);}100%{transform:translateX(110vw);}}
+
+  #header{display:flex; align-items:center; justify-content:space-between; padding:10px 54px; z-index:5;}
+  #progressBadge{background:rgba(255,255,255,0.85); border-radius:20px; padding:6px 14px; font-weight:800; font-size:14px; box-shadow:0 3px 8px rgba(0,0,0,0.1);}
+  #starsBadge{background:rgba(255,255,255,0.85); border-radius:20px; padding:6px 14px; font-weight:800; font-size:14px; box-shadow:0 3px 8px rgba(0,0,0,0.1);}
+
+  #meaningCard{
+    margin:4px 14px; padding:12px 16px; border-radius:18px;
+    background:#fff; box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    text-align:center;
+  }
+  #meaningVi{font-size:16px; font-weight:700; color:var(--accentD);}
+  #listenBtn{
+    margin-top:6px; border:none; border-radius:14px; background:#ffd166;
+    padding:6px 18px; font-weight:800; font-size:13px; cursor:pointer;
+  }
+
+  #answerRow{
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center;
+    min-height:64px; margin:10px 14px; padding:8px;
+    border:3px dashed #b8d9ee; border-radius:18px;
+    background:rgba(255,255,255,0.5);
+  }
+  .slotPlaceholder{
+    width:56px; height:48px; border-radius:12px;
+    border:2px dashed #cfe4f2;
+  }
+  .tile{
+    padding:10px 16px; border-radius:14px; font-size:20px; font-weight:800;
+    background:linear-gradient(160deg,#fff,#eef8ff);
+    box-shadow:0 4px 8px rgba(0,0,0,0.12);
+    cursor:pointer; border:3px solid #cfe4f2;
+    transition:transform .15s;
+  }
+  .tile:active{transform:scale(0.94);}
+  .tile.inAnswer{border-color:var(--accent); background:#eaf6ff;}
+  .tile.bi{ border-color:var(--pinkD); background:#fff0f5; color:var(--pinkD); }
+  .tile.wrongFlash{ animation: shakeTile .35s; border-color:#ff5c5c !important; }
+  @keyframes shakeTile{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .tile.correctFlash{ animation: popTile .4s; border-color:var(--green) !important; background:#eafff0 !important;}
+  @keyframes popTile{0%{transform:scale(1);}50%{transform:scale(1.15);}100%{transform:scale(1);}}
+
+  #poolRow{
+    display:flex; flex-wrap:wrap; gap:14px; justify-content:center; align-content:center;
+    padding:14px; margin:0 14px; flex:1;
+  }
+
+  #controls{ display:flex; justify-content:center; gap:12px; padding:8px 14px 14px;}
+  .ctrlBtn{
+    border:none; border-radius:16px; padding:10px 20px; font-weight:800; font-size:14px;
+    background:#fff; box-shadow:0 3px 8px rgba(0,0,0,0.12); cursor:pointer;
+  }
+  #checkBtn{ background:linear-gradient(135deg,var(--accent),var(--accentD)); color:#fff; }
+  #nextBtn{ background:linear-gradient(135deg,var(--green),#4fae63); color:#fff; animation: popInBtn .3s ease-out; }
+  @keyframes popInBtn{ from{transform:scale(0.8); opacity:0;} to{transform:scale(1); opacity:1;} }
+
+  #feedback{ text-align:center; font-size:15px; font-weight:800; min-height:22px; }
+  #feedback.ok{ color:var(--green); }
+  #feedback.no{ color:#ff5c5c; }
+
+  .overlay{position:fixed; inset:0; z-index:50; background:rgba(45,58,74,0.55);
+    display:flex; align-items:center; justify-content:center; padding:16px;}
+  .hidden{display:none !important;}
+  .panel{background:#fff; border-radius:26px; padding:24px 20px; max-width:420px; width:100%;
+    text-align:center; box-shadow:0 20px 40px rgba(0,0,0,0.25); max-height:88vh; overflow-y:auto;}
+  .panel h1{font-size:22px; margin:6px 0; color:var(--accentD);}
+  .panel p{font-size:14px; line-height:1.5; margin:6px 0;}
+  .bigBtn{margin-top:14px; border:none; color:#fff; font-weight:800; font-size:18px;
+    padding:13px 28px; border-radius:20px; cursor:pointer;
+    background:linear-gradient(135deg,var(--accent),var(--accentD)); box-shadow:0 8px 16px rgba(38,120,184,0.35);}
+  .bigBtn:active{transform:scale(0.96);}
+  .demoSentence{ font-size:22px; font-weight:800; margin:10px 0; color:var(--pinkD); }
+
+  #logoLink{position:fixed; top:8px; left:8px; z-index:60; width:38px; height:38px; border-radius:50%;
+    background:#1877f2; color:#fff; display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:16px; text-decoration:none; box-shadow:0 3px 8px rgba(0,0,0,0.25); opacity:0.88;}
+  #muteBtn{position:fixed; top:8px; right:8px; z-index:60; border:none; width:38px; height:38px;
+    border-radius:50%; background:#fff; box-shadow:0 3px 8px rgba(0,0,0,0.2); font-size:16px;}
+</style>
+</head>
+<body>
+<div id="app">
+  <a id="logoLink" href="https://www.facebook.com/revenge.third" target="_blank" rel="noopener">f</a>
+  <button id="muteBtn">🔊</button>
+
+  <div id="header">
+    <div id="progressBadge">Câu 1/10</div>
+    <div id="starsBadge">⭐ 0</div>
+  </div>
+
+  <div id="meaningCard">
+    <div id="meaningVi">Hôm nay nóng hơn hôm qua.</div>
+    <button id="listenBtn">🔊 Nghe câu mẫu · 🔊 听例句</button>
+  </div>
+
+  <div id="answerRow"></div>
+  <div id="feedback"></div>
+  <div id="poolRow"></div>
+
+  <div id="controls">
+    <button id="checkBtn" class="ctrlBtn">✅ Kiểm tra · ✅ 检查</button>
+    <button id="nextBtn" class="ctrlBtn hidden">▶ Câu tiếp theo · ▶ 下一句</button>
+  </div>
+
+  <!-- START -->
+  <div id="startOverlay" class="overlay">
+    <div class="panel">
+      <div style="font-size:48px;">🎂⚖️📝</div>
+      <h1>Sắp Xếp Câu So Sánh Chênh Lệch · 排句子 · 差比句</h1>
+      <p>Luyện câu <b>比...tuổi</b> — <b>Bài 8 YCT2</b>. · 练习<b>比...岁</b>句型 — <b>YCT2第8课</b>。</p>
+      <div class="demoSentence">马丁 比 我 大 三岁。</div>
+      <p style="font-size:13px; color:#8a7a99;">Nghe câu mẫu, rồi chạm vào từng từ theo đúng thứ tự để ghép thành câu. Cấu trúc: · 先听例句，再按正确顺序点每个词组成句子。结构： <b>A + 比 + B + 大/小 + Số tuổi</b>.</p>
+      <button id="startBtn" class="bigBtn">Bắt đầu 🚀 · 开始 🚀</button>
+    </div>
+  </div>
+
+  <!-- END -->
+  <div id="endOverlay" class="overlay hidden">
+    <div class="panel">
+      <div style="font-size:48px;">🏆</div>
+      <h1>Xong rồi, giỏi quá! · 完成啦，真棒！</h1>
+      <p id="endDesc"></p>
+      <button id="replayBtn" class="bigBtn">Chơi lại 🔁 · 再玩一次 🔁</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ DATA: 10 câu so sánh chênh lệch 比...岁 (Bài 8 YCT2) ============ */
+const AUDIO_BASE = "../audio/yct2c33_";
+const SENTENCES = [
+  {chunks:["马丁","比","我","大","三岁"], vi:"Martin lớn hơn tôi 3 tuổi.", audio:"s1"},
+  {chunks:["我","比","姐姐","小","两岁"], vi:"Tôi nhỏ hơn chị gái 2 tuổi.", audio:"s2"},
+  {chunks:["哥哥","比","我","大","一岁"], vi:"Anh trai lớn hơn tôi 1 tuổi.", audio:"s3"},
+  {chunks:["妹妹","比","弟弟","小","三岁"], vi:"Em gái nhỏ hơn em trai 3 tuổi.", audio:"s4"},
+  {chunks:["老师","比","学生","大","十岁"], vi:"Giáo viên lớn hơn học sinh 10 tuổi.", audio:"s5"},
+  {chunks:["爸爸","比","妈妈","大","两岁"], vi:"Bố lớn hơn mẹ 2 tuổi.", audio:"s6"},
+  {chunks:["爷爷","比","奶奶","大","三岁"], vi:"Ông nội lớn hơn bà nội 3 tuổi.", audio:"s7"},
+  {chunks:["我","比","弟弟","大","四岁"], vi:"Tôi lớn hơn em trai 4 tuổi.", audio:"s8"},
+  {chunks:["姐姐","比","妹妹","大","五岁"], vi:"Chị gái lớn hơn em gái 5 tuổi.", audio:"s9"},
+  {chunks:["你","比","我","大","一岁"], vi:"Bạn lớn hơn tôi 1 tuổi.", audio:"s10"},
+];
+
+/* ============ STATE ============ */
+let order = [];
+let curIdx = 0;
+let answer = [];
+let pool = [];
+let stars = 0;
+let muted = false;
+let checkLocked = false; // chong bam nhieu lan nut Kiem tra khi dang chuyen cau
+
+/* ============ DOM ============ */
+const answerRow = document.getElementById('answerRow');
+const poolRow = document.getElementById('poolRow');
+const meaningVi = document.getElementById('meaningVi');
+const progressBadge = document.getElementById('progressBadge');
+const starsBadge = document.getElementById('starsBadge');
+const feedback = document.getElementById('feedback');
+const startOverlay = document.getElementById('startOverlay');
+const endOverlay = document.getElementById('endOverlay');
+
+/* ============ BG DECOR ============ */
+function initClouds(){
+  for(let i=0;i<5;i++){
+    const c = document.createElement('div');
+    c.className='bg-cloud'; c.textContent='☁️';
+    c.style.top=(10+Math.random()*50)+'%';
+    c.style.animationDuration=(18+Math.random()*10)+'s';
+    c.style.animationDelay=(-Math.random()*20)+'s';
+    document.getElementById('app').prepend(c);
+  }
+}
+
+/* ============ AUDIO (guaranteed non-silent fallback) ============ */
+let cachedZhVoice = null;
+function initVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const pick=()=>{ const v=speechSynthesis.getVoices(); cachedZhVoice = v.find(x=>x.lang&&x.lang.toLowerCase().startsWith('zh'))||null; };
+  pick();
+  if(speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', pick);
+}
+let actx;
+function beep(f1,f2,dur,type){
+  if(muted) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state==='suspended') actx.resume();
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type=type||'sine';
+    o.frequency.setValueAtTime(f1,actx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(f2,actx.currentTime+dur);
+    g.gain.setValueAtTime(0.15,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001,actx.currentTime+dur);
+    o.connect(g); g.connect(actx.destination);
+    o.start(); o.stop(actx.currentTime+dur);
+  }catch(e){}
+}
+const sfxCorrect = ()=>beep(500,950,0.3,'triangle');
+const sfxWrong = ()=>beep(280,180,0.3,'sawtooth');
+const sfxWin = ()=>beep(400,1300,0.6,'triangle');
+function playChime(){ beep(520,520,0.12,'sine'); setTimeout(()=>beep(720,720,0.14,'sine'),130); }
+function speakFallback(text, onDone){
+  if(muted){ if(onDone) onDone(); return; }
+  let done=false; const finish=()=>{ if(!done){done=true; if(onDone) onDone();} };
+  playChime();
+  try{
+    if('speechSynthesis' in window){
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang='zh-CN'; if(cachedZhVoice) u.voice=cachedZhVoice; u.rate=0.8;
+      u.onend=finish; u.onerror=finish;
+      setTimeout(()=>speechSynthesis.speak(u), 160);
+      setTimeout(finish, 3200);
+      return;
+    }
+  }catch(e){}
+  finish();
+}
+function playSentenceAudio(sentence){
+  if(muted) return;
+  let fallbackFired = false;
+  const goFallback = ()=>{ if(fallbackFired) return; fallbackFired = true; speakFallback(sentence.chunks.join('')); };
+  try{
+    const audio = new Audio(AUDIO_BASE + sentence.audio + ".mp3");
+    audio.play().catch(goFallback);
+    audio.addEventListener('error', goFallback);
+  }catch(e){ goFallback(); }
+}
+
+/* ============ GAME LOGIC ============ */
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function startGame(){
+  order = shuffle([...Array(SENTENCES.length).keys()]);
+  curIdx = 0; stars = 0;
+  starsBadge.textContent = '⭐ 0';
+  startOverlay.classList.add('hidden');
+  nextSentence();
+}
+
+function nextSentence(){
+  checkLocked = false;
+  document.getElementById('checkBtn').classList.remove('hidden');
+  document.getElementById('nextBtn').classList.add('hidden');
+  if(curIdx >= order.length){ return finishGame(); }
+  const sentence = SENTENCES[order[curIdx]];
+  progressBadge.textContent = `Câu ${curIdx+1}/${order.length} · 第${curIdx+1}/${order.length}句`;
+  meaningVi.textContent = sentence.vi;
+  feedback.textContent = '';
+  feedback.className = '';
+  answer = [];
+  pool = shuffle(sentence.chunks.map((c,i)=>({text:c, origIdx:i})));
+  renderPool();
+  renderAnswer();
+  setTimeout(()=> playSentenceAudio(sentence), 400);
+}
+
+function renderPool(){
+  poolRow.innerHTML = '';
+  pool.forEach((tile, i)=>{
+    const el = document.createElement('div');
+    el.className = 'tile' + (tile.text==='比' ? ' bi' : '');
+    el.textContent = tile.text;
+    el.onclick = ()=> moveToAnswer(i);
+    poolRow.appendChild(el);
+  });
+}
+function renderAnswer(){
+  answerRow.innerHTML = '';
+  const totalSlots = SENTENCES[order[curIdx]].chunks.length;
+  answer.forEach((tile,i)=>{
+    const el = document.createElement('div');
+    el.className = 'tile inAnswer' + (tile.text==='比' ? ' bi' : '');
+    el.textContent = tile.text;
+    el.onclick = ()=> moveToPool(i);
+    answerRow.appendChild(el);
+  });
+  for(let i=answer.length; i<totalSlots; i++){
+    const ph = document.createElement('div');
+    ph.className='slotPlaceholder';
+    answerRow.appendChild(ph);
+  }
+}
+function moveToAnswer(poolIdx){
+  answer.push(pool[poolIdx]);
+  pool.splice(poolIdx,1);
+  renderPool(); renderAnswer();
+}
+function moveToPool(answerIdx){
+  pool.push(answer[answerIdx]);
+  answer.splice(answerIdx,1);
+  renderPool(); renderAnswer();
+}
+
+document.getElementById('listenBtn').onclick = ()=>{
+  playSentenceAudio(SENTENCES[order[curIdx]]);
+};
+
+document.getElementById('checkBtn').onclick = ()=>{
+  if(checkLocked) return;
+  const sentence = SENTENCES[order[curIdx]];
+  if(answer.length !== sentence.chunks.length){
+    feedback.textContent = '👉 Bé xếp đủ hết các từ đã nhé! · 👉 请先把所有词都排好！';
+    feedback.className = 'no';
+    return;
+  }
+  const built = answer.map(t=>t.text).join('|');
+  const target = sentence.chunks.join('|');
+  if(built === target){
+    checkLocked = true;
+    sfxCorrect();
+    feedback.textContent = '✅ Đúng rồi, giỏi quá! · ✅ 对了，真棒！';
+    feedback.className = 'ok';
+    document.querySelectorAll('#answerRow .tile').forEach(el=>el.classList.add('correctFlash'));
+    stars++;
+    starsBadge.textContent = '⭐ ' + stars;
+    playSentenceAudio(sentence);
+    goToNextWhenReady();
+  } else {
+    sfxWrong();
+    feedback.textContent = '🔁 Chưa đúng thứ tự, bé thử lại nhé! · 🔁 顺序不对，再试一次吧！';
+    feedback.className = 'no';
+    document.querySelectorAll('#answerRow .tile').forEach(el=>el.classList.add('wrongFlash'));
+    setTimeout(()=>{
+      document.querySelectorAll('#answerRow .tile').forEach(el=>el.classList.remove('wrongFlash'));
+    }, 400);
+  }
+};
+
+function goToNextWhenReady(){
+  // Cho be chu dong bam "Cau tiep theo" sau khi da doc ky cau dung, khong ep thoi gian
+  const checkBtn = document.getElementById('checkBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  checkBtn.classList.add('hidden');
+  nextBtn.classList.remove('hidden');
+  let advanced = false;
+  const doAdvance = ()=>{
+    if(advanced) return;
+    advanced = true;
+    clearTimeout(safetyTimer);
+    nextBtn.classList.add('hidden');
+    nextBtn.onclick = null;
+    checkBtn.classList.remove('hidden');
+    curIdx++; nextSentence();
+  };
+  nextBtn.onclick = doAdvance;
+  const safetyTimer = setTimeout(doAdvance, 15000); // moc an toan, chi phong be quen bam
+}
+
+function finishGame(){
+  sfxWin();
+  document.getElementById('endDesc').textContent = `Bé đã ghép đúng ${stars}/${SENTENCES.length} câu so sánh dùng 比!`;
+  endOverlay.classList.remove('hidden');
+}
+
+document.getElementById('startBtn').onclick = function(){
+  try{ actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); }catch(e){}
+  startGame();
+};
+document.getElementById('replayBtn').onclick = ()=>{
+  endOverlay.classList.add('hidden');
+  startGame();
+};
+document.getElementById('muteBtn').onclick = function(){
+  muted = !muted;
+  this.textContent = muted ? '🔇' : '🔊';
+};
+
+initClouds();
+initVoices();
+</script>
+</body>
+</html>
