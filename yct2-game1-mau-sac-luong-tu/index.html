@@ -394,8 +394,9 @@ pinyinInput.addEventListener('input', ()=>{
     if(lockedObj){ lockedObj.el.classList.remove('locked'); lockedObj=null; }
     const candidates=active.filter(a=>a.word.target.startsWith(val));
     if(candidates.length===0){ wrongInput(); return; }
-    if(candidates.length>1){ return; } // ambiguous prefix shared by several words — wait for more letters
-    target=candidates[0];
+    const exactMatch=candidates.find(a=>a.word.target===val);
+    if(candidates.length>1 && !exactMatch){ return; } // ambiguous prefix shared by several words — wait for more letters
+    target=exactMatch || candidates[0];
     lockedObj=target;
     target.el.classList.add('locked');
   }
