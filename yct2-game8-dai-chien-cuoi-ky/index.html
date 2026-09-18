@@ -195,6 +195,11 @@
       <div class="ruleRow"><span class="ic">⚔️</span><span>Trả lời đúng → · 答对了 → <b>gây sát thương</b> lên đối phương. Trả lời sai → không đánh trúng. · 对对方造成伤害。答错 → 不会命中。</span></div>
       <div class="ruleRow"><span class="ic">🔥</span><span>Đúng liên tiếp → chuỗi lửa nhân sát thương · 连续答对 → 连击火焰加倍伤害 <b>x2, x3</b> (tối đa x3)!</span></div>
       <div class="ruleRow"><span class="ic">👀</span><span>Lượt của Rùa Thần, bé cũng xem được Rùa chọn gì — và đáp án đúng luôn được tiết lộ ở cả 2 lượt. · 轮到神龟时，你也能看到神龟选了什么——两边的正确答案都会公布。</span></div>
+      <div class="ruleRow"><span class="ic">⚡</span><span>Trả lời càng nhanh, càng nhiều điểm! · 回答越快，得分越多！ Điểm được lưu vào bảng xếp hạng. · 分数会存入排行榜。</span></div>
+      <div id="leaderboardBox" style="margin-top:8px; background:#fff; border-radius:14px; padding:10px 14px; max-height:130px; overflow-y:auto; width:100%; box-sizing:border-box;">
+        <div style="font-weight:800; font-size:13px; margin-bottom:4px;">🏅 Bảng xếp hạng · 🏅 排行榜</div>
+        <div id="leaderboardList" style="font-size:13px;"></div>
+      </div>
       <button id="startBtn" class="bigBtn">Vào trận! ⚔️ · 开始比赛！⚔️</button>
     </div>
   </div>
@@ -205,6 +210,7 @@
       <div id="endEmoji" style="font-size:48px;">🏆</div>
       <h1 id="endTitle">Kết thúc trận đấu! · 比赛结束！</h1>
       <p id="endDesc"></p>
+      <div id="endScoreBox" style="font-weight:800; font-size:16px; margin:4px 0;"></div>
       <div id="summaryList"></div>
       <button id="replayBtn" class="bigBtn">Đấu lại 🔁 · 再战一次 🔁</button>
     </div>
@@ -275,12 +281,44 @@ const QUESTIONS = [
    {h:'我来北京一年了。',p:'Wǒ lái Běijīng yì nián le.',vi:'Tôi đến Bắc Kinh một năm rồi'},{h:'我一年来北京了。',p:'(sai trật tự)',vi:''},{h:'了我来北京一年。',p:'(sai trật tự)',vi:''}], correct:0},
  {type:'E', instr:'Câu nào ĐÚNG ngữ pháp? · 哪句语法是对的？', prompt:'', opts:[
    {h:'你会不会做饭？',p:'Nǐ huì bú huì zuòfàn?',vi:'Bạn có biết nấu ăn không?'},{h:'你做饭会不会？',p:'(sai trật tự)',vi:''},{h:'不会你做饭会？',p:'(sai trật tự)',vi:''}], correct:0},
+ {type:'A', audio:'niunai', instr:'🎧 Nghe và chọn đúng đồ uống · 🎧 听音，选对饮料', prompt:'🔊 ...', opts:[
+   {icon:'🥛',h:'牛奶',p:'niúnǎi',vi:'sữa'},{icon:'💧',h:'水',p:'shuǐ',vi:'nước'},{icon:'🍵',h:'茶',p:'chá',vi:'trà'}], correct:0},
+ {type:'A', audio:'pingguo', instr:'🎧 Nghe và chọn đúng món ăn · 🎧 听音，选对食物', prompt:'🔊 ...', opts:[
+   {icon:'🍎',h:'苹果',p:'píngguǒ',vi:'táo'},{icon:'🥟',h:'包子',p:'bāozi',vi:'bánh bao'},{icon:'🍜',h:'面条',p:'miàntiáo',vi:'mì'}], correct:0},
+ {type:'A', audio:'heise', instr:'🎧 Nghe và chọn đúng màu · 🎧 听音，选对颜色', prompt:'🔊 ...', opts:[
+   {icon:'⚫',h:'黑色',p:'hēisè',vi:'màu đen'},{icon:'⚪',h:'白色',p:'báisè',vi:'màu trắng'},{icon:'🔴',h:'红色',p:'hóngsè',vi:'màu đỏ'}], correct:0},
+ {type:'B', instr:'🥛 Đây là gì? · 🥛 这是什么？', prompt:'🥛', opts:[
+   {h:'牛奶',p:'niúnǎi',vi:'sữa'},{h:'水',p:'shuǐ',vi:'nước'},{h:'茶',p:'chá',vi:'trà'}], correct:0},
+ {type:'B', instr:'🍎 Đây là gì? · 🍎 这是什么？', prompt:'🍎', opts:[
+   {h:'苹果',p:'píngguǒ',vi:'táo'},{h:'包子',p:'bāozi',vi:'bánh bao'},{h:'面条',p:'miàntiáo',vi:'mì'}], correct:0},
+ {type:'B', instr:'⚫ Đây là màu gì? · ⚫ 这是什么颜色？', prompt:'⚫', opts:[
+   {h:'黑色',p:'hēisè',vi:'màu đen'},{h:'白色',p:'báisè',vi:'màu trắng'},{h:'蓝色',p:'lánsè',vi:'màu xanh dương'}], correct:0},
+ {type:'B', instr:'🐱 Đây là gì? (chọn đúng lượng từ) · 🐱 这是什么？（选对量词）', prompt:'🐱', opts:[
+   {h:'一只猫',p:'yì zhī māo',vi:'một con mèo'},{h:'一本书',p:'yì běn shū',vi:'một quyển sách'},{h:'两本书',p:'liǎng běn shū',vi:'hai quyển sách'}], correct:0},
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (hỏi của ai) · 选对词填空（问是谁的）', prompt:'这是 ___ 的铅笔？', promptSmall:'Zhè shì ___ de qiānbǐ?', opts:[
+   {h:'谁',p:'shéi',vi:'ai'},{h:'什么',p:'shénme',vi:'cái gì'},{h:'哪',p:'nǎ',vi:'nào'}], correct:0},
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (hỏi tuổi) · 选对词填空（问年龄）', prompt:'你今年 ___ 岁？', promptSmall:'Nǐ jīnnián ___ suì?', opts:[
+   {h:'几',p:'jǐ',vi:'mấy'},{h:'谁',p:'shéi',vi:'ai'},{h:'什么',p:'shénme',vi:'cái gì'}], correct:0},
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (hỏi có biết không) · 选对词填空（问会不会）', prompt:'他 ___ 说汉语。', promptSmall:'Tā ___ shuō Hànyǔ.', opts:[
+   {h:'会',p:'huì',vi:'biết (kỹ năng)'},{h:'是',p:'shì',vi:'là'},{h:'有',p:'yǒu',vi:'có'}], correct:0},
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (lượng từ con vật) · 选对词填空（动物量词）', prompt:'一 ___ 猫', promptSmall:'yì ___ māo', opts:[
+   {h:'只',p:'zhī',vi:'con'},{h:'个',p:'ge',vi:'cái'},{h:'本',p:'běn',vi:'quyển'}], correct:0},
+ {type:'D', audio:'d5', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng · 🎧 听问题，选对答案', prompt:'他几岁？', promptSmall:'Tā jǐ suì?', opts:[
+   {h:'他八岁。',p:'Tā bā suì.',vi:'Cậu ấy 8 tuổi'},{h:'他八点。',p:'Tā bā diǎn.',vi:'Cậu ấy 8 giờ'},{h:'他八本书。',p:'Tā bā běn shū.',vi:'Cậu ấy 8 quyển sách'}], correct:0},
+ {type:'D', audio:'d6', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng · 🎧 听问题，选对答案', prompt:'现在几点？', promptSmall:'Xiànzài jǐ diǎn?', opts:[
+   {h:'现在三点。',p:'Xiànzài sān diǎn.',vi:'Bây giờ 3 giờ'},{h:'现在三岁。',p:'Xiànzài sān suì.',vi:'Bây giờ 3 tuổi'},{h:'现在三个。',p:'Xiànzài sān ge.',vi:'Bây giờ 3 cái'}], correct:0},
+ {type:'E', instr:'Câu nào ĐÚNG ngữ pháp? · 哪句语法是对的？', prompt:'', opts:[
+   {h:'他比我大两岁。',p:'Tā bǐ wǒ dà liǎng suì.',vi:'Cậu ấy lớn hơn tôi 2 tuổi'},{h:'他两岁比我大。',p:'(sai trật tự)',vi:''},{h:'比他我大两岁。',p:'(sai trật tự)',vi:''}], correct:0},
+ {type:'E', instr:'Câu nào ĐÚNG ngữ pháp? · 哪句语法是对的？', prompt:'', opts:[
+   {h:'你几点起床？',p:'Nǐ jǐ diǎn qǐchuáng?',vi:'Bạn mấy giờ thức dậy?'},{h:'起床你几点？',p:'(sai trật tự)',vi:''},{h:'你起床几点？',p:'(sai trật tự)',vi:''}], correct:0},
 ];
 const AUDIO_BASE = "../audio/yct2boss_";
-const TOTAL_Q = QUESTIONS.length; // 30
+const TOTAL_Q = QUESTIONS.length; // 45 câu trong kho, mỗi trận lấy ngẫu nhiên ROUND_SIZE câu
+const ROUND_SIZE = 30;
 const START_HP = 300;
 const BASE_DMG = 10;
 const BOT_MISS_MIN = 3, BOT_MISS_MAX = 5;
+const LB_KEY = 'yct2boss_leaderboard_v1';
 
 /* ============ STATE ============ */
 let order = [];         // shuffled question indices with assigned owner
@@ -294,6 +332,8 @@ let botMissSet = new Set();
 let muted = false;
 let advancing = false;
 let currentQ = null;
+let score = 0;
+let qStartTime = 0;
 
 /* ============ DOM ============ */
 const pHpBar = document.getElementById('pHpBar');
@@ -400,13 +440,14 @@ function shuffle(arr){
 }
 
 function setupGame(){
-  const idxs = shuffle([...Array(TOTAL_Q).keys()]);
+  const idxs = shuffle([...Array(TOTAL_Q).keys()]).slice(0, ROUND_SIZE);
   order = idxs.map((qIndex,pos)=>({qIndex, owner: pos%2===0 ? 'player':'bot'}));
   qi = 0;
   pHP=START_HP; bHP=START_HP; pStreak=0; bStreak=0;
   pCorrectCount=0; pTotal=0; bCorrectCount=0; bTotal=0;
   pLongestCombo=0; bLongestCombo=0;
   missedForReview = [];
+  score = 0;
 
   const botIndices = order.filter(o=>o.owner==='bot').map((o,i)=>i);
   const missCount = BOT_MISS_MIN + Math.floor(Math.random()*(BOT_MISS_MAX-BOT_MISS_MIN+1));
@@ -416,11 +457,51 @@ function setupGame(){
   renderTurnBanner();
 }
 
+/* ============ SCORE & LEADERBOARD ============ */
+function calcSpeedScore(elapsedSec){
+  if(elapsedSec<=3) return 150;
+  if(elapsedSec<=6) return 120;
+  if(elapsedSec<=10) return 90;
+  if(elapsedSec<=15) return 60;
+  return 30;
+}
+function loadLeaderboard(){
+  try{
+    const raw = localStorage.getItem(LB_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){ return []; }
+}
+function saveScoreToLeaderboard(finalScore){
+  let arr = loadLeaderboard();
+  const entry = {score: finalScore, date: new Date().toLocaleDateString('vi-VN')};
+  arr.push(entry);
+  arr.sort((a,b)=>b.score-a.score);
+  const rank = arr.indexOf(entry) + 1;
+  arr = arr.slice(0,10);
+  try{ localStorage.setItem(LB_KEY, JSON.stringify(arr)); }catch(e){}
+  return rank;
+}
+function renderLeaderboard(){
+  const box = document.getElementById('leaderboardList');
+  if(!box) return;
+  const arr = loadLeaderboard();
+  if(arr.length===0){
+    box.innerHTML = '<div style="opacity:0.6;">Chưa có điểm nào — đấu trận đầu tiên đi! · 还没有记录——开始第一场吧！</div>';
+    return;
+  }
+  box.innerHTML = arr.map((x,i)=>{
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+    return `<div style="display:flex; justify-content:space-between; padding:2px 0;"><span>${medal} ${x.score} điểm</span><span style="opacity:0.6;">${x.date}</span></div>`;
+  }).join('');
+}
+
 function updateBars(){
   pHpBar.style.width = Math.max(0,(pHP/START_HP*100))+'%';
   bHpBar.style.width = Math.max(0,(bHP/START_HP*100))+'%';
   pFlames.textContent = flameStr(pStreak);
   bFlames.textContent = flameStr(bStreak);
+  document.getElementById('pAcc').textContent = '· ⭐'+score;
 }
 function flameStr(streak){
   if(streak>=3) return '🔥🔥🔥 x3';
@@ -467,6 +548,8 @@ function renderQuestion(q, owner){
   } else {
     qListenBtn.classList.add('hidden');
   }
+
+  if(owner==='player') qStartTime = performance.now();
 
   q.opts.forEach((opt,i)=>{
     const btn = document.createElement('button');
@@ -528,6 +611,8 @@ function handlePlayerAnswer(choiceIdx, q){
     const mult = pStreak>=3?3:(pStreak===2?2:1);
     const dmg = BASE_DMG*mult;
     bHP = Math.max(0, bHP-dmg);
+    const elapsedSec = (performance.now()-qStartTime)/1000;
+    score += calcSpeedScore(elapsedSec) * mult;
     sfxHit();
     showDamage(dmg, 'bot');
   } else {
@@ -626,6 +711,13 @@ function finishGame(){
   endDesc.textContent = `Bé đúng ${pCorrectCount}/${pTotal} câu (chuỗi dài nhất x${Math.min(3,pLongestCombo)}). `+
     `Rùa Thần đúng ${bCorrectCount}/${bTotal} câu.`;
 
+  const rank = saveScoreToLeaderboard(score);
+  const scoreBox = document.getElementById('endScoreBox');
+  scoreBox.textContent = rank<=10
+    ? `⭐ ${score} điểm — Hạng #${rank} bảng xếp hạng! · ⭐ ${score}分 — 排行榜第${rank}名！`
+    : `⭐ ${score} điểm · ⭐ ${score}分`;
+  renderLeaderboard();
+
   const list = document.getElementById('summaryList');
   list.innerHTML = '';
   if(missedForReview.length===0){
@@ -653,6 +745,7 @@ document.getElementById('startBtn').onclick = ()=>{
   nextQuestion();
 };
 initVoices();
+renderLeaderboard();
 document.getElementById('replayBtn').onclick = ()=>{
   endOverlay.classList.add('hidden');
   setupGame();
