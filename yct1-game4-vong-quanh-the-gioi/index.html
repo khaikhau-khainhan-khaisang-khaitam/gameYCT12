@@ -136,7 +136,7 @@ const WORDS = [
 const AUDIO_BASE = "../audio/yct1c8_";
 const MAX_LIVES = 3;
 const MAX_CONCURRENT = 3;
-const FALL_DURATION = 17000;
+const FALL_DURATION = 14500;
 const SPAWN_GAP = 2400;
 WORDS.forEach(w=>{ let c=0; w.cum=[]; w.syl.forEach(s=>{ c+=s.length; w.cum.push(c); }); w.target=w.syl.join(''); });
 
@@ -336,13 +336,11 @@ function correctHit(obj){
 }
 
 function wrongInput(){
-  lives--; updateLives();
   sfxMiss();
   pinyinInput.classList.add('errorShake');
   setTimeout(()=>pinyinInput.classList.remove('errorShake'),350);
   pinyinInput.value='';
   if(lockedObj){ lockedObj.el.classList.remove('locked'); lockedObj=null; }
-  if(lives<=0) endGame(false);
 }
 
 function checkWin(){

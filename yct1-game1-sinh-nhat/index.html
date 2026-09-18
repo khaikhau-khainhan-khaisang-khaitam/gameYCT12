@@ -765,6 +765,7 @@ function handleMiss(){
 /* ============ SPEAK-ALONG MODAL ============ */
 let mediaRecorder, recordedChunks=[], recStream;
 function openSpeakModal(){
+  pinyinInput.blur();
   document.getElementById('speakHanzi').textContent = currentWord ? currentWord.hanzi : '你好';
   document.getElementById('micStatus').textContent = 'Nhấn micro để ghi âm giọng của bé · 按麦克风录下你的声音';
   document.getElementById('playbackAudio').classList.add('hidden');
@@ -821,6 +822,7 @@ function stopRecordingIfActive(){
 
 /* ============ END GAME ============ */
 function finishGame(){
+  pinyinInput.blur();
   sfxWin();
   const rect = playArea.getBoundingClientRect();
   burstConfetti(rect.left+rect.width/2, rect.top+40, 40);
