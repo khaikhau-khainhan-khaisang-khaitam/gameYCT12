@@ -324,11 +324,10 @@
     <div id="hintText"></div>
     <div id="inputRow">
       <button id="listenBtn" class="iconBtn">🔊</button>
-      <input id="pinyinInput" type="text" placeholder="gõ pinyin ở đây..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" readonly inputmode="none">
+      <input id="pinyinInput" type="text" placeholder="gõ pinyin ở đây..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
       <button id="hintBtn" class="iconBtn">💡</button>
       <button id="backspaceBtn" class="iconBtn">⌫</button>
     </div>
-    <div id="keyboard"></div>
   </div>
 
   <!-- START OVERLAY -->
@@ -477,31 +476,6 @@ function updateCandles(){
   const lit = Math.floor(learnedCount / WORDS_PER_CANDLE);
   const els = candlesEl.querySelectorAll('.candle');
   els.forEach((el,i)=>{ el.classList.toggle('lit', i < lit); });
-}
-
-/* ============ ON-SCREEN KEYBOARD ============ */
-function initKeyboard(){
-  const rows = ["qwertyuiop","asdfghjkl","zxcvbnm"];
-  const kb = document.getElementById('keyboard');
-  rows.forEach((row,idx)=>{
-    const rowEl = document.createElement('div');
-    rowEl.className='kbRow';
-    if(idx===2){
-      const clearBtn = document.createElement('button');
-      clearBtn.className='key wide';
-      clearBtn.textContent='Xoá hết · 清空';
-      clearBtn.onclick=()=>{ pinyinInput.value=''; pinyinInput.focus(); };
-      rowEl.appendChild(clearBtn);
-    }
-    row.split('').forEach(ch=>{
-      const btn = document.createElement('button');
-      btn.className='key';
-      btn.textContent=ch;
-      btn.onclick=()=>{ pinyinInput.value += ch; checkInput(); pinyinInput.focus(); };
-      rowEl.appendChild(btn);
-    });
-    kb.appendChild(rowEl);
-  });
 }
 
 /* ============ AUDIO ============ */
@@ -730,18 +704,6 @@ document.getElementById('backspaceBtn').onclick = ()=>{
   checkInput();
   pinyinInput.focus();
 };
-// Bàn phím vật lý (bluetooth/desktop) vẫn gõ được dù input readonly để chặn bàn phím ảo của điện thoại
-document.addEventListener('keydown', (e)=>{
-  if(document.activeElement && document.activeElement.tagName==='INPUT' && document.activeElement!==pinyinInput) return;
-  if(/^[a-zA-Z]$/.test(e.key)){
-    pinyinInput.value += e.key.toLowerCase();
-    checkInput();
-  } else if(e.key==='Backspace'){
-    e.preventDefault();
-    pinyinInput.value = pinyinInput.value.slice(0,-1);
-    checkInput();
-  }
-});
 document.getElementById('listenBtn').onclick = replayCurrentAudio;
 document.getElementById('hintBtn').onclick = ()=>{
   if(!currentWord) return;
@@ -886,7 +848,6 @@ document.getElementById('muteBtn').onclick = function(){
 
 /* ============ INIT ============ */
 initBalloons();
-initKeyboard();
 initVoices();
 </script>
 </body>

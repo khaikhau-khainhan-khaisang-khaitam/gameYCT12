@@ -234,7 +234,7 @@ function startGame(){
   updateLives(); updateScore();
   feedbackText.textContent='';
   startOverlay.classList.add('hidden');
-  playArea.innerHTML='';
+  playArea.querySelectorAll('.fallWord, .bullet').forEach(el=>el.remove());
   pinyinInput.value=''; pinyinInput.focus();
   spawnLoop();
 }
@@ -250,8 +250,7 @@ function spawnLoop(){
 function spawnWord(word){
   const el=document.createElement('div');
   el.className='fallWord';
-  const hpHtml = word.syl.length>1 ? '<div class="hpBar"><div class="hpFill"></div></div>' : '';
-  el.innerHTML=`<div class="fwHanzi">${word.hanzi}</div>${hpHtml}`;
+  el.innerHTML=`<div class="fwHanzi">${word.hanzi}</div>`;
   const leftPct = 14 + Math.random()*72;
   el.style.left=leftPct+'%';
   playArea.appendChild(el);
@@ -399,7 +398,6 @@ pinyinInput.addEventListener('input', ()=>{
   if(newHits>target.hitCount){
     for(let i=target.hitCount;i<newHits;i++){ fireBullet(target); }
     target.hitCount=newHits;
-    updateHealthBar(target);
   }
   if(val===target.word.target){ correctHit(target); return; } // gõ đúng hết là thắng, kể cả sau khi đã xoá lùi sửa
 });
