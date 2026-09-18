@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
 <title>Đường Đua Sinh Nhật — Ôn tập Bài 1-5 (YCT1)</title>
 <style>
   :root{
@@ -29,8 +29,8 @@
   #app{
     position:relative;
     width:100%;
-    height:100dvh;
-    max-height:100dvh;
+    height:var(--app-height, 100dvh);
+    max-height:var(--app-height, 100dvh);
     overflow:hidden;
     display:flex;
     flex-direction:column;
@@ -118,7 +118,7 @@
     font-size:20px;
   }
   #wordIcon{font-size:44px; line-height:1;}
-  #wordHanzi{font-size:44px; font-weight:800; color:var(--pink-dark); line-height:1.1;}
+  #wordHanzi{font-size:50px; font-weight:900; color:var(--ink); line-height:1.1; font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC","Baloo 2","Segoe UI",Arial,sans-serif; text-shadow:0 1px 0 rgba(255,255,255,0.6);}
 
   #timerRing{
     position:absolute; top:0; left:0; width:100%; height:100%;
@@ -292,7 +292,7 @@
 
   @media (max-height:640px){
     #wordIcon{font-size:34px;}
-    #wordHanzi{font-size:34px;}
+    #wordHanzi{font-size:38px;}
     .key{height:32px;}
   }
 </style>
@@ -849,6 +849,21 @@ document.getElementById('muteBtn').onclick = function(){
 /* ============ INIT ============ */
 initBalloons();
 initVoices();
+</script>
+
+<script>
+(function(){
+  function setAppHeight(){
+    var h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+    document.documentElement.style.setProperty('--app-height', h+'px');
+  }
+  setAppHeight();
+  window.addEventListener('resize', setAppHeight);
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', setAppHeight);
+    window.visualViewport.addEventListener('scroll', function(){ window.scrollTo(0,0); });
+  }
+})();
 </script>
 </body>
 </html>

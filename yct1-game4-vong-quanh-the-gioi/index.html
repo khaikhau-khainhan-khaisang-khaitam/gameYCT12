@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content">
 <title>Bắn Hạ Chữ — Vòng Quanh Thế Giới (YCT1 Bài 3)</title>
 <style>
   :root{
@@ -15,7 +15,7 @@
     font-family:"Baloo 2","Segoe UI",Arial,sans-serif;
     background:linear-gradient(180deg,var(--bg1),var(--bg2));
     color:var(--ink); user-select:none;}
-  #app{position:relative; width:100%; height:100dvh; display:flex; flex-direction:column;}
+  #app{position:relative; width:100%; height:var(--app-height, 100dvh); display:flex; flex-direction:column;}
 
   #header{display:flex; align-items:center; justify-content:space-between; padding:8px 54px; z-index:5;}
   #livesBox,#scoreBox{background:rgba(255,255,255,0.8); border-radius:20px; padding:6px 14px;
@@ -429,6 +429,21 @@ document.getElementById('muteBtn').onclick=function(){
 
 /* ============ INIT ============ */
 initVoices();
+</script>
+
+<script>
+(function(){
+  function setAppHeight(){
+    var h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+    document.documentElement.style.setProperty('--app-height', h+'px');
+  }
+  setAppHeight();
+  window.addEventListener('resize', setAppHeight);
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', setAppHeight);
+    window.visualViewport.addEventListener('scroll', function(){ window.scrollTo(0,0); });
+  }
+})();
 </script>
 </body>
 </html>
