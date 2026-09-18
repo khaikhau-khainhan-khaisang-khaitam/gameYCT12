@@ -295,6 +295,10 @@
     #wordHanzi{font-size:38px;}
     .key{height:32px;}
   }
+  html.kb-open #wordCard{padding:6px 14px;}
+  html.kb-open #wordIcon{font-size:24px;}
+  html.kb-open #wordHanzi{font-size:26px;}
+  html.kb-open #wordCard .ribbon{font-size:14px; top:-9px;}
 </style>
 </head>
 <body>
@@ -640,6 +644,8 @@ function nextWord(){
   wordCard.classList.remove('show');
   wordCard.style.top = '0%';
   wordCard.style.transition = 'none';
+  wordCard.style.opacity = '';
+  wordCard.style.transform = '';
 
   const holdStart = Date.now();
   playWordAudio(currentWord, ()=>{
@@ -856,6 +862,8 @@ initVoices();
   function setAppHeight(){
     var h = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
     document.documentElement.style.setProperty('--app-height', h+'px');
+    var kbOpen = h < window.innerHeight * 0.75;
+    document.documentElement.classList.toggle('kb-open', kbOpen);
   }
   setAppHeight();
   window.addEventListener('resize', setAppHeight);

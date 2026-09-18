@@ -282,6 +282,9 @@ function missFall(obj){
   obj.el.classList.add('faded');
   queue.push(obj.word);
   removeActive(obj);
+  lives--; updateLives();
+  if(lockedObj===obj) lockedObj=null;
+  if(lives<=0) endGame(false);
 }
 
 function updateHealthBar(obj){
