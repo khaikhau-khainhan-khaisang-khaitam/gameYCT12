@@ -358,7 +358,10 @@
       <div style="font-size:40px;">🎤</div>
       <h1 style="font-size:20px;">Bé nói theo nhé! · 跟着说一遍吧！</h1>
       <div style="font-size:34px; font-weight:800; color:var(--pink-dark);" id="speakHanzi">你好</div>
-      <button id="speakListenBtn" class="bigBtn alt" style="font-size:15px; padding:10px 18px;">🔊 Nghe mẫu · 🔊 听示范</button>
+      <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+        <button id="speakListenBtn" class="bigBtn alt" style="font-size:15px; padding:10px 18px;">🔊 Nghe mẫu · 🔊 听示范</button>
+        <button id="playbackBtn" class="bigBtn alt hidden" style="font-size:15px; padding:10px 18px;">🎧 Nghe lại · 🎧 回放</button>
+      </div>
       <button id="micBtn" class="micBtn">🎤</button>
       <p id="micStatus" style="font-size:13px; color:#8a7a99;">Nhấn micro để ghi âm giọng của bé · 按麦克风录下你的声音</p>
       <audio id="playbackAudio" class="hidden"></audio>
@@ -769,10 +772,15 @@ function openSpeakModal(){
   document.getElementById('speakHanzi').textContent = currentWord ? currentWord.hanzi : '你好';
   document.getElementById('micStatus').textContent = 'Nhấn micro để ghi âm giọng của bé · 按麦克风录下你的声音';
   document.getElementById('playbackAudio').classList.add('hidden');
+  document.getElementById('playbackBtn').classList.add('hidden');
   speakModal.classList.remove('hidden');
 }
 document.getElementById('speakListenBtn').onclick = ()=>{
   if(currentWord) playWordAudio(currentWord, ()=>{});
+};
+document.getElementById('playbackBtn').onclick = ()=>{
+  const pa = document.getElementById('playbackAudio');
+  if(pa.src) pa.play().catch(()=>{});
 };
 document.getElementById('speakContinueBtn').onclick = ()=>{
   speakModal.classList.add('hidden');
@@ -800,6 +808,7 @@ micBtn.onclick = async ()=>{
       const pa = document.getElementById('playbackAudio');
       pa.src = url;
       pa.classList.remove('hidden');
+      document.getElementById('playbackBtn').classList.remove('hidden');
       pa.play().catch(()=>{});
       document.getElementById('micStatus').textContent = 'Bé nghe lại giọng của mình nè! 🎧 · 听听你自己的声音吧！🎧';
     };
