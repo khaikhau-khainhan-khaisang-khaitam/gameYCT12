@@ -324,7 +324,7 @@
     <div id="hintText"></div>
     <div id="inputRow">
       <button id="listenBtn" class="iconBtn">🔊</button>
-      <input id="pinyinInput" type="text" placeholder="gõ pinyin ở đây..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <input id="pinyinInput" type="text" placeholder="gõ pinyin ở đây..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" readonly inputmode="none">
       <button id="hintBtn" class="iconBtn">💡</button>
       <button id="backspaceBtn" class="iconBtn">⌫</button>
     </div>
@@ -727,8 +727,21 @@ pinyinInput.addEventListener('keydown', (e)=>{
 });
 document.getElementById('backspaceBtn').onclick = ()=>{
   pinyinInput.value = pinyinInput.value.slice(0,-1);
+  checkInput();
   pinyinInput.focus();
 };
+// Bàn phím vật lý (bluetooth/desktop) vẫn gõ được dù input readonly để chặn bàn phím ảo của điện thoại
+document.addEventListener('keydown', (e)=>{
+  if(document.activeElement && document.activeElement.tagName==='INPUT' && document.activeElement!==pinyinInput) return;
+  if(/^[a-zA-Z]$/.test(e.key)){
+    pinyinInput.value += e.key.toLowerCase();
+    checkInput();
+  } else if(e.key==='Backspace'){
+    e.preventDefault();
+    pinyinInput.value = pinyinInput.value.slice(0,-1);
+    checkInput();
+  }
+});
 document.getElementById('listenBtn').onclick = replayCurrentAudio;
 document.getElementById('hintBtn').onclick = ()=>{
   if(!currentWord) return;

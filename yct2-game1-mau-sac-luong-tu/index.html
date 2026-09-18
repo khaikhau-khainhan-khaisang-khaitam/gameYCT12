@@ -405,11 +405,12 @@ pinyinInput.addEventListener('input', ()=>{
     for(let i=target.hitCount;i<newHits;i++){ fireBullet(target); }
     target.hitCount=newHits;
     updateHealthBar(target);
-    if(target.hitCount>=target.word.syl.length){ correctHit(target); }
   }
+  if(val===target.word.target){ correctHit(target); return; } // gõ đúng hết là thắng, kể cả sau khi đã xoá lùi sửa
 });
 document.getElementById('backspaceBtn').onclick=()=>{
   pinyinInput.value=pinyinInput.value.slice(0,-1);
+  pinyinInput.dispatchEvent(new Event('input'));
   pinyinInput.focus();
 };
 document.getElementById('listenBtn').onclick=()=>{
