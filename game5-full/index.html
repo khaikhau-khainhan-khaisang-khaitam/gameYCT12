@@ -110,6 +110,7 @@
     overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.25);z-index:50;border:2px solid #fff;background:#fff;}
   .teacher-badge img{width:100%;height:100%;object-fit:cover;display:block;}
   .teacher-badge:active{transform:scale(.94);}
+  .zhSub{display:block; margin-top:3px; opacity:0.7; font-size:0.78em; font-weight:600;}
 </style>
 </head>
 <body>
@@ -127,8 +128,8 @@
     <div class="card">
       <div class="hero">
         <div class="critters"><span class="critter">🎓</span><span class="critter">🎈</span><span class="critter">🎉</span></div>
-        <h1>Chúc mừng bé đã học xong hết các âm! · 恭喜你学完所有发音啦！</h1>
-        <p>Nghe kỹ rồi chạm đúng quả bóng bay có chứa âm vừa nghe, trước khi cả chùm bóng bay mất lên trời! Đây là màn tổng ôn tất cả các âm bé đã học. · 仔细听，在气球飞走前点对含有该发音的气球！这是所有学过发音的总复习。</p>
+        <h1>Chúc mừng bé đã học xong hết các âm!<span class="zhSub" style="font-size:0.5em;">恭喜你学完所有发音啦！</span></h1>
+        <p>Nghe kỹ rồi chạm đúng quả bóng bay có chứa âm vừa nghe, trước khi cả chùm bóng bay mất lên trời! Đây là màn tổng ôn tất cả các âm bé đã học.<span class="zhSub">仔细听，在气球飞走前点对含有该发音的气球！这是所有学过发音的总复习。</span></p>
         <button class="start-btn" onclick="startGame()">🎈 Bắt Đầu Bữa Tiệc</button>
         <div class="badge-row">
           <span class="badge">b p m f</span><span class="badge">d t n l</span><span class="badge">g k h y</span>
@@ -141,19 +142,19 @@
 
   <!-- ============ GAME ============ -->
   <section id="screen-game" class="screen">
-    <button class="backlink" onclick="goHome()">← Về trang chính · ← 返回主页</button>
+    <button class="backlink" onclick="goHome()">← Về trang chính<span class="zhSub" style="display:inline; margin-left:4px;">← 返回主页</span></button>
     <div class="card">
       <div class="hud">
         <div class="hearts" id="arcadeHearts">❤️❤️❤️</div>
         <div style="font-size:13px;color:var(--ink-soft);font-weight:600;">Câu <span id="arcadeIdx">1</span>/<span id="arcadeTotal">15</span></div>
       </div>
       <div class="arena" id="arena">
-        <div class="listen-tag" id="listenTag">🔊 Đang nghe... · 🔊 正在听...</div>
+        <div class="listen-tag" id="listenTag">🔊 Đang nghe...<span class="zhSub" style="display:inline; margin-left:4px;">🔊 正在听...</span></div>
         <button class="replay-mini" onclick="replayAudio()">🔊</button>
         <div class="balloon-row" id="balloonRow"></div>
       </div>
       <div class="feedback" id="arcadeFeedback"></div>
-        <button id="continueBtn" class="hidden" style="display:block;margin:8px auto 0;border:none;border-radius:20px;background:linear-gradient(135deg,#4fc3f7,#1e90c9);color:#fff;font-weight:800;font-size:16px;padding:12px 32px;cursor:pointer;box-shadow:0 6px 14px rgba(30,144,201,0.4);">▶ Tiếp tục · ▶ 继续</button>
+        <button id="continueBtn" class="hidden" style="display:block;margin:8px auto 0;border:none;border-radius:20px;background:linear-gradient(135deg,#4fc3f7,#1e90c9);color:#fff;font-weight:800;font-size:16px;padding:12px 32px;cursor:pointer;box-shadow:0 6px 14px rgba(30,144,201,0.4);">▶ Tiếp tục<span class="zhSub">▶ 继续</span></button>
     </div>
   </section>
 
@@ -161,11 +162,11 @@
   <section id="screen-result" class="screen">
     <div class="card">
       <div class="result-emoji" id="resultEmoji">🎉</div>
-      <div class="result-title" id="resultTitle">Hoàn thành! · 完成啦！</div>
+      <div class="result-title" id="resultTitle">Hoàn thành!<span class="zhSub" style="font-size:0.6em;">完成啦！</span></div>
       <div class="stars" id="resultStars"></div>
       <div class="result-score" id="resultScore"></div>
       <div class="btn-row">
-        <button class="btn ghost" onclick="goHome()">Trang chính · 主页</button>
+        <button class="btn ghost" onclick="goHome()">Trang chính<span class="zhSub" style="display:inline; margin-left:4px;">主页</span></button>
         <button class="btn primary" onclick="startGame()">Chơi lại</button>
       </div>
     </div>
@@ -406,14 +407,14 @@ function answer(syl, el){
     el.classList.add("pop");
     document.querySelectorAll(".balloon").forEach(b=>{ if(b!==el) b.classList.add("dud"); });
     totalScore++; scoreDisplay();
-    fb.textContent = pick(["Đúng rồi! Bùm! 🎉 · 对了！砰！🎉","Chuẩn không cần chỉnh! ⭐ · 完全正确！⭐","Giỏi quá, tốt nghiệp sớm! 🎓 · 太棒了，提前毕业！🎓"]);
+    fb.innerHTML = pick(["Đúng rồi! Bùm! 🎉<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">对了！砰！🎉</span>","Chuẩn không cần chỉnh! ⭐<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">完全正确！⭐</span>","Giỏi quá, tốt nghiệp sớm! 🎓<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">太棒了，提前毕业！🎓</span>"]);
     fb.className = "feedback ok";
     setTimeout(()=>playFile(item.syl+".mp3", item.hz), 300);
     goToNextWhenReady();
   } else {
     game.answered = true;
     el.classList.add("dud");
-    fb.textContent = "Chưa đúng — để xem bóng nào đúng nhé... · 还不对——来看看哪个气球才对……";
+    fb.innerHTML = "Chưa đúng — để xem bóng nào đúng nhé...<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">还不对——来看看哪个气球才对……</span>";
     fb.className = "feedback bad";
     setTimeout(()=>playFile(item.syl+".mp3", item.hz), 300);
     // KHÔNG dừng — để chùm bóng tiếp tục bay lên thật (balloonsFloatAway lo phần còn lại)
@@ -426,7 +427,7 @@ function balloonsFloatAway(){
   const item = game.current;
   document.getElementById("balloonRow").innerHTML = "";
   const fb = document.getElementById("arcadeFeedback");
-  fb.textContent = "Bóng bay mất rồi! Âm \""+item.py+"\" ("+item.hz+" — "+item.mn+") · 气球飞走了";
+  fb.innerHTML = "Bóng bay mất rồi! Âm \""+item.py+"\" ("+item.hz+" — "+item.mn+")<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">气球飞走了</span>";
   fb.className = "feedback bad";
   goToNextWhenReady();
 }
@@ -437,8 +438,8 @@ function finishGame(){
   const pct = total? totalScore/total : 0;
   const stars = pct>=0.9?3:pct>=0.6?2:pct>=0.3?1:0;
   document.getElementById("resultEmoji").textContent = stars===3?"🎓":stars>=1?"🎉":"💪";
-  document.getElementById("resultTitle").textContent =
-    stars===3?"Xuất sắc! · 太棒了！ Chính thức tốt nghiệp Pre!": stars===2?"Giỏi lắm, gần hoàn hảo rồi! · 真棒，快完美了！": stars===1?"Tốt lắm, luyện thêm chút nữa nhé! · 很好，再练习一下吧！":"Cố lên nào, mình dự tiệc lại nhé!";
+  document.getElementById("resultTitle").innerHTML =
+    stars===3?"Xuất sắc! Chính thức tốt nghiệp Pre!<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">太棒了！</span>": stars===2?"Giỏi lắm, gần hoàn hảo rồi!<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">真棒，快完美了！</span>": stars===1?"Tốt lắm, luyện thêm chút nữa nhé!<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">很好，再练习一下吧！</span>":"Cố lên nào, mình dự tiệc lại nhé!";
   document.getElementById("resultStars").textContent = "⭐".repeat(stars)+"☆".repeat(3-stars);
   document.getElementById("resultScore").textContent = `Đúng ${totalScore}/${total}`;
   showScreen("screen-result");

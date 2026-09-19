@@ -86,6 +86,7 @@
   #logoLink img{width:100%; height:100%; object-fit:cover; display:block;}
   #muteBtn{position:fixed; top:8px; right:8px; z-index:60; border:none; width:38px; height:38px;
     border-radius:50%; background:#fff; box-shadow:0 3px 8px rgba(0,0,0,0.2); font-size:16px;}
+  .zhSub{display:block; margin-top:3px; opacity:0.7; font-size:0.78em; font-weight:600;}
 </style>
 </head>
 <body>
@@ -105,10 +106,10 @@
   <div id="startOverlay" class="overlay">
     <div class="panel">
       <div style="font-size:48px;">🌟🎴🎈</div>
-      <h1>Ghép Thẻ Vườn Sao · 配对卡片 · 星星花园</h1>
-      <p>Ôn số đếm 1-10 và lời chào — · 复习1-10数字和问候语 — <b>Bài 1 YCT1</b>.</p>
+      <h1>Ghép Thẻ Vườn Sao<span class="zhSub" style="font-size:0.55em;">配对卡片·星星花园</span></h1>
+      <p>Ôn số đếm 1-10 và lời chào — <b>Bài 1 YCT1</b>.<span class="zhSub">复习1-10数字和问候语</span></p>
       <p style="font-size:13px; color:#8a7a99;">Lật 2 thẻ để tìm đúng cặp: 1 thẻ chữ Hán 🔊 (chạm để nghe), 1 thẻ hình minh hoạ. 3 vòng chơi nhỏ, càng ít lượt càng nhiều sao ⭐!</p>
-      <button id="startBtn" class="bigBtn">Bắt đầu 🚀 · 开始 🚀</button>
+      <button id="startBtn" class="bigBtn">Bắt đầu 🚀<span class="zhSub">开始 🚀</span></button>
     </div>
   </div>
 
@@ -116,9 +117,9 @@
   <div id="roundIntroOverlay" class="overlay hidden">
     <div class="panel">
       <div id="roundIntroEmoji" style="font-size:44px;">🔢</div>
-      <h1 id="roundIntroTitle">Vòng 1: Số đếm 1-5 · 第1轮：数字1-5</h1>
+      <h1 id="roundIntroTitle">Vòng 1: Số đếm 1-5<span class="zhSub">第1轮：数字1-5</span></h1>
       <p id="roundIntroDesc"></p>
-      <button id="roundStartBtn" class="bigBtn">Chơi vòng này 🎮 · 开始本轮 🎮</button>
+      <button id="roundStartBtn" class="bigBtn">Chơi vòng này 🎮<span class="zhSub">开始本轮 🎮</span></button>
     </div>
   </div>
 
@@ -126,10 +127,10 @@
   <div id="roundDoneOverlay" class="overlay hidden">
     <div class="panel">
       <div style="font-size:44px;">🎉</div>
-      <h1>Xong vòng này! · 本轮结束！</h1>
+      <h1>Xong vòng này!<span class="zhSub">本轮结束！</span></h1>
       <div class="starsRow"><span id="s1">⭐</span><span id="s2">⭐</span><span id="s3">⭐</span></div>
       <p id="roundDoneDesc"></p>
-      <button id="roundNextBtn" class="bigBtn">Tiếp tục ▶ · 继续 ▶</button>
+      <button id="roundNextBtn" class="bigBtn">Tiếp tục ▶<span class="zhSub">继续 ▶</span></button>
     </div>
   </div>
 
@@ -137,10 +138,10 @@
   <div id="endOverlay" class="overlay hidden">
     <div class="panel">
       <div style="font-size:48px;">🏆🌟🎈</div>
-      <h1>Hoàn thành trò chơi! · 游戏完成！</h1>
+      <h1>Hoàn thành trò chơi!<span class="zhSub" style="font-size:0.6em;">游戏完成！</span></h1>
       <div class="starsRow" id="finalStarsRow"></div>
       <p id="endDesc"></p>
-      <button id="replayBtn" class="bigBtn">Chơi lại 🔁 · 再玩一次 🔁</button>
+      <button id="replayBtn" class="bigBtn">Chơi lại 🔁<span class="zhSub">再玩一次 🔁</span></button>
     </div>
   </div>
 </div>
@@ -149,7 +150,7 @@
 /* ============ DATA: cac vong choi (Bai 1 - so dem 1-10 + chao hoi) ============ */
 const AUDIO_BASE = "../audio/yct1c2_";
 const ROUNDS = [
-  { title:"Vòng 1: Số đếm 1-5 · 第1轮：数字1-5", emoji:"🔢", desc:"Ghép chữ Hán với đúng số lượng ngôi sao! · 把汉字和正确数量的星星配对！",
+  { title:"Vòng 1: Số đếm 1-5<span class=\"zhSub\">第1轮：数字1-5</span>", emoji:"🔢", desc:"Ghép chữ Hán với đúng số lượng ngôi sao!<span class=\"zhSub\">把汉字和正确数量的星星配对！</span>",
     pairs:[
       {hanzi:"一", pinyin:"yī", icon:"⭐", audio:"yi"},
       {hanzi:"二", pinyin:"èr", icon:"⭐⭐", audio:"er"},
@@ -157,7 +158,7 @@ const ROUNDS = [
       {hanzi:"四", pinyin:"sì", icon:"⭐⭐⭐⭐", audio:"si"},
       {hanzi:"五", pinyin:"wǔ", icon:"5️⃣", audio:"wu"},
     ]},
-  { title:"Vòng 2: Số đếm 6-10 · 第2轮：数字6-10", emoji:"🔟", desc:"Tiếp tục ghép số nhé! · 继续配对数字吧！",
+  { title:"Vòng 2: Số đếm 6-10<span class=\"zhSub\">第2轮：数字6-10</span>", emoji:"🔟", desc:"Tiếp tục ghép số nhé!<span class=\"zhSub\">继续配对数字吧！</span>",
     pairs:[
       {hanzi:"六", pinyin:"liù", icon:"6️⃣", audio:"liu"},
       {hanzi:"七", pinyin:"qī", icon:"7️⃣", audio:"qi"},
@@ -165,7 +166,7 @@ const ROUNDS = [
       {hanzi:"九", pinyin:"jiǔ", icon:"9️⃣", audio:"jiu"},
       {hanzi:"十", pinyin:"shí", icon:"🔟", audio:"shi"},
     ]},
-  { title:"Vòng 3: Lời chào · 第3轮：问候语", emoji:"👋", desc:"Ghép lời chào với đúng hình! · 把问候语和正确的图配对！",
+  { title:"Vòng 3: Lời chào<span class=\"zhSub\">第3轮：问候语</span>", emoji:"👋", desc:"Ghép lời chào với đúng hình!<span class=\"zhSub\">把问候语和正确的图配对！</span>",
     pairs:[
       {hanzi:"你好", pinyin:"nǐhǎo", icon:"🙋", audio:"nihao"},
       {hanzi:"再见", pinyin:"zàijiàn", icon:"👋", audio:"zaijian"},
@@ -286,8 +287,8 @@ function startGame(){
 function showRoundIntro(){
   const r = ROUNDS[roundIdx];
   document.getElementById('roundIntroEmoji').textContent = r.emoji;
-  document.getElementById('roundIntroTitle').textContent = r.title;
-  document.getElementById('roundIntroDesc').textContent = r.desc;
+  document.getElementById('roundIntroTitle').innerHTML = r.title;
+  document.getElementById('roundIntroDesc').innerHTML = r.desc;
   roundBadge.textContent = `Vòng ${roundIdx+1}/${ROUNDS.length} · 第${roundIdx+1}/${ROUNDS.length}轮`;
   roundIntroOverlay.classList.remove('hidden');
 }

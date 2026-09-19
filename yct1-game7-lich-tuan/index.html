@@ -86,6 +86,7 @@
   #logoLink img{width:100%; height:100%; object-fit:cover; display:block;}
   #muteBtn{position:fixed; top:8px; right:8px; z-index:60; border:none; width:38px; height:38px;
     border-radius:50%; background:#fff; box-shadow:0 3px 8px rgba(0,0,0,0.2); font-size:16px;}
+  .zhSub{display:block; margin-top:3px; opacity:0.7; font-size:0.78em; font-weight:600;}
 </style>
 </head>
 <body>
@@ -105,10 +106,10 @@
   <div id="startOverlay" class="overlay">
     <div class="panel">
       <div style="font-size:48px;">📅🎴🗓️</div>
-      <h1>Ghép Thẻ Lịch Tuần · 配对卡片 · 一周日历</h1>
-      <p>Ôn thứ trong tuần — · 复习星期 — <b>Bài 9 YCT1</b>.</p>
-      <p style="font-size:13px; color:#8a7a99;">Lật 2 thẻ để tìm đúng cặp: 1 thẻ chữ Hán 🔊 (chạm để nghe), 1 thẻ chữ Việt. Càng ít lượt càng nhiều sao ⭐! · 翻开2张卡片找配对：1张汉字卡🔊（点一下可听发音），1张越南语卡片。翻的次数越少，星星越多⭐！</p>
-      <button id="startBtn" class="bigBtn">Bắt đầu 🚀 · 开始 🚀</button>
+      <h1>Ghép Thẻ Lịch Tuần<span class="zhSub" style="font-size:0.55em;">配对卡片·一周日历</span></h1>
+      <p>Ôn thứ trong tuần — <b>Bài 9 YCT1</b>.<span class="zhSub">复习星期</span></p>
+      <p style="font-size:13px; color:#8a7a99;">Lật 2 thẻ để tìm đúng cặp: 1 thẻ chữ Hán 🔊 (chạm để nghe), 1 thẻ chữ Việt. Càng ít lượt càng nhiều sao ⭐!<span class="zhSub">翻开2张卡片找配对：1张汉字卡🔊（点一下可听发音），1张越南语卡片。翻的次数越少，星星越多⭐！</span></p>
+      <button id="startBtn" class="bigBtn">Bắt đầu 🚀<span class="zhSub">开始 🚀</span></button>
     </div>
   </div>
 
@@ -116,9 +117,9 @@
   <div id="roundIntroOverlay" class="overlay hidden">
     <div class="panel">
       <div id="roundIntroEmoji" style="font-size:44px;">📅</div>
-      <h1 id="roundIntroTitle">Vòng 1: Thứ trong tuần · 第1轮：星期</h1>
+      <h1 id="roundIntroTitle">Vòng 1: Thứ trong tuần<span class="zhSub">第1轮：星期</span></h1>
       <p id="roundIntroDesc"></p>
-      <button id="roundStartBtn" class="bigBtn">Chơi vòng này 🎮 · 开始本轮 🎮</button>
+      <button id="roundStartBtn" class="bigBtn">Chơi vòng này 🎮<span class="zhSub">开始本轮 🎮</span></button>
     </div>
   </div>
 
@@ -126,10 +127,10 @@
   <div id="roundDoneOverlay" class="overlay hidden">
     <div class="panel">
       <div style="font-size:44px;">🎉</div>
-      <h1>Xong vòng này! · 本轮结束！</h1>
+      <h1>Xong vòng này!<span class="zhSub">本轮结束！</span></h1>
       <div class="starsRow"><span id="s1">⭐</span><span id="s2">⭐</span><span id="s3">⭐</span></div>
       <p id="roundDoneDesc"></p>
-      <button id="roundNextBtn" class="bigBtn">Tiếp tục ▶ · 继续 ▶</button>
+      <button id="roundNextBtn" class="bigBtn">Tiếp tục ▶<span class="zhSub">继续 ▶</span></button>
     </div>
   </div>
 
@@ -137,10 +138,10 @@
   <div id="endOverlay" class="overlay hidden">
     <div class="panel">
       <div style="font-size:48px;">🏆📅🎈</div>
-      <h1>Hoàn thành trò chơi! · 游戏完成！</h1>
+      <h1>Hoàn thành trò chơi!<span class="zhSub" style="font-size:0.6em;">游戏完成！</span></h1>
       <div class="starsRow" id="finalStarsRow"></div>
       <p id="endDesc"></p>
-      <button id="replayBtn" class="bigBtn">Chơi lại 🔁 · 再玩一次 🔁</button>
+      <button id="replayBtn" class="bigBtn">Chơi lại 🔁<span class="zhSub">再玩一次 🔁</span></button>
     </div>
   </div>
 </div>
@@ -149,7 +150,7 @@
 /* ============ DATA: cac vong choi (Bai 9 - thu trong tuan) ============ */
 const AUDIO_BASE = "../audio/yct1c28_";
 const ROUNDS = [
-  { title:"Vòng 1: Thứ trong tuần · 第1轮：星期", emoji:"📅", desc:"Ghép chữ Hán với đúng số trong lịch! · 把汉字和正确的日历数字配对！",
+  { title:"Vòng 1: Thứ trong tuần<span class=\"zhSub\">第1轮：星期</span>", emoji:"📅", desc:"Ghép chữ Hán với đúng số trong lịch!<span class=\"zhSub\">把汉字和正确的日历数字配对！</span>",
     pairs:[
       {hanzi:"星期一", pinyin:"xīngqīyī", icon:"Thứ Hai (Monday)", audio:"xingqiyi"},
       {hanzi:"星期二", pinyin:"xīngqīèr", icon:"Thứ Ba (Tuesday)", audio:"xingqier"},
@@ -159,7 +160,7 @@ const ROUNDS = [
       {hanzi:"星期六", pinyin:"xīngqīliù", icon:"Thứ Bảy (Saturday)", audio:"xingqiliu"},
       {hanzi:"星期日", pinyin:"xīngqīrì", icon:"Chủ Nhật (Sunday)", audio:"xingqiri"},
     ]},
-  { title:"Vòng 2: Hôm nay & khái niệm · 第2轮：今天和概念", emoji:"🗓️", desc:"Ghép chữ Hán với đúng hình! · 把汉字和正确的图配对！",
+  { title:"Vòng 2: Hôm nay & khái niệm<span class=\"zhSub\">第2轮：今天和概念</span>", emoji:"🗓️", desc:"Ghép chữ Hán với đúng hình!<span class=\"zhSub\">把汉字和正确的图配对！</span>",
     pairs:[
       {hanzi:"今天", pinyin:"jīntiān", icon:"Hôm nay (Today)", audio:"jintian"},
       {hanzi:"明天", pinyin:"míngtiān", icon:"Ngày mai (Tomorrow)", audio:"mingtian"},
@@ -281,8 +282,8 @@ function startGame(){
 function showRoundIntro(){
   const r = ROUNDS[roundIdx];
   document.getElementById('roundIntroEmoji').textContent = r.emoji;
-  document.getElementById('roundIntroTitle').textContent = r.title;
-  document.getElementById('roundIntroDesc').textContent = r.desc;
+  document.getElementById('roundIntroTitle').innerHTML = r.title;
+  document.getElementById('roundIntroDesc').innerHTML = r.desc;
   roundBadge.textContent = `Vòng ${roundIdx+1}/${ROUNDS.length} · 第${roundIdx+1}/${ROUNDS.length}轮`;
   roundIntroOverlay.classList.remove('hidden');
 }
@@ -382,7 +383,7 @@ function finishRound(){
   ['s1','s2','s3'].forEach((id,i)=>{
     document.getElementById(id).classList.toggle('on', i<stars);
   });
-  document.getElementById('roundDoneDesc').textContent = `Bé dùng ${moves} lượt để ghép ${numPairs} cặp thẻ! · 你用了${moves}次翻牌配对了${numPairs}对卡片！`;
+  document.getElementById('roundDoneDesc').innerHTML = `Bé dùng ${moves} lượt để ghép ${numPairs} cặp thẻ!<span class="zhSub">你用了${moves}次翻牌配对了${numPairs}对卡片！</span>`;
   roundDoneOverlay.classList.remove('hidden');
 }
 
@@ -412,7 +413,7 @@ function finishGame(){
     span.style.fontSize='30px';
     row.appendChild(span);
   }
-  document.getElementById('endDesc').textContent = `Bé đạt ${totalStars}/${maxStars} sao qua ${ROUNDS.length} vòng chơi. Giỏi lắm! · 你在${ROUNDS.length}轮游戏中获得了${totalStars}/${maxStars}颗星，真棒！`;
+  document.getElementById('endDesc').innerHTML = `Bé đạt ${totalStars}/${maxStars} sao qua ${ROUNDS.length} vòng chơi. Giỏi lắm!<span class="zhSub">你在${ROUNDS.length}轮游戏中获得了${totalStars}/${maxStars}颗星，真棒！</span>`;
   endOverlay.classList.remove('hidden');
 }
 

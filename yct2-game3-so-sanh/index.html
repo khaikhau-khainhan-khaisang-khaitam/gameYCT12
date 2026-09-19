@@ -99,6 +99,7 @@
   #logoLink img{width:100%; height:100%; object-fit:cover; display:block;}
   #muteBtn{position:fixed; top:8px; right:8px; z-index:60; border:none; width:38px; height:38px;
     border-radius:50%; background:#fff; box-shadow:0 3px 8px rgba(0,0,0,0.2); font-size:16px;}
+  .zhSub{display:block; margin-top:3px; opacity:0.7; font-size:0.78em; font-weight:600;}
 </style>
 </head>
 <body>
@@ -113,7 +114,7 @@
 
   <div id="meaningCard">
     <div id="meaningVi">Hôm nay nóng hơn hôm qua.</div>
-    <button id="listenBtn">🔊 Nghe câu mẫu · 🔊 听例句</button>
+    <button id="listenBtn">🔊 Nghe câu mẫu<span class="zhSub">🔊 听例句</span></button>
   </div>
 
   <div id="answerRow"></div>
@@ -121,19 +122,19 @@
   <div id="poolRow"></div>
 
   <div id="controls">
-    <button id="checkBtn" class="ctrlBtn">✅ Kiểm tra · ✅ 检查</button>
-    <button id="nextBtn" class="ctrlBtn hidden">▶ Câu tiếp theo · ▶ 下一句</button>
+    <button id="checkBtn" class="ctrlBtn">✅ Kiểm tra<span class="zhSub">✅ 检查</span></button>
+    <button id="nextBtn" class="ctrlBtn hidden">▶ Câu tiếp theo<span class="zhSub">▶ 下一句</span></button>
   </div>
 
   <!-- START -->
   <div id="startOverlay" class="overlay">
     <div class="panel">
       <div style="font-size:48px;">🌡️⚖️📝</div>
-      <h1>Sắp Xếp Câu So Sánh · 排句子 · 比较句</h1>
-      <p>Luyện câu dùng <b>比 (bǐ)</b> — <b>Bài 7 YCT2</b>. · 练习用<b>比 (bǐ)</b>造句 — <b>YCT2第7课</b>。</p>
+      <h1>Sắp Xếp Câu So Sánh<span class="zhSub" style="font-size:0.55em;">排句子·比较句</span></h1>
+      <p>Luyện câu dùng <b>比 (bǐ)</b> — <b>Bài 7 YCT2</b>.<span class="zhSub">练习用比(bǐ)造句 — YCT2第7课。</span></p>
       <div class="demoSentence">今天 比 昨天 热。</div>
-      <p style="font-size:13px; color:#8a7a99;">Nghe câu mẫu, rồi chạm vào từng từ theo đúng thứ tự để ghép thành câu. Cấu trúc: · 先听例句，再按正确顺序点每个词组成句子。结构： <b>A + 比 + B + Tính từ</b>.</p>
-      <button id="startBtn" class="bigBtn">Bắt đầu 🚀 · 开始 🚀</button>
+      <p style="font-size:13px; color:#8a7a99;">Nghe câu mẫu, rồi chạm vào từng từ theo đúng thứ tự để ghép thành câu. Cấu trúc: <b>A + 比 + B + Tính từ</b>.<span class="zhSub">先听例句，再按正确顺序点每个词组成句子。结构：A + 比 + B + 形容词。</span></p>
+      <button id="startBtn" class="bigBtn">Bắt đầu 🚀<span class="zhSub">开始 🚀</span></button>
     </div>
   </div>
 
@@ -141,9 +142,9 @@
   <div id="endOverlay" class="overlay hidden">
     <div class="panel">
       <div style="font-size:48px;">🏆</div>
-      <h1>Xong rồi, giỏi quá! · 完成啦，真棒！</h1>
+      <h1>Xong rồi, giỏi quá!<span class="zhSub" style="font-size:0.55em;">完成啦，真棒！</span></h1>
       <p id="endDesc"></p>
-      <button id="replayBtn" class="bigBtn">Chơi lại 🔁 · 再玩一次 🔁</button>
+      <button id="replayBtn" class="bigBtn">Chơi lại 🔁<span class="zhSub">再玩一次 🔁</span></button>
     </div>
   </div>
 </div>
@@ -324,7 +325,7 @@ document.getElementById('checkBtn').onclick = ()=>{
   if(checkLocked) return;
   const sentence = SENTENCES[order[curIdx]];
   if(answer.length !== sentence.chunks.length){
-    feedback.textContent = '👉 Bé xếp đủ hết các từ đã nhé! · 👉 请先把所有词都排好！';
+    feedback.innerHTML = '👉 Bé xếp đủ hết các từ đã nhé!<span class="zhSub">👉 请先把所有词都排好！</span>';
     feedback.className = 'no';
     return;
   }
@@ -333,7 +334,7 @@ document.getElementById('checkBtn').onclick = ()=>{
   if(built === target){
     checkLocked = true;
     sfxCorrect();
-    feedback.textContent = '✅ Đúng rồi, giỏi quá! · ✅ 对了，真棒！';
+    feedback.innerHTML = '✅ Đúng rồi, giỏi quá!<span class="zhSub">✅ 对了，真棒！</span>';
     feedback.className = 'ok';
     document.querySelectorAll('#answerRow .tile').forEach(el=>el.classList.add('correctFlash'));
     stars++;
@@ -342,7 +343,7 @@ document.getElementById('checkBtn').onclick = ()=>{
     goToNextWhenReady();
   } else {
     sfxWrong();
-    feedback.textContent = '🔁 Chưa đúng thứ tự, bé thử lại nhé! · 🔁 顺序不对，再试一次吧！';
+    feedback.innerHTML = '🔁 Chưa đúng thứ tự, bé thử lại nhé!<span class="zhSub">🔁 顺序不对，再试一次吧！</span>';
     feedback.className = 'no';
     document.querySelectorAll('#answerRow .tile').forEach(el=>el.classList.add('wrongFlash'));
     setTimeout(()=>{

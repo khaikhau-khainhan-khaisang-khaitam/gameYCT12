@@ -76,6 +76,7 @@
   #logoLink img{width:100%; height:100%; object-fit:cover; display:block;}
   #muteBtn{position:fixed; top:8px; right:8px; z-index:60; border:none; width:38px; height:38px;
     border-radius:50%; background:#fff; box-shadow:0 3px 8px rgba(0,0,0,0.2); font-size:16px;}
+  .zhSub{display:block; margin-top:3px; opacity:0.7; font-size:0.78em; font-weight:600;}
 </style>
 </head>
 <body>
@@ -95,7 +96,7 @@
     <div id="feedbackText"></div>
     <div id="inputRow">
       <button id="listenBtn" class="iconBtn">🔊</button>
-      <input id="pinyinInput" type="text" placeholder="gõ pinyin... · 输入拼音..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <input id="pinyinInput" type="text" placeholder="gõ pinyin..." autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
       <button id="backspaceBtn" class="iconBtn">⌫</button>
     </div>
   </div>
@@ -104,19 +105,19 @@
     <div class="panel">
       <div style="font-size:48px;">🌍🚀</div>
       <h1>Bắn Hạ Chữ — Vòng Quanh Thế Giới</h1>
-      <p>Ôn từ quốc tịch, con người — · 复习国籍、人物词汇 — <b>Bài 3 YCT1</b>.</p>
-      <p style="font-size:13px; color:#8a7a99;">Chữ Hán rơi xuống — gõ đúng · 汉字往下掉——正确输入 <b>pinyin không dấu · 不带声调的拼音</b> (âm <b>ü</b> gõ là · 要打成 <b>v</b>). Cứ gõ đúng 1 âm tiết là súng 🔫 bắn 1 viên đạn trúng chữ đó, bắn đủ số âm tiết thì hạ được chữ! Gõ sai <b>3 lần · 3次</b> là thua! · 就算输！<br><span style="opacity:0.85;">汉字往下掉——正确输入不带声调的拼音（"ü"打成"v"）。每打对1个音节，枪🔫就会发射1颗子弹击中该字，打完所有音节即可击落！打错3次就算输！</span></p>
-      <button id="startBtn" class="bigBtn">Bắt đầu 🚀 · 开始 🚀</button>
+      <p>Ôn từ quốc tịch, con người — <b>Bài 3 YCT1</b>.<span class="zhSub">复习国籍、人物词汇</span></p>
+      <p style="font-size:13px; color:#8a7a99;">Chữ Hán rơi xuống — gõ đúng <b>pinyin không dấu</b> (âm <b>ü</b> gõ là <b>v</b>). Cứ gõ đúng 1 âm tiết là súng 🔫 bắn 1 viên đạn trúng chữ đó, bắn đủ số âm tiết thì hạ được chữ! Gõ sai <b>3 lần</b> là thua!<span class="zhSub">汉字往下掉——正确输入不带声调的拼音（"ü"打成"v"）。每打对1个音节，枪🔫就会发射1颗子弹击中该字，打完所有音节即可击落！打错3次就算输！</span></p>
+      <button id="startBtn" class="bigBtn">Bắt đầu 🚀<span class="zhSub">开始 🚀</span></button>
     </div>
   </div>
 
   <div id="endOverlay" class="overlay hidden">
     <div class="panel">
       <div id="endEmoji" style="font-size:52px;">🏆</div>
-      <h1 id="endTitle">Xong rồi! · 完成了！</h1>
+      <h1 id="endTitle">Xong rồi!<span class="zhSub">完成了！</span></h1>
       <p id="endDesc"></p>
       <div id="endList"></div>
-      <button id="replayBtn" class="bigBtn">Chơi lại 🔁 · 再玩一次 🔁</button>
+      <button id="replayBtn" class="bigBtn">Chơi lại 🔁<span class="zhSub">再玩一次 🔁</span></button>
     </div>
   </div>
 </div>
@@ -357,13 +358,13 @@ function endGame(won){
     const rect=playArea.getBoundingClientRect();
     burstConfetti(rect.left+rect.width/2, rect.top+40, 40);
     document.getElementById('endEmoji').textContent='🏆';
-    document.getElementById('endTitle').textContent='Xuất sắc! · 太棒了！';
-    document.getElementById('endDesc').textContent=`Bé đã bắn hạ đúng cả ${WORDS.length} từ! · 你成功击落了全部 ${WORDS.length} 个词！`;
+    document.getElementById('endTitle').innerHTML='Xuất sắc!<span class="zhSub">太棒了！</span>';
+    document.getElementById('endDesc').innerHTML=`Bé đã bắn hạ đúng cả ${WORDS.length} từ!<span class="zhSub">你成功击落了全部 ${WORDS.length} 个词！</span>`;
   } else {
     sfxLose();
     document.getElementById('endEmoji').textContent='💪';
-    document.getElementById('endTitle').textContent='Cố lên nào! · 加油！';
-    document.getElementById('endDesc').textContent=`Bé đã bắn hạ ${destroyedSet.size}/${WORDS.length} từ. Chơi lại để giỏi hơn nhé! · 你击落了 ${destroyedSet.size}/${WORDS.length} 个词，再玩一次会更棒！`;
+    document.getElementById('endTitle').innerHTML='Cố lên nào!<span class="zhSub">加油！</span>';
+    document.getElementById('endDesc').innerHTML=`Bé đã bắn hạ ${destroyedSet.size}/${WORDS.length} từ. Chơi lại để giỏi hơn nhé!<span class="zhSub">你击落了 ${destroyedSet.size}/${WORDS.length} 个词，再玩一次会更棒！</span>`;
   }
   const list=document.getElementById('endList'); list.innerHTML='';
   WORDS.forEach(w=>{

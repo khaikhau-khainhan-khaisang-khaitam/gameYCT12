@@ -297,6 +297,7 @@
   html.kb-open #wordIcon{font-size:24px;}
   html.kb-open #wordHanzi{font-size:26px;}
   html.kb-open #wordCard .ribbon{font-size:14px; top:-9px;}
+  .zhSub{display:block; margin-top:3px; opacity:0.7; font-size:0.78em; font-weight:600;}
 </style>
 </head>
 <body>
@@ -345,8 +346,8 @@
           Nghe từ, gõ <b>pinyin</b> (không dấu)<br>trước khi món quà rơi xuống!
         </div>
       </div>
-      <p style="font-size:13px; color:#8a7a99;">Bé có thể bấm 🔊 để nghe lại, 💡 để xin gợi ý. · 你可以按🔊再听一次，按💡获取提示。</p>
-      <button id="startBtn" class="bigBtn">Bắt đầu chơi 🚀 · 开始游戏 🚀</button>
+      <p style="font-size:13px; color:#8a7a99;">Bé có thể bấm 🔊 để nghe lại, 💡 để xin gợi ý.<span class="zhSub">你可以按🔊再听一次，按💡获取提示。</span></p>
+      <button id="startBtn" class="bigBtn">Bắt đầu chơi 🚀<span class="zhSub">开始游戏 🚀</span></button>
     </div>
   </div>
 
@@ -354,16 +355,16 @@
   <div id="speakModal" class="overlay hidden">
     <div class="panel">
       <div style="font-size:40px;">🎤</div>
-      <h1 style="font-size:20px;">Bé nói theo nhé! · 跟着说一遍吧！</h1>
+      <h1 style="font-size:20px;">Bé nói theo nhé!<span class="zhSub" style="font-size:0.6em;">跟着说一遍吧！</span></h1>
       <div style="font-size:34px; font-weight:800; color:var(--pink-dark);" id="speakHanzi">你好</div>
       <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
-        <button id="speakListenBtn" class="bigBtn alt" style="font-size:15px; padding:10px 18px;">🔊 Nghe mẫu · 🔊 听示范</button>
-        <button id="playbackBtn" class="bigBtn alt hidden" style="font-size:15px; padding:10px 18px;">🎧 Nghe lại · 🎧 回放</button>
+        <button id="speakListenBtn" class="bigBtn alt" style="font-size:15px; padding:10px 18px;">🔊 Nghe mẫu<span class="zhSub">🔊 听示范</span></button>
+        <button id="playbackBtn" class="bigBtn alt hidden" style="font-size:15px; padding:10px 18px;">🎧 Nghe lại<span class="zhSub">🎧 回放</span></button>
       </div>
       <button id="micBtn" class="micBtn">🎤</button>
-      <p id="micStatus" style="font-size:13px; color:#8a7a99;">Nhấn micro để ghi âm giọng của bé · 按麦克风录下你的声音</p>
+      <p id="micStatus" style="font-size:13px; color:#8a7a99;">Nhấn micro để ghi âm giọng của bé<span class="zhSub">按麦克风录下你的声音</span></p>
       <audio id="playbackAudio" class="hidden"></audio>
-      <button id="speakContinueBtn" class="bigBtn">Tiếp tục chơi 🎈 · 继续游戏 🎈</button>
+      <button id="speakContinueBtn" class="bigBtn">Tiếp tục chơi 🎈<span class="zhSub">继续游戏 🎈</span></button>
     </div>
   </div>
 
@@ -371,10 +372,10 @@
   <div id="endOverlay" class="overlay hidden">
     <div class="panel">
       <div style="font-size:52px;">🏆🎂✨</div>
-      <h1>Xong rồi, giỏi quá! · 完成啦，真棒！</h1>
+      <h1>Xong rồi, giỏi quá!<span class="zhSub" style="font-size:0.55em;">完成啦，真棒！</span></h1>
       <p>Bé đã học được <b id="endCount">0</b>/30 từ trong buổi ôn tập này.</p>
       <div id="summaryList"></div>
-      <button id="replayBtn" class="bigBtn">Chơi lại 🔁 · 再玩一次 🔁</button>
+      <button id="replayBtn" class="bigBtn">Chơi lại 🔁<span class="zhSub">再玩一次 🔁</span></button>
     </div>
   </div>
 
@@ -661,7 +662,7 @@ function nextWord(){
   pinyinInput.focus();
 
   hintTimer = setTimeout(()=>{
-    hintText.textContent = '💡 Có thể bấm nút gợi ý! · 💡 可以按提示按钮哦！';
+    hintText.innerHTML = '💡 Có thể bấm nút gợi ý!<span class="zhSub">💡 可以按提示按钮哦！</span>';
   }, HINT_DELAY);
 }
 
@@ -768,7 +769,7 @@ let mediaRecorder, recordedChunks=[], recStream;
 function openSpeakModal(){
   pinyinInput.blur();
   document.getElementById('speakHanzi').textContent = currentWord ? currentWord.hanzi : '你好';
-  document.getElementById('micStatus').textContent = 'Nhấn micro để ghi âm giọng của bé · 按麦克风录下你的声音';
+  document.getElementById('micStatus').innerHTML = 'Nhấn micro để ghi âm giọng của bé<span class="zhSub">按麦克风录下你的声音</span>';
   document.getElementById('playbackAudio').classList.add('hidden');
   document.getElementById('playbackBtn').classList.add('hidden');
   speakModal.classList.remove('hidden');
@@ -788,7 +789,7 @@ document.getElementById('speakContinueBtn').onclick = ()=>{
 const micBtn = document.getElementById('micBtn');
 micBtn.onclick = async ()=>{
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-    document.getElementById('micStatus').textContent = 'Trình duyệt chưa hỗ trợ ghi âm, mình học tiếp nhé! · 浏览器不支持录音，我们继续学习吧！';
+    document.getElementById('micStatus').innerHTML = 'Trình duyệt chưa hỗ trợ ghi âm, mình học tiếp nhé!<span class="zhSub">浏览器不支持录音，我们继续学习吧！</span>';
     return;
   }
   if(micBtn.classList.contains('recording')){
@@ -808,13 +809,13 @@ micBtn.onclick = async ()=>{
       pa.classList.remove('hidden');
       document.getElementById('playbackBtn').classList.remove('hidden');
       pa.play().catch(()=>{});
-      document.getElementById('micStatus').textContent = 'Bé nghe lại giọng của mình nè! 🎧 · 听听你自己的声音吧！🎧';
+      document.getElementById('micStatus').innerHTML = 'Bé nghe lại giọng của mình nè! 🎧<span class="zhSub">听听你自己的声音吧！🎧</span>';
     };
     mediaRecorder.start();
     micBtn.classList.add('recording');
-    document.getElementById('micStatus').textContent = 'Đang ghi âm... nhấn lại để dừng · 正在录音……再按一次停止';
+    document.getElementById('micStatus').innerHTML = 'Đang ghi âm... nhấn lại để dừng<span class="zhSub">正在录音……再按一次停止</span>';
   }catch(e){
-    document.getElementById('micStatus').textContent = 'Bé chưa cho phép dùng micro, mình học tiếp nhé! · 还没允许使用麦克风，我们继续学习吧！';
+    document.getElementById('micStatus').innerHTML = 'Bé chưa cho phép dùng micro, mình học tiếp nhé!<span class="zhSub">还没允许使用麦克风，我们继续学习吧！</span>';
   }
 };
 function stopRecordingIfActive(){

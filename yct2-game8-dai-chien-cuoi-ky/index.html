@@ -142,6 +142,7 @@
     #qPrompt{font-size:20px;}
     .optBtn{padding:8px 10px; font-size:14px;}
   }
+  .zhSub{display:block; margin-top:3px; opacity:0.7; font-size:0.78em; font-weight:600;}
 </style>
 </head>
 <body>
@@ -161,46 +162,46 @@
     <div class="fighterRow bot">
       <div class="avatar">🐢</div>
       <div class="fighterInfo">
-        <div class="fighterName"><span id="bAcc"></span> Rùa Thần 🛡️ · 神龟 🛡️</div>
+        <div class="fighterName"><span id="bAcc"></span> Rùa Thần 🛡️<span class="zhSub" style="display:inline; margin-left:4px;">神龟 🛡️</span></div>
         <div class="hpBarOuter"><div id="bHpBar" class="hpBarInner bot" style="width:100%"></div></div>
         <div class="comboFlames" id="bFlames"></div>
       </div>
     </div>
   </div>
 
-  <div id="turnBanner">Sẵn sàng chiến đấu! · 准备战斗！</div>
+  <div id="turnBanner">Sẵn sàng chiến đấu!<span class="zhSub" style="display:inline; margin-left:4px;">准备战斗！</span></div>
 
   <div id="qArea">
     <div id="qCard">
       <div id="qInstr"></div>
       <div id="qPrompt">?</div>
       <div id="qPromptSmall"></div>
-      <button id="qListenBtn" class="hidden">🔊 Nghe lại · 🔊 再听一次</button>
+      <button id="qListenBtn" class="hidden">🔊 Nghe lại<span class="zhSub">🔊 再听一次</span></button>
     </div>
     <div id="optionsWrap"></div>
     <div id="botThinking" class="hidden">
-      <div id="botThinkingText">🐢 Rùa Thần đang đọc câu hỏi... · 🐢 神龟正在读题...</div>
+      <div id="botThinkingText">🐢 Rùa Thần đang đọc câu hỏi...<span class="zhSub" style="display:inline; margin-left:4px;">🐢 神龟正在读题...</span></div>
       <div class="thinkBarOuter"><div id="thinkBarInner" class="thinkBarInner"></div></div>
     </div>
   </div>
-  <button id="continueBtn" class="hidden">▶ Tiếp tục · ▶ 继续</button>
+  <button id="continueBtn" class="hidden">▶ Tiếp tục<span class="zhSub">▶ 继续</span></button>
 
   <!-- START -->
   <div id="startOverlay" class="overlay">
     <div class="panel">
       <div style="font-size:48px;">🐢⚔️🧒</div>
-      <h1>Đại Chiến Rùa Thần Tối Thượng · 神龟终极大战</h1>
-      <p>Trận đấu cuối cùng trước kỳ thi YCT2 — ôn lại toàn bộ · YCT2考前最后一战——全面复习 <b>150 từ vựng + ngữ pháp</b> đã học suốt 2 quyển! · 两册书学过的全部内容！</p>
-      <div class="ruleRow"><span class="ic">🔁</span><span>Bé và Rùa Thần · 你 对战 神龟 <b>lần lượt</b> trả lời 30 câu hỏi đủ thể loại: nghe, nhìn hình, điền câu, hỏi-đáp, chọn câu đúng. · 回答30道各类题目：听力、看图、填空、问答、选正确句子。</span></div>
-      <div class="ruleRow"><span class="ic">⚔️</span><span>Trả lời đúng → · 答对了 → <b>gây sát thương</b> lên đối phương. Trả lời sai → không đánh trúng. · 对对方造成伤害。答错 → 不会命中。</span></div>
-      <div class="ruleRow"><span class="ic">🔥</span><span>Đúng liên tiếp → chuỗi lửa nhân sát thương · 连续答对 → 连击火焰加倍伤害 <b>x2, x3</b> (tối đa x3)!</span></div>
-      <div class="ruleRow"><span class="ic">👀</span><span>Lượt của Rùa Thần, bé cũng xem được Rùa chọn gì — và đáp án đúng luôn được tiết lộ ở cả 2 lượt. · 轮到神龟时，你也能看到神龟选了什么——两边的正确答案都会公布。</span></div>
-      <div class="ruleRow"><span class="ic">⚡</span><span>Trả lời càng nhanh, càng nhiều điểm! · 回答越快，得分越多！ Điểm được lưu vào bảng xếp hạng. · 分数会存入排行榜。</span></div>
+      <h1>Đại Chiến Rùa Thần Tối Thượng<span class="zhSub" style="font-size:0.55em;">神龟终极大战</span></h1>
+      <p>Trận đấu cuối cùng trước kỳ thi YCT2 — ôn lại toàn bộ <b>150 từ vựng + ngữ pháp</b> đã học suốt 2 quyển!<span class="zhSub">YCT2考前最后一战——全面复习两册书学过的150个词汇和全部语法内容！</span></p>
+      <div class="ruleRow"><span class="ic">🔁</span><span>Bé và Rùa Thần <b>lần lượt</b> trả lời 30 câu hỏi đủ thể loại: nghe, nhìn hình, điền câu, hỏi-đáp, chọn câu đúng.<span class="zhSub">你和神龟轮流回答30道各类题目：听力、看图、填空、问答、选正确句子。</span></span></div>
+      <div class="ruleRow"><span class="ic">⚔️</span><span>Trả lời đúng → <b>gây sát thương</b> lên đối phương. Trả lời sai → không đánh trúng.<span class="zhSub">答对了→对对方造成伤害。答错→不会命中。</span></span></div>
+      <div class="ruleRow"><span class="ic">🔥</span><span>Đúng liên tiếp → chuỗi lửa nhân sát thương <b>x2, x3</b> (tối đa x3)!<span class="zhSub">连续答对→连击火焰加倍伤害x2、x3（最多x3）！</span></span></div>
+      <div class="ruleRow"><span class="ic">👀</span><span>Lượt của Rùa Thần, bé cũng xem được Rùa chọn gì — và đáp án đúng luôn được tiết lộ ở cả 2 lượt.<span class="zhSub">轮到神龟时，你也能看到神龟选了什么——两边的正确答案都会公布。</span></span></div>
+      <div class="ruleRow"><span class="ic">⚡</span><span>Trả lời càng nhanh, càng nhiều điểm! Điểm được lưu vào bảng xếp hạng.<span class="zhSub">回答越快，得分越多！分数会存入排行榜。</span></span></div>
       <div id="leaderboardBox" style="margin-top:8px; background:#fff; border-radius:14px; padding:10px 14px; max-height:130px; overflow-y:auto; width:100%; box-sizing:border-box;">
-        <div style="font-weight:800; font-size:13px; margin-bottom:4px;">🏅 Bảng xếp hạng · 🏅 排行榜</div>
+        <div style="font-weight:800; font-size:13px; margin-bottom:4px;">🏅 Bảng xếp hạng<span class="zhSub" style="display:inline; margin-left:4px;">🏅 排行榜</span></div>
         <div id="leaderboardList" style="font-size:13px;"></div>
       </div>
-      <button id="startBtn" class="bigBtn">Vào trận! ⚔️ · 开始比赛！⚔️</button>
+      <button id="startBtn" class="bigBtn">Vào trận! ⚔️<span class="zhSub">开始比赛！⚔️</span></button>
     </div>
   </div>
 
@@ -208,11 +209,11 @@
   <div id="endOverlay" class="overlay hidden">
     <div class="panel">
       <div id="endEmoji" style="font-size:48px;">🏆</div>
-      <h1 id="endTitle">Kết thúc trận đấu! · 比赛结束！</h1>
+      <h1 id="endTitle">Kết thúc trận đấu!<span class="zhSub" style="font-size:0.6em;">比赛结束！</span></h1>
       <p id="endDesc"></p>
       <div id="endScoreBox" style="font-weight:800; font-size:16px; margin:4px 0;"></div>
       <div id="summaryList"></div>
-      <button id="replayBtn" class="bigBtn">Đấu lại 🔁 · 再战一次 🔁</button>
+      <button id="replayBtn" class="bigBtn">Đấu lại 🔁<span class="zhSub">再战一次 🔁</span></button>
     </div>
   </div>
 </div>
@@ -221,95 +222,95 @@
 /* ============ DATA: 30 câu hỏi ôn tổng YCT2 (Bài 1-11, ~150 từ + ngữ pháp) ============ */
 // type: A=nghe từ chọn hình | B=xem hình chọn chữ | C=điền câu | D=nghe hội thoại chọn đáp | E=chọn câu đúng ngữ pháp
 const QUESTIONS = [
- {type:'A', audio:'qian', instr:'🎧 Nghe và chọn đúng từ · 🎧 听音，选对词', prompt:'🔊 ...', opts:[
+ {type:'A', audio:'qian', instr:'🎧 Nghe và chọn đúng từ<span class=\"zhSub\">🎧 听音，选对词</span>', prompt:'🔊 ...', opts:[
    {icon:'💰',h:'钱',p:'qián',vi:'tiền'},{icon:'🍵',h:'茶',p:'chá',vi:'trà'},{icon:'🌸',h:'花',p:'huā',vi:'hoa'}], correct:0},
- {type:'A', audio:'mai', instr:'🎧 Nghe và chọn đúng động từ · 🎧 听音，选对动词', prompt:'🔊 ...', opts:[
+ {type:'A', audio:'mai', instr:'🎧 Nghe và chọn đúng động từ<span class=\"zhSub\">🎧 听音，选对动词</span>', prompt:'🔊 ...', opts:[
    {icon:'🛒',h:'买',p:'mǎi',vi:'mua'},{icon:'😋',h:'吃',p:'chī',vi:'ăn'},{icon:'👀',h:'看',p:'kàn',vi:'xem'}], correct:0},
- {type:'A', audio:'baozi', instr:'🎧 Nghe và chọn đúng món ăn · 🎧 听音，选对食物', prompt:'🔊 ...', opts:[
+ {type:'A', audio:'baozi', instr:'🎧 Nghe và chọn đúng món ăn<span class=\"zhSub\">🎧 听音，选对食物</span>', prompt:'🔊 ...', opts:[
    {icon:'🥟',h:'包子',p:'bāozi',vi:'bánh bao'},{icon:'🍜',h:'面条',p:'miàntiáo',vi:'mì'},{icon:'🍎',h:'苹果',p:'píngguǒ',vi:'táo'}], correct:0},
- {type:'A', audio:'hongse', instr:'🎧 Nghe và chọn đúng màu · 🎧 听音，选对颜色', prompt:'🔊 ...', opts:[
+ {type:'A', audio:'hongse', instr:'🎧 Nghe và chọn đúng màu<span class=\"zhSub\">🎧 听音，选对颜色</span>', prompt:'🔊 ...', opts:[
    {icon:'🔴',h:'红色',p:'hóngsè',vi:'màu đỏ'},{icon:'🔵',h:'蓝色',p:'lánsè',vi:'màu xanh dương'},{icon:'🟡',h:'黄色',p:'huángsè',vi:'màu vàng'}], correct:0},
- {type:'A', audio:'yisheng', instr:'🎧 Nghe và chọn đúng nghề nghiệp · 🎧 听音，选对职业', prompt:'🔊 ...', opts:[
+ {type:'A', audio:'yisheng', instr:'🎧 Nghe và chọn đúng nghề nghiệp<span class=\"zhSub\">🎧 听音，选对职业</span>', prompt:'🔊 ...', opts:[
    {icon:'👨‍⚕️',h:'医生',p:'yīshēng',vi:'bác sĩ'},{icon:'👨‍🍳',h:'厨师',p:'chúshī',vi:'đầu bếp'},{icon:'👩‍🏫',h:'老师',p:'lǎoshī',vi:'giáo viên'}], correct:0},
- {type:'A', audio:'shubao', instr:'🎧 Nghe và chọn đúng đồ vật · 🎧 听音，选对物品', prompt:'🔊 ...', opts:[
+ {type:'A', audio:'shubao', instr:'🎧 Nghe và chọn đúng đồ vật<span class=\"zhSub\">🎧 听音，选对物品</span>', prompt:'🔊 ...', opts:[
    {icon:'🎒',h:'书包',p:'shūbāo',vi:'cặp sách'},{icon:'✏️',h:'铅笔',p:'qiānbǐ',vi:'bút chì'},{icon:'📚',h:'书',p:'shū',vi:'sách'}], correct:0},
- {type:'A', audio:'zuofan', instr:'🎧 Nghe và chọn đúng hành động · 🎧 听音，选对动作', prompt:'🔊 ...', opts:[
+ {type:'A', audio:'zuofan', instr:'🎧 Nghe và chọn đúng hành động<span class=\"zhSub\">🎧 听音，选对动作</span>', prompt:'🔊 ...', opts:[
    {icon:'🍳',h:'做饭',p:'zuòfàn',vi:'nấu cơm'},{icon:'🛒',h:'买',p:'mǎi',vi:'mua'},{icon:'😋',h:'吃',p:'chī',vi:'ăn'}], correct:0},
- {type:'A', audio:'qichuang', instr:'🎧 Nghe và chọn đúng hành động · 🎧 听音，选对动作', prompt:'🔊 ...', opts:[
+ {type:'A', audio:'qichuang', instr:'🎧 Nghe và chọn đúng hành động<span class=\"zhSub\">🎧 听音，选对动作</span>', prompt:'🔊 ...', opts:[
    {icon:'⏰',h:'起床',p:'qǐchuáng',vi:'thức dậy'},{icon:'😴',h:'睡觉',p:'shuìjiào',vi:'ngủ'},{icon:'🍳',h:'做饭',p:'zuòfàn',vi:'nấu cơm'}], correct:0},
- {type:'B', instr:'✏️ Đây là gì? · ✏️ 这是什么？', prompt:'✏️', opts:[
+ {type:'B', instr:'✏️ Đây là gì?<span class=\"zhSub\">✏️ 这是什么？</span>', prompt:'✏️', opts:[
    {h:'铅笔',p:'qiānbǐ',vi:'bút chì'},{h:'书包',p:'shūbāo',vi:'cặp sách'},{h:'书',p:'shū',vi:'sách'}], correct:0},
- {type:'B', instr:'👨‍⚕️ Đây là nghề gì? · 👨‍⚕️ 这是什么职业？', prompt:'👨‍⚕️', opts:[
+ {type:'B', instr:'👨‍⚕️ Đây là nghề gì?<span class=\"zhSub\">👨‍⚕️ 这是什么职业？</span>', prompt:'👨‍⚕️', opts:[
    {h:'医生',p:'yīshēng',vi:'bác sĩ'},{h:'厨师',p:'chúshī',vi:'đầu bếp'},{h:'老师',p:'lǎoshī',vi:'giáo viên'}], correct:0},
- {type:'B', instr:'📚📚 Đây là gì? · 📚📚 这是什么？', prompt:'📚📚', opts:[
+ {type:'B', instr:'📚📚 Đây là gì?<span class=\"zhSub\">📚📚 这是什么？</span>', prompt:'📚📚', opts:[
    {h:'两本书',p:'liǎng běn shū',vi:'hai quyển sách'},{h:'一只猫',p:'yì zhī māo',vi:'một con mèo'},{h:'一本书',p:'yì běn shū',vi:'một quyển sách'}], correct:0},
- {type:'B', instr:'🟡 Đây là màu gì? · 🟡 这是什么颜色？', prompt:'🟡', opts:[
+ {type:'B', instr:'🟡 Đây là màu gì?<span class=\"zhSub\">🟡 这是什么颜色？</span>', prompt:'🟡', opts:[
    {h:'黄色',p:'huángsè',vi:'màu vàng'},{h:'红色',p:'hóngsè',vi:'màu đỏ'},{h:'黑色',p:'hēisè',vi:'màu đen'}], correct:0},
- {type:'B', instr:'🍵 Đây là gì? · 🍵 这是什么？', prompt:'🍵', opts:[
+ {type:'B', instr:'🍵 Đây là gì?<span class=\"zhSub\">🍵 这是什么？</span>', prompt:'🍵', opts:[
    {h:'茶',p:'chá',vi:'trà'},{h:'水',p:'shuǐ',vi:'nước'},{h:'牛奶',p:'niúnǎi',vi:'sữa'}], correct:0},
- {type:'B', instr:'🌸 Đây là gì? · 🌸 这是什么？', prompt:'🌸', opts:[
+ {type:'B', instr:'🌸 Đây là gì?<span class=\"zhSub\">🌸 这是什么？</span>', prompt:'🌸', opts:[
    {h:'花',p:'huā',vi:'hoa'},{h:'茶',p:'chá',vi:'trà'},{h:'钱',p:'qián',vi:'tiền'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (câu so sánh) · 选对词填空（比较句）', prompt:'今天 ___ 昨天热。', promptSmall:'Jīntiān ___ zuótiān rè.', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống (câu so sánh)<span class=\"zhSub\">选对词填空（比较句）</span>', prompt:'今天 ___ 昨天热。', promptSmall:'Jīntiān ___ zuótiān rè.', opts:[
    {h:'比',p:'bǐ',vi:'so với'},{h:'和',p:'hé',vi:'và'},{h:'的',p:'de',vi:'của'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (câu so sánh) · 选对词填空（比较句）', prompt:'我 ___ 你高。', promptSmall:'Wǒ ___ nǐ gāo.', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống (câu so sánh)<span class=\"zhSub\">选对词填空（比较句）</span>', prompt:'我 ___ 你高。', promptSmall:'Wǒ ___ nǐ gāo.', opts:[
    {h:'比',p:'bǐ',vi:'so với'},{h:'很',p:'hěn',vi:'rất'},{h:'不',p:'bù',vi:'không'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (kể việc đã làm) · 选对词填空（讲做过的事）', prompt:'我今天吃米饭 ___。', promptSmall:'Wǒ jīntiān chī mǐfàn ___.', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống (kể việc đã làm)<span class=\"zhSub\">选对词填空（讲做过的事）</span>', prompt:'我今天吃米饭 ___。', promptSmall:'Wǒ jīntiān chī mǐfàn ___.', opts:[
    {h:'了',p:'le',vi:'rồi'},{h:'吗',p:'ma',vi:'(hỏi)'},{h:'呢',p:'ne',vi:'(hỏi)'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (thời lượng) · 选对词填空（时长）', prompt:'我来北京一年 ___。', promptSmall:'Wǒ lái Běijīng yì nián ___.', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống (thời lượng)<span class=\"zhSub\">选对词填空（时长）</span>', prompt:'我来北京一年 ___。', promptSmall:'Wǒ lái Běijīng yì nián ___.', opts:[
    {h:'了',p:'le',vi:'rồi'},{h:'的',p:'de',vi:'của'},{h:'吗',p:'ma',vi:'(hỏi)'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (hỏi có biết không) · 选对词填空（问会不会）', prompt:'你 ___ 不 ___ 做饭？', promptSmall:'Nǐ ___ bú ___ zuòfàn?', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống (hỏi có biết không)<span class=\"zhSub\">选对词填空（问会不会）</span>', prompt:'你 ___ 不 ___ 做饭？', promptSmall:'Nǐ ___ bú ___ zuòfàn?', opts:[
    {h:'会',p:'huì',vi:'biết (kỹ năng)'},{h:'是',p:'shì',vi:'là'},{h:'有',p:'yǒu',vi:'có'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空', prompt:'这个 ___ 那个大。', promptSmall:'Zhège ___ nàge dà.', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống<span class=\"zhSub\">选对词填空</span>', prompt:'这个 ___ 那个大。', promptSmall:'Zhège ___ nàge dà.', opts:[
    {h:'比',p:'bǐ',vi:'so với'},{h:'也',p:'yě',vi:'cũng'},{h:'和',p:'hé',vi:'và'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空', prompt:'现在 ___ 点？', promptSmall:'Xiànzài ___ diǎn?', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống<span class=\"zhSub\">选对词填空</span>', prompt:'现在 ___ 点？', promptSmall:'Xiànzài ___ diǎn?', opts:[
    {h:'几',p:'jǐ',vi:'mấy'},{h:'谁',p:'shéi',vi:'ai'},{h:'哪',p:'nǎ',vi:'nào'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空', prompt:'包子多少钱一 ___？', promptSmall:'Bāozi duōshao qián yí ___?', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống<span class=\"zhSub\">选对词填空</span>', prompt:'包子多少钱一 ___？', promptSmall:'Bāozi duōshao qián yí ___?', opts:[
    {h:'个',p:'ge',vi:'cái'},{h:'只',p:'zhī',vi:'con'},{h:'本',p:'běn',vi:'quyển'}], correct:0},
- {type:'D', audio:'d1', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng · 🎧 听问题，选对答案', prompt:'包子多少钱一个？', promptSmall:'Bāozi duōshao qián yí ge?', opts:[
+ {type:'D', audio:'d1', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng<span class=\"zhSub\">🎧 听问题，选对答案</span>', prompt:'包子多少钱一个？', promptSmall:'Bāozi duōshao qián yí ge?', opts:[
    {h:'两块钱一个。',p:'Liǎng kuài qián yí ge.',vi:'Hai đồng một cái'},{h:'两点。',p:'Liǎng diǎn.',vi:'Hai giờ'},{h:'两本书。',p:'Liǎng běn shū.',vi:'Hai quyển sách'}], correct:0},
- {type:'D', audio:'d2', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng · 🎧 听问题，选对答案', prompt:'你会不会做饭？', promptSmall:'Nǐ huì bú huì zuòfàn?', opts:[
+ {type:'D', audio:'d2', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng<span class=\"zhSub\">🎧 听问题，选对答案</span>', prompt:'你会不会做饭？', promptSmall:'Nǐ huì bú huì zuòfàn?', opts:[
    {h:'我不会做饭。',p:'Wǒ bú huì zuòfàn.',vi:'Tôi không biết nấu ăn'},{h:'我不吃饭。',p:'Wǒ bù chī fàn.',vi:'Tôi không ăn cơm'},{h:'我不买饭。',p:'Wǒ bù mǎi fàn.',vi:'Tôi không mua cơm'}], correct:0},
- {type:'D', audio:'d3', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng · 🎧 听问题，选对答案', prompt:'你今天做什么了？', promptSmall:'Nǐ jīntiān zuò shénme le?', opts:[
+ {type:'D', audio:'d3', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng<span class=\"zhSub\">🎧 听问题，选对答案</span>', prompt:'你今天做什么了？', promptSmall:'Nǐ jīntiān zuò shénme le?', opts:[
    {h:'我今天做饭了。',p:'Wǒ jīntiān zuòfàn le.',vi:'Hôm nay tôi nấu cơm rồi'},{h:'我今天七点。',p:'Wǒ jīntiān qī diǎn.',vi:'Hôm nay tôi 7 giờ'},{h:'我今天很好。',p:'Wǒ jīntiān hěn hǎo.',vi:'Hôm nay tôi khỏe'}], correct:0},
- {type:'D', audio:'d4', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng · 🎧 听问题，选对答案', prompt:'你早上几点起床？', promptSmall:'Nǐ zǎoshang jǐ diǎn qǐchuáng?', opts:[
+ {type:'D', audio:'d4', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng<span class=\"zhSub\">🎧 听问题，选对答案</span>', prompt:'你早上几点起床？', promptSmall:'Nǐ zǎoshang jǐ diǎn qǐchuáng?', opts:[
    {h:'我七点起床。',p:'Wǒ qī diǎn qǐchuáng.',vi:'Tôi thức dậy lúc 7 giờ'},{h:'我七岁。',p:'Wǒ qī suì.',vi:'Tôi 7 tuổi'},{h:'我七个人。',p:'Wǒ qī ge rén.',vi:'Tôi 7 người'}], correct:0},
- {type:'E', instr:'Câu nào ĐÚNG ngữ pháp? · 哪句语法是对的？', prompt:'', opts:[
+ {type:'E', instr:'Câu nào ĐÚNG ngữ pháp?<span class=\"zhSub\">哪句语法是对的？</span>', prompt:'', opts:[
    {h:'今天比昨天热。',p:'Jīntiān bǐ zuótiān rè.',vi:'Hôm nay nóng hơn hôm qua'},{h:'昨天热比今天。',p:'(sai trật tự)',vi:''},{h:'比今天昨天热。',p:'(sai trật tự)',vi:''}], correct:0},
- {type:'E', instr:'Câu nào ĐÚNG ngữ pháp? · 哪句语法是对的？', prompt:'', opts:[
+ {type:'E', instr:'Câu nào ĐÚNG ngữ pháp?<span class=\"zhSub\">哪句语法是对的？</span>', prompt:'', opts:[
    {h:'马丁比我大三岁。',p:'Mǎdīng bǐ wǒ dà sān suì.',vi:'Martin lớn hơn tôi 3 tuổi'},{h:'马丁大三岁比我。',p:'(sai trật tự)',vi:''},{h:'三岁马丁比我大。',p:'(sai trật tự)',vi:''}], correct:0},
- {type:'E', instr:'Câu nào ĐÚNG ngữ pháp? · 哪句语法是对的？', prompt:'', opts:[
+ {type:'E', instr:'Câu nào ĐÚNG ngữ pháp?<span class=\"zhSub\">哪句语法是对的？</span>', prompt:'', opts:[
    {h:'我来北京一年了。',p:'Wǒ lái Běijīng yì nián le.',vi:'Tôi đến Bắc Kinh một năm rồi'},{h:'我一年来北京了。',p:'(sai trật tự)',vi:''},{h:'了我来北京一年。',p:'(sai trật tự)',vi:''}], correct:0},
- {type:'E', instr:'Câu nào ĐÚNG ngữ pháp? · 哪句语法是对的？', prompt:'', opts:[
+ {type:'E', instr:'Câu nào ĐÚNG ngữ pháp?<span class=\"zhSub\">哪句语法是对的？</span>', prompt:'', opts:[
    {h:'你会不会做饭？',p:'Nǐ huì bú huì zuòfàn?',vi:'Bạn có biết nấu ăn không?'},{h:'你做饭会不会？',p:'(sai trật tự)',vi:''},{h:'不会你做饭会？',p:'(sai trật tự)',vi:''}], correct:0},
- {type:'A', audio:'niunai', instr:'🎧 Nghe và chọn đúng đồ uống · 🎧 听音，选对饮料', prompt:'🔊 ...', opts:[
+ {type:'A', audio:'niunai', instr:'🎧 Nghe và chọn đúng đồ uống<span class=\"zhSub\">🎧 听音，选对饮料</span>', prompt:'🔊 ...', opts:[
    {icon:'🥛',h:'牛奶',p:'niúnǎi',vi:'sữa'},{icon:'💧',h:'水',p:'shuǐ',vi:'nước'},{icon:'🍵',h:'茶',p:'chá',vi:'trà'}], correct:0},
- {type:'A', audio:'pingguo', instr:'🎧 Nghe và chọn đúng món ăn · 🎧 听音，选对食物', prompt:'🔊 ...', opts:[
+ {type:'A', audio:'pingguo', instr:'🎧 Nghe và chọn đúng món ăn<span class=\"zhSub\">🎧 听音，选对食物</span>', prompt:'🔊 ...', opts:[
    {icon:'🍎',h:'苹果',p:'píngguǒ',vi:'táo'},{icon:'🥟',h:'包子',p:'bāozi',vi:'bánh bao'},{icon:'🍜',h:'面条',p:'miàntiáo',vi:'mì'}], correct:0},
- {type:'A', audio:'heise', instr:'🎧 Nghe và chọn đúng màu · 🎧 听音，选对颜色', prompt:'🔊 ...', opts:[
+ {type:'A', audio:'heise', instr:'🎧 Nghe và chọn đúng màu<span class=\"zhSub\">🎧 听音，选对颜色</span>', prompt:'🔊 ...', opts:[
    {icon:'⚫',h:'黑色',p:'hēisè',vi:'màu đen'},{icon:'⚪',h:'白色',p:'báisè',vi:'màu trắng'},{icon:'🔴',h:'红色',p:'hóngsè',vi:'màu đỏ'}], correct:0},
- {type:'B', instr:'🥛 Đây là gì? · 🥛 这是什么？', prompt:'🥛', opts:[
+ {type:'B', instr:'🥛 Đây là gì?<span class=\"zhSub\">🥛 这是什么？</span>', prompt:'🥛', opts:[
    {h:'牛奶',p:'niúnǎi',vi:'sữa'},{h:'水',p:'shuǐ',vi:'nước'},{h:'茶',p:'chá',vi:'trà'}], correct:0},
- {type:'B', instr:'🍎 Đây là gì? · 🍎 这是什么？', prompt:'🍎', opts:[
+ {type:'B', instr:'🍎 Đây là gì?<span class=\"zhSub\">🍎 这是什么？</span>', prompt:'🍎', opts:[
    {h:'苹果',p:'píngguǒ',vi:'táo'},{h:'包子',p:'bāozi',vi:'bánh bao'},{h:'面条',p:'miàntiáo',vi:'mì'}], correct:0},
- {type:'B', instr:'⚫ Đây là màu gì? · ⚫ 这是什么颜色？', prompt:'⚫', opts:[
+ {type:'B', instr:'⚫ Đây là màu gì?<span class=\"zhSub\">⚫ 这是什么颜色？</span>', prompt:'⚫', opts:[
    {h:'黑色',p:'hēisè',vi:'màu đen'},{h:'白色',p:'báisè',vi:'màu trắng'},{h:'蓝色',p:'lánsè',vi:'màu xanh dương'}], correct:0},
- {type:'B', instr:'🐱 Đây là gì? (chọn đúng lượng từ) · 🐱 这是什么？（选对量词）', prompt:'🐱', opts:[
+ {type:'B', instr:'🐱 Đây là gì? (chọn đúng lượng từ)<span class=\"zhSub\">🐱 这是什么？（选对量词）</span>', prompt:'🐱', opts:[
    {h:'一只猫',p:'yì zhī māo',vi:'một con mèo'},{h:'一本书',p:'yì běn shū',vi:'một quyển sách'},{h:'两本书',p:'liǎng běn shū',vi:'hai quyển sách'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (hỏi của ai) · 选对词填空（问是谁的）', prompt:'这是 ___ 的铅笔？', promptSmall:'Zhè shì ___ de qiānbǐ?', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống (hỏi của ai)<span class=\"zhSub\">选对词填空（问是谁的）</span>', prompt:'这是 ___ 的铅笔？', promptSmall:'Zhè shì ___ de qiānbǐ?', opts:[
    {h:'谁',p:'shéi',vi:'ai'},{h:'什么',p:'shénme',vi:'cái gì'},{h:'哪',p:'nǎ',vi:'nào'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (hỏi tuổi) · 选对词填空（问年龄）', prompt:'你今年 ___ 岁？', promptSmall:'Nǐ jīnnián ___ suì?', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống (hỏi tuổi)<span class=\"zhSub\">选对词填空（问年龄）</span>', prompt:'你今年 ___ 岁？', promptSmall:'Nǐ jīnnián ___ suì?', opts:[
    {h:'几',p:'jǐ',vi:'mấy'},{h:'谁',p:'shéi',vi:'ai'},{h:'什么',p:'shénme',vi:'cái gì'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (hỏi có biết không) · 选对词填空（问会不会）', prompt:'他 ___ 说汉语。', promptSmall:'Tā ___ shuō Hànyǔ.', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống (hỏi có biết không)<span class=\"zhSub\">选对词填空（问会不会）</span>', prompt:'他 ___ 说汉语。', promptSmall:'Tā ___ shuō Hànyǔ.', opts:[
    {h:'会',p:'huì',vi:'biết (kỹ năng)'},{h:'是',p:'shì',vi:'là'},{h:'有',p:'yǒu',vi:'có'}], correct:0},
- {type:'C', instr:'Chọn từ đúng điền vào chỗ trống · 选对词填空 (lượng từ con vật) · 选对词填空（动物量词）', prompt:'一 ___ 猫', promptSmall:'yì ___ māo', opts:[
+ {type:'C', instr:'Chọn từ đúng điền vào chỗ trống (lượng từ con vật)<span class=\"zhSub\">选对词填空（动物量词）</span>', prompt:'一 ___ 猫', promptSmall:'yì ___ māo', opts:[
    {h:'只',p:'zhī',vi:'con'},{h:'个',p:'ge',vi:'cái'},{h:'本',p:'běn',vi:'quyển'}], correct:0},
- {type:'D', audio:'d5', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng · 🎧 听问题，选对答案', prompt:'他几岁？', promptSmall:'Tā jǐ suì?', opts:[
+ {type:'D', audio:'d5', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng<span class=\"zhSub\">🎧 听问题，选对答案</span>', prompt:'他几岁？', promptSmall:'Tā jǐ suì?', opts:[
    {h:'他八岁。',p:'Tā bā suì.',vi:'Cậu ấy 8 tuổi'},{h:'他八点。',p:'Tā bā diǎn.',vi:'Cậu ấy 8 giờ'},{h:'他八本书。',p:'Tā bā běn shū.',vi:'Cậu ấy 8 quyển sách'}], correct:0},
- {type:'D', audio:'d6', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng · 🎧 听问题，选对答案', prompt:'现在几点？', promptSmall:'Xiànzài jǐ diǎn?', opts:[
+ {type:'D', audio:'d6', instr:'🎧 Nghe câu hỏi, chọn câu trả lời đúng<span class=\"zhSub\">🎧 听问题，选对答案</span>', prompt:'现在几点？', promptSmall:'Xiànzài jǐ diǎn?', opts:[
    {h:'现在三点。',p:'Xiànzài sān diǎn.',vi:'Bây giờ 3 giờ'},{h:'现在三岁。',p:'Xiànzài sān suì.',vi:'Bây giờ 3 tuổi'},{h:'现在三个。',p:'Xiànzài sān ge.',vi:'Bây giờ 3 cái'}], correct:0},
- {type:'E', instr:'Câu nào ĐÚNG ngữ pháp? · 哪句语法是对的？', prompt:'', opts:[
+ {type:'E', instr:'Câu nào ĐÚNG ngữ pháp?<span class=\"zhSub\">哪句语法是对的？</span>', prompt:'', opts:[
    {h:'他比我大两岁。',p:'Tā bǐ wǒ dà liǎng suì.',vi:'Cậu ấy lớn hơn tôi 2 tuổi'},{h:'他两岁比我大。',p:'(sai trật tự)',vi:''},{h:'比他我大两岁。',p:'(sai trật tự)',vi:''}], correct:0},
- {type:'E', instr:'Câu nào ĐÚNG ngữ pháp? · 哪句语法是对的？', prompt:'', opts:[
+ {type:'E', instr:'Câu nào ĐÚNG ngữ pháp?<span class=\"zhSub\">哪句语法是对的？</span>', prompt:'', opts:[
    {h:'你几点起床？',p:'Nǐ jǐ diǎn qǐchuáng?',vi:'Bạn mấy giờ thức dậy?'},{h:'起床你几点？',p:'(sai trật tự)',vi:''},{h:'你起床几点？',p:'(sai trật tự)',vi:''}], correct:0},
 ];
 const AUDIO_BASE = "../audio/yct2boss_";
@@ -487,7 +488,7 @@ function renderLeaderboard(){
   if(!box) return;
   const arr = loadLeaderboard();
   if(arr.length===0){
-    box.innerHTML = '<div style="opacity:0.6;">Chưa có điểm nào — đấu trận đầu tiên đi! · 还没有记录——开始第一场吧！</div>';
+    box.innerHTML = '<div style="opacity:0.6;">Chưa có điểm nào — đấu trận đầu tiên đi!<span class="zhSub" style="display:inline; margin-left:4px;">还没有记录——开始第一场吧！</span></div>';
     return;
   }
   box.innerHTML = arr.map((x,i)=>{
@@ -515,10 +516,10 @@ function renderTurnBanner(){
   const cur = order[qi];
   if(!cur){ return; }
   if(cur.owner==='player'){
-    turnBanner.textContent = '🧒 Lượt của Bé! · 🧒 轮到你了！';
+    turnBanner.innerHTML = '🧒 Lượt của Bé!<span class="zhSub" style="display:inline; margin-left:4px;">🧒 轮到你了！</span>';
     turnBanner.className = 'playerTurn';
   } else {
-    turnBanner.textContent = '🐢 Lượt của Rùa Thần! · 🐢 轮到神龟了！';
+    turnBanner.innerHTML = '🐢 Lượt của Rùa Thần!<span class="zhSub" style="display:inline; margin-left:4px;">🐢 轮到神龟了！</span>';
     turnBanner.className = 'botTurn';
   }
 }
@@ -533,7 +534,7 @@ function nextQuestion(){
 }
 
 function renderQuestion(q, owner){
-  qInstr.textContent = q.instr;
+  qInstr.innerHTML = q.instr;
   qPrompt.textContent = q.prompt || '';
   qPromptSmall.textContent = q.promptSmall || '';
   optionsWrap.innerHTML = '';
@@ -574,12 +575,12 @@ function renderQuestion(q, owner){
     void thinkBar.offsetWidth; // force reflow truoc khi bat dau transition
     thinkBar.style.transition = `width ${duration}ms linear`;
     thinkBar.style.width = '0%';
-    const dots = ['🐢 Rùa Thần đang đọc câu hỏi... · 🐢 神龟正在读题...','🐢 Rùa Thần đang suy nghĩ... · 🐢 神龟正在思考...','🐢 Rùa Thần sắp trả lời rồi... · 🐢 神龟马上要回答了...'];
+    const dots = ['🐢 Rùa Thần đang đọc câu hỏi...<span class="zhSub" style="display:inline; margin-left:4px;">🐢 神龟正在读题...</span>','🐢 Rùa Thần đang suy nghĩ...<span class="zhSub" style="display:inline; margin-left:4px;">🐢 神龟正在思考...</span>','🐢 Rùa Thần sắp trả lời rồi...<span class="zhSub" style="display:inline; margin-left:4px;">🐢 神龟马上要回答了...</span>'];
     let dotIdx = 0;
-    thinkText.textContent = dots[0];
+    thinkText.innerHTML = dots[0];
     const dotTimer = setInterval(()=>{
       dotIdx = (dotIdx+1) % dots.length;
-      thinkText.textContent = dots[dotIdx];
+      thinkText.innerHTML = dots[dotIdx];
     }, duration/3);
     setTimeout(()=>{ clearInterval(dotTimer); runBotTurn(q); }, duration);
   }
@@ -702,29 +703,29 @@ function finishGame(){
   const endDesc = document.getElementById('endDesc');
 
   let resultTxt, emoji;
-  if(pHP === bHP){ resultTxt='Hòa! Cả hai đều xuất sắc! · 平局！两边都很棒！'; emoji='🤝'; sfxWin(); }
-  else if(pHP > bHP){ resultTxt='Bé đã chiến thắng Rùa Thần! 🎉 · 你打败神龟啦！🎉'; emoji='🏆'; sfxWin(); }
-  else { resultTxt='Rùa Thần thắng lần này — luyện thêm rồi đấu lại nhé! · 这次神龟赢了——多练习再来挑战吧！'; emoji='🐢'; sfxLose(); }
+  if(pHP === bHP){ resultTxt='Hòa! Cả hai đều xuất sắc!<span class="zhSub" style="display:inline; margin-left:4px;">平局！两边都很棒！</span>'; emoji='🤝'; sfxWin(); }
+  else if(pHP > bHP){ resultTxt='Bé đã chiến thắng Rùa Thần! 🎉<span class="zhSub" style="display:inline; margin-left:4px;">你打败神龟啦！🎉</span>'; emoji='🏆'; sfxWin(); }
+  else { resultTxt='Rùa Thần thắng lần này — luyện thêm rồi đấu lại nhé!<span class="zhSub" style="display:inline; margin-left:4px;">这次神龟赢了——多练习再来挑战吧！</span>'; emoji='🐢'; sfxLose(); }
 
   endEmoji.textContent = emoji;
-  endTitle.textContent = resultTxt;
+  endTitle.innerHTML = resultTxt;
   endDesc.textContent = `Bé đúng ${pCorrectCount}/${pTotal} câu (chuỗi dài nhất x${Math.min(3,pLongestCombo)}). `+
     `Rùa Thần đúng ${bCorrectCount}/${bTotal} câu.`;
 
   const rank = saveScoreToLeaderboard(score);
   const scoreBox = document.getElementById('endScoreBox');
-  scoreBox.textContent = rank<=10
-    ? `⭐ ${score} điểm — Hạng #${rank} bảng xếp hạng! · ⭐ ${score}分 — 排行榜第${rank}名！`
-    : `⭐ ${score} điểm · ⭐ ${score}分`;
+  scoreBox.innerHTML = rank<=10
+    ? `⭐ ${score} điểm — Hạng #${rank} bảng xếp hạng!<span class="zhSub" style="display:inline; margin-left:4px;">⭐ ${score}分 — 排行榜第${rank}名！</span>`
+    : `⭐ ${score} điểm<span class="zhSub" style="display:inline; margin-left:4px;">⭐ ${score}分</span>`;
   renderLeaderboard();
 
   const list = document.getElementById('summaryList');
   list.innerHTML = '';
   if(missedForReview.length===0){
-    list.innerHTML = '<div>✨ Bé không sai câu nào cả, quá giỏi luôn! · ✨ 一题都没错，太厉害了！</div> · <div>✨ 一题都没错，太厉害了！</div>';
+    list.innerHTML = '<div>✨ Bé không sai câu nào cả, quá giỏi luôn!<span class="zhSub">✨ 一题都没错，太厉害了！</span></div>';
   } else {
     const header = document.createElement('div');
-    header.innerHTML = '<b>📖 Những câu bé nên ôn lại: · 📖 需要复习的句子：</b> · <b>📖 需要复习的句子：</b>';
+    header.innerHTML = '<b>📖 Những câu bé nên ôn lại:</b><span class="zhSub">📖 需要复习的句子：</span>';
     list.appendChild(header);
     missedForReview.forEach(q=>{
       const div = document.createElement('div');

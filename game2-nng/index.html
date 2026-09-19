@@ -119,6 +119,7 @@
     overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.25);z-index:50;border:2px solid #fff;background:#fff;}
   .teacher-badge img{width:100%;height:100%;object-fit:cover;display:block;}
   .teacher-badge:active{transform:scale(.94);}
+  .zhSub{display:block; margin-top:3px; opacity:0.7; font-size:0.78em; font-weight:600;}
 </style>
 </head>
 <body>
@@ -126,7 +127,7 @@
   <div class="topbar">
     <div class="brand">
       <div class="name">🦌🐴 Về Đúng Chuồng</div>
-      <div class="sub">Luyện nghe & phát âm tiếng Trung cho bé · 给孩子的中文听力发音练习</div>
+      <div class="sub">Luyện nghe & phát âm tiếng Trung cho bé<span class="zhSub" style="display:inline; margin-left:4px;">给孩子的中文听力发音练习</span></div>
     </div>
     <div class="stat-pill">⭐ <span id="scoreDisplay">0</span></div>
   </div>
@@ -136,8 +137,8 @@
     <div class="card">
       <div class="hero">
         <div class="critters"><span class="critter">🐣</span><span class="critter">🦌</span><span class="critter">🐴</span></div>
-        <h1>Đuôi -N hay đuôi -NG? · 韵尾是-N还是-NG？</h1>
-        <p>Chú gà con đang rơi xuống — nghe kỹ xem âm kết thúc bằng <b>-N</b> (như an, en, ian, in) hay <b>-NG</b> (như ang, eng, iang, ing), rồi thả đúng vào chuồng Nai hoặc chuồng Ngựa! · 小鸡正在往下掉——仔细听发音结尾是<b>-N</b>（像an, en, ian, in）还是<b>-NG</b>（像ang, eng, iang, ing），然后放进鹿棚或马棚！</p>
+        <h1>Đuôi -N hay đuôi -NG?<span class="zhSub" style="font-size:0.6em;">韵尾是-N还是-NG？</span></h1>
+        <p>Chú gà con đang rơi xuống — nghe kỹ xem âm kết thúc bằng <b>-N</b> (như an, en, ian, in) hay <b>-NG</b> (như ang, eng, iang, ing), rồi thả đúng vào chuồng Nai hoặc chuồng Ngựa!<span class="zhSub">小鸡正在往下掉——仔细听发音结尾是-N（像an, en, ian, in）还是-NG（像ang, eng, iang, ing），然后放进鹿棚或马棚！</span></p>
         <div class="rule-box">💡 -N: đầu lưỡi có nâng lên chạm nhẹ, âm gọn, nhanh. -NG: miệng há to hơn, đầu lưỡi không nâng lên, âm vang trong mũi và kéo dài hơn — hai âm nghe gần giống nhau nên cần nghe thật kỹ!</div>
       </div>
       <div class="mode-list">
@@ -151,8 +152,8 @@
         <div class="mode-card review" onclick="startGame('review')">
           <div class="memoji">🎧</div>
           <div>
-            <div class="mname">Ôn Tất Cả Âm Đã Học · 复习所有学过的发音</div>
-            <div class="mdesc">Vẫn là về chuồng, nhưng trộn thêm rất nhiều âm khác đã học từ trước tới giờ. · 还是回棚游戏，但混入了之前学过的更多发音。</div>
+            <div class="mname">Ôn Tất Cả Âm Đã Học<span class="zhSub" style="display:inline; margin-left:4px;">复习所有学过的发音</span></div>
+            <div class="mdesc">Vẫn là về chuồng, nhưng trộn thêm rất nhiều âm khác đã học từ trước tới giờ.<span class="zhSub">还是回棚游戏，但混入了之前学过的更多发音。</span></div>
           </div>
         </div>
       </div>
@@ -161,7 +162,7 @@
 
   <!-- ============ GAME ============ -->
   <section id="screen-game" class="screen">
-    <button class="backlink" onclick="goHome()">← Về trang chính · ← 返回主页</button>
+    <button class="backlink" onclick="goHome()">← Về trang chính<span class="zhSub" style="display:inline; margin-left:4px;">← 返回主页</span></button>
     <div class="card" style="padding:0;overflow:hidden;">
       <div style="padding:16px 16px 0;">
         <div class="hud">
@@ -171,7 +172,7 @@
       </div>
       <div class="arena" id="arena">
         <div class="cloud-deco"></div>
-        <div class="listen-tag" id="listenTag">🔊 Đang nghe... · 🔊 正在听...</div>
+        <div class="listen-tag" id="listenTag">🔊 Đang nghe...<span class="zhSub" style="display:inline; margin-left:4px;">🔊 正在听...</span></div>
         <button class="replay-mini" onclick="replayAudio()">🔊</button>
       </div>
       <div class="targetbar">
@@ -183,7 +184,7 @@
       </div>
       <div style="padding:0 16px 16px;">
         <div class="feedback" id="arcadeFeedback"></div>
-        <button id="continueBtn" class="hidden" style="display:block;margin:8px auto 0;border:none;border-radius:20px;background:linear-gradient(135deg,#4fc3f7,#1e90c9);color:#fff;font-weight:800;font-size:16px;padding:12px 32px;cursor:pointer;box-shadow:0 6px 14px rgba(30,144,201,0.4);">▶ Tiếp tục · ▶ 继续</button>
+        <button id="continueBtn" class="hidden" style="display:block;margin:8px auto 0;border:none;border-radius:20px;background:linear-gradient(135deg,#4fc3f7,#1e90c9);color:#fff;font-weight:800;font-size:16px;padding:12px 32px;cursor:pointer;box-shadow:0 6px 14px rgba(30,144,201,0.4);">▶ Tiếp tục<span class="zhSub">▶ 继续</span></button>
       </div>
     </div>
   </section>
@@ -192,11 +193,11 @@
   <section id="screen-result" class="screen">
     <div class="card">
       <div class="result-emoji" id="resultEmoji">🎉</div>
-      <div class="result-title" id="resultTitle">Hoàn thành! · 完成啦！</div>
+      <div class="result-title" id="resultTitle">Hoàn thành!<span class="zhSub" style="font-size:0.6em;">完成啦！</span></div>
       <div class="stars" id="resultStars"></div>
       <div class="result-score" id="resultScore"></div>
       <div class="btn-row">
-        <button class="btn ghost" onclick="goHome()">Trang chính · 主页</button>
+        <button class="btn ghost" onclick="goHome()">Trang chính<span class="zhSub" style="display:inline; margin-left:4px;">主页</span></button>
         <button class="btn primary" onclick="startGame(lastMode)">Chơi lại</button>
       </div>
     </div>
@@ -463,14 +464,14 @@ function answer(value, elArg){
     const chick = document.getElementById("chick");
     if(chick){ chick.classList.add("pop"); }
     totalScore++; scoreDisplay();
-    fb.textContent = pick(["Về đúng chuồng rồi! 🎉 · 回对棚了！🎉","Chuẩn không cần chỉnh! ⭐ · 完全正确！⭐","Tai thính quá! · 耳朵真灵！"]);
+    fb.innerHTML = pick(["Về đúng chuồng rồi! 🎉<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">回对棚了！🎉</span>","Chuẩn không cần chỉnh! ⭐<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">完全正确！⭐</span>","Tai thính quá!<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">耳朵真灵！</span>"]);
     fb.className = "feedback ok";
     setTimeout(()=>playFile(item.syl+".mp3", item.hz), 300);
     goToNextWhenReady();
   } else {
     game.answered = true;
     if(el) el.classList.add("miss");
-    fb.textContent = "Nhầm chuồng rồi! Để xem gà con về đúng đâu nhé... · 进错棚了！来看看小鸡该回哪个棚……";
+    fb.innerHTML = "Nhầm chuồng rồi! Để xem gà con về đúng đâu nhé...<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">进错棚了！来看看小鸡该回哪个棚……</span>";
     fb.className = "feedback bad";
     setTimeout(()=>playFile(item.syl+".mp3", item.hz), 300);
   }
@@ -483,7 +484,7 @@ function chickLands(){
   const chick = document.getElementById("chick");
   if(chick) chick.remove();
   const fb = document.getElementById("arcadeFeedback");
-  fb.textContent = "Gà con lạc rồi! Âm \""+item.py+"\" ("+item.hz+" — "+item.mn+") kết thúc bằng \"-"+item.side+"\" · 小鸡走丢啦";
+  fb.innerHTML = "Gà con lạc rồi! Âm \""+item.py+"\" ("+item.hz+" — "+item.mn+") kết thúc bằng \"-"+item.side+"\"<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">小鸡走丢啦</span>";
   fb.className = "feedback bad";
   goToNextWhenReady();
 }
@@ -494,8 +495,8 @@ function finishGame(){
   const pct = total? totalScore/total : 0;
   const stars = pct>=0.9?3:pct>=0.6?2:pct>=0.3?1:0;
   document.getElementById("resultEmoji").textContent = stars===3?"🏆":stars>=1?"🎉":"💪";
-  document.getElementById("resultTitle").textContent =
-    stars===3?"Xuất sắc! · 太棒了！ Cả đàn gà về đúng chuồng!": stars===2?"Giỏi lắm, gần hoàn hảo rồi! · 真棒，快完美了！": stars===1?"Tốt lắm, luyện thêm chút nữa nhé! · 很好，再练习一下吧！":"Cố lên nào, mình thử lại nhé!";
+  document.getElementById("resultTitle").innerHTML =
+    stars===3?"Xuất sắc! Cả đàn gà về đúng chuồng!<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">太棒了！</span>": stars===2?"Giỏi lắm, gần hoàn hảo rồi!<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">真棒，快完美了！</span>": stars===1?"Tốt lắm, luyện thêm chút nữa nhé!<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">很好，再练习一下吧！</span>":"Cố lên nào, mình thử lại nhé!";
   document.getElementById("resultStars").textContent = "⭐".repeat(stars)+"☆".repeat(3-stars);
   document.getElementById("resultScore").textContent = `Đúng ${totalScore}/${total}`;
   showScreen("screen-result");
