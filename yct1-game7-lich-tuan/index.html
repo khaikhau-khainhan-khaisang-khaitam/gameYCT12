@@ -109,6 +109,7 @@
       <h1>Ghép Thẻ Lịch Tuần<span class="zhSub" style="font-size:0.55em;">配对卡片·一周日历</span></h1>
       <p>Ôn thứ trong tuần — <b>Bài 9 YCT1</b>.<span class="zhSub">复习星期</span></p>
       <p style="font-size:13px; color:#8a7a99;">Lật 2 thẻ để tìm đúng cặp: 1 thẻ chữ Hán 🔊 (chạm để nghe), 1 thẻ chữ Việt. Càng ít lượt càng nhiều sao ⭐!<span class="zhSub">翻开2张卡片找配对：1张汉字卡🔊（点一下可听发音），1张越南语卡片。翻的次数越少，星星越多⭐！</span></p>
+      <div id="recordBox" style="font-size:13px; font-weight:700; background:#fff; border-radius:14px; padding:8px 14px; margin-top:4px;"></div>
       <button id="startBtn" class="bigBtn">Bắt đầu 🚀<span class="zhSub">开始 🚀</span></button>
     </div>
   </div>
@@ -141,6 +142,7 @@
       <h1>Hoàn thành trò chơi!<span class="zhSub" style="font-size:0.6em;">游戏完成！</span></h1>
       <div class="starsRow" id="finalStarsRow"></div>
       <p id="endDesc"></p>
+      <p id="recordMsg" style="font-weight:700;"></p>
       <button id="replayBtn" class="bigBtn">Chơi lại 🔁<span class="zhSub">再玩一次 🔁</span></button>
     </div>
   </div>
@@ -174,6 +176,7 @@ let cards = [];
 let flipped = [];
 let matchedCount = 0;
 let moves = 0;
+let totalMoves = 0;
 let lockBoard = false;
 let starsPerRound = [];
 let muted = false;
@@ -273,8 +276,24 @@ function burstConfetti(x,y,count){
 /* ============ GAME LOGIC ============ */
 function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; }
 
+const RECORD_KEY = 'lichTuan_bestMoves_v1';
+function loadBestMoves(){
+  try{ const v = localStorage.getItem(RECORD_KEY); return v ? parseInt(v,10) : null; }catch(e){ return null; }
+}
+function saveBestMoves(v){
+  try{ localStorage.setItem(RECORD_KEY, String(v)); }catch(e){}
+}
+function renderRecordBox(){
+  const best = loadBestMoves();
+  const box = document.getElementById('recordBox');
+  if(!box) return;
+  box.innerHTML = best!=null
+    ? `🏆 Kỷ lục của em: <b>${best} lượt</b><span class="zhSub" style="display:inline; margin-left:4px;">🏆 你的记录：${best}次</span>`
+    : `Chưa có kỷ lục — chơi lần đầu nhé!<span class="zhSub" style="display:inline; margin-left:4px;">还没有记录——开始第一次挑战吧！</span>`;
+}
+
 function startGame(){
-  roundIdx = 0; starsPerRound = [];
+  roundIdx = 0; starsPerRound = []; totalMoves = 0;
   startOverlay.classList.add('hidden');
   showRoundIntro();
 }
@@ -335,7 +354,7 @@ function flipCard(i){
   if(c.kind==='hanzi'){ playWordAudio(c.pair); }
 
   if(flipped.length===2){
-    moves++;
+    moves++; totalMoves++;
     movesBadge.textContent = `🔄 ${moves} lượt · ${moves} 次`;
     const [a,b] = flipped;
     if(cards[a].matchId === cards[b].matchId){
@@ -414,6 +433,15 @@ function finishGame(){
     row.appendChild(span);
   }
   document.getElementById('endDesc').innerHTML = `Bé đạt ${totalStars}/${maxStars} sao qua ${ROUNDS.length} vòng chơi. Giỏi lắm!<span class="zhSub">你在${ROUNDS.length}轮游戏中获得了${totalStars}/${maxStars}颗星，真棒！</span>`;
+
+  const best = loadBestMoves();
+  const recordMsg = document.getElementById('recordMsg');
+  if(best===null || totalMoves<best){
+    saveBestMoves(totalMoves);
+    recordMsg.innerHTML = `🏆 Kỷ lục mới! Cả game chỉ dùng <b>${totalMoves} lượt</b>!<span class="zhSub" style="display:inline; margin-left:4px;">🏆 新纪录！全程只用了${totalMoves}次！</span>`;
+  } else {
+    recordMsg.innerHTML = `Bé dùng ${totalMoves} lượt (kỷ lục: ${best} lượt).<span class="zhSub" style="display:inline; margin-left:4px;">你用了${totalMoves}次（记录：${best}次）。</span>`;
+  }
   endOverlay.classList.remove('hidden');
 }
 
@@ -432,6 +460,7 @@ document.getElementById('muteBtn').onclick = function(){
 
 initBgStars();
 initVoices();
+renderRecordBox();
 </script>
 </body>
 </html>

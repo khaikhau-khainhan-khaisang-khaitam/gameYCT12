@@ -90,19 +90,23 @@
     min-height:64px;border-radius:14px;border:3px solid var(--line);
     display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;
     font-family:'Baloo 2';font-weight:800;background:rgba(255,255,255,.92);
+    transition:border-color .2s ease, background-color .2s ease;
   }
-  .tbtn.z{border-color:var(--z);} .tbtn.c{border-color:var(--c);} .tbtn.s{border-color:var(--s);}
-  .tbtn.zh{border-color:var(--zh);} .tbtn.ch{border-color:var(--ch);} .tbtn.sh{border-color:var(--sh);}
-  .tbtn .hlabel{font-size:15px;}
-  .tbtn.z .hlabel{color:var(--z-dark);} .tbtn.c .hlabel{color:var(--c-dark);} .tbtn.s .hlabel{color:var(--s-dark);}
-  .tbtn.zh .hlabel{color:var(--zh-dark);} .tbtn.ch .hlabel{color:var(--ch-dark);} .tbtn.sh .hlabel{color:var(--sh-dark);}
+  .tbtn .hlabel{font-size:15px;color:var(--ink);}
   .tbtn .htiny{font-size:9px;color:var(--ink-soft);margin-top:1px;}
   .tbtn.hit{animation:hit .3s ease;}
   @keyframes hit{0%{transform:scale(1);}40%{transform:scale(1.12);}100%{transform:scale(1);}}
-  .tbtn.miss{animation:missflash .4s ease;}
-  @keyframes missflash{0%,100%{filter:none;}40%{filter:drop-shadow(0 0 6px var(--red));}}
+  .tbtn.correct{border-color:#2FAE72; background:#EAFBF2;}
+  .tbtn.wrong{border-color:var(--red); background:#FDEDEB; animation:shake .35s ease;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
   .tbtn.dyn .hz{font-size:22px;}
   .tbtn.dyn .py{font-size:13px;color:var(--ink-soft);}
+  .mascot{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:36px;
+    filter:drop-shadow(0 3px 3px rgba(0,0,0,.2)); transition:transform .25s ease; z-index:5;}
+  .mascot.happy{animation:mascotHappy .5s ease;}
+  .mascot.sad{animation:mascotSad .4s ease;}
+  @keyframes mascotHappy{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-14px);}}
+  @keyframes mascotSad{0%,100%{transform:translateX(-50%) rotate(0);}25%{transform:translateX(-50%) rotate(-8deg);}75%{transform:translateX(-50%) rotate(8deg);}}
 
   .feedback{min-height:24px;text-align:center;font-weight:700;font-size:14px;margin-top:12px;}
   .feedback.ok{color:var(--c-dark);} .feedback.bad{color:var(--red-dark);}
@@ -178,6 +182,7 @@
         <div class="bubbles-deco"></div>
         <div class="listen-tag" id="listenTag">🔊 Đang nghe...<span class="zhSub" style="display:inline; margin-left:4px;">🔊 正在听...</span></div>
         <button class="replay-mini" onclick="replayAudio()">🔊</button>
+        <div class="mascot" id="mascot">🧒</div>
       </div>
       <div class="targetbar">
         <div class="targets-fixed" id="targetsFixed">
@@ -192,7 +197,6 @@
       </div>
       <div style="padding:0 16px 16px;">
         <div class="feedback" id="arcadeFeedback"></div>
-        <button id="continueBtn" class="hidden" style="display:block;margin:8px auto 0;border:none;border-radius:20px;background:linear-gradient(135deg,#4fc3f7,#1e90c9);color:#fff;font-weight:800;font-size:16px;padding:12px 32px;cursor:pointer;box-shadow:0 6px 14px rgba(30,144,201,0.4);">▶ Tiếp tục<span class="zhSub">▶ 继续</span></button>
       </div>
     </div>
   </section>
@@ -330,26 +334,14 @@ function tripletsFlat(){ const out=[]; TRIPLETS_JQX.forEach(t=>{ ["j","q","x"].f
    ============================================================ */
 let game = null;
 let bombTimeout = null;
+let advanceTimer = null;
 
-function goToNextWhenReady(){
-  // Cho be chu dong bam "Tiep tuc" sau khi da doc ky giai thich, khong ep thoi gian
-  const btn = document.getElementById('continueBtn');
-  if(!btn){ game.idx++; nextRound(); return; }
-  btn.classList.remove('hidden');
-  let advanced = false;
-  const doAdvance = ()=>{
-    if(advanced) return;
-    advanced = true;
-    clearTimeout(safetyTimer);
-    btn.classList.add('hidden');
-    btn.onclick = null;
-    game.idx++; nextRound();
-  };
-  btn.onclick = doAdvance;
-  const safetyTimer = setTimeout(doAdvance, 15000); // moc an toan, chi phong be quen bam
+function autoAdvance(delayMs){
+  clearTimeout(advanceTimer);
+  advanceTimer = setTimeout(()=>{ game.idx++; nextRound(); }, delayMs);
 }
 
-function clearTimer(){ if(bombTimeout){ clearTimeout(bombTimeout); bombTimeout=null; } }
+function clearTimer(){ if(bombTimeout){ clearTimeout(bombTimeout); bombTimeout=null; } clearTimeout(advanceTimer); }
 
 function buildDistractors(pool, target, n){
   let d = pool.filter(x=> x.syl!==target.syl && x.final===target.final);
@@ -383,13 +375,14 @@ function updateHearts(){ document.getElementById("arcadeHearts").textContent = "
 
 function nextRound(){
   clearTimer();
-  const cbtn=document.getElementById("continueBtn"); if(cbtn) cbtn.classList.add("hidden");
   if(game.idx >= game.queue.length || game.lives<=0){ finishGame(); return; }
   document.getElementById("arcadeIdx").textContent = game.idx+1;
   updateHearts();
   document.getElementById("arcadeFeedback").textContent = "";
   document.getElementById("arcadeFeedback").className = "feedback";
-  document.querySelectorAll(".tbtn").forEach(h=>h.classList.remove("miss","hit"));
+  document.querySelectorAll(".tbtn").forEach(h=>h.classList.remove("wrong","hit","correct"));
+  const mascot = document.getElementById("mascot");
+  mascot.textContent = "🧒"; mascot.className = "mascot";
 
   let item;
   if(game.mode==="main"){
@@ -436,6 +429,7 @@ function renderDynamicTargets(opts){
   opts.forEach(opt=>{
     const d = document.createElement("div");
     d.className = "tbtn dyn";
+    d.dataset.syl = opt.syl;
     d.innerHTML = `<div class="hz">${opt.hz}</div><div class="py">${opt.py}</div>`;
     d.onclick = ()=>answer(opt.syl, d);
     wrap.appendChild(d);
@@ -443,6 +437,20 @@ function renderDynamicTargets(opts){
 }
 
 function replayAudio(){ if(game && game.current) playFile(game.current.syl+".mp3", game.current.hz); }
+
+function findCorrectEl(item){
+  if(game.mode==="main") return document.querySelector(`.targets-fixed .tbtn.${item.side}`);
+  return document.querySelector(`.targets-dynamic .tbtn.dyn[data-syl="${item.syl}"]`);
+}
+
+function freezeFishAtCurrentSpot(fish, arena){
+  const r = fish.getBoundingClientRect();
+  const ar = arena.getBoundingClientRect();
+  const curLeft = r.left - ar.left;
+  fish.style.transition = "none";
+  fish.style.left = curLeft + "px";
+  void fish.offsetHeight;
+}
 
 function hookIdCls(side){ return side; }
 
@@ -479,23 +487,37 @@ function answer(value, elArg){
   if(el) shootFrom(el);
 
   const fb = document.getElementById("arcadeFeedback");
+  const mascot = document.getElementById("mascot");
+  const arena = document.getElementById("arena");
+  const fish = document.getElementById("fish");
   if(ok){
     game.answered = true;
-    clearTimer();
-    if(el) el.classList.add("hit");
-    const fish = document.getElementById("fish");
-    if(fish){ fish.classList.add("caught"); }
+    clearTimeout(bombTimeout);
+    if(el){ el.classList.add("hit","correct"); }
+    if(fish){ freezeFishAtCurrentSpot(fish, arena); fish.classList.add("caught"); }
+    mascot.textContent = "😄"; mascot.classList.add("happy");
     totalScore++; scoreDisplay();
     fb.innerHTML = pick(["Câu trúng rồi! 🎉<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">钓中了！🎉</span>","Cá cắn câu! ⭐<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">鱼上钩了！⭐</span>","Tai thính quá!<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">耳朵真灵！</span>"]);
     fb.className = "feedback ok";
     setTimeout(()=>playFile(item.syl+".mp3", item.hz), 300);
-    goToNextWhenReady();
+    autoAdvance(1700);
   } else {
     game.answered = true;
-    if(el) el.classList.add("miss");
-    fb.innerHTML = "Câu hụt rồi! Để xem cá bơi trúng đáp án nào nhé...<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">钓空了！来看看鱼游向哪个答案……</span>";
+    if(el) el.classList.add("wrong");
+    const correctEl = findCorrectEl(item);
+    if(correctEl) correctEl.classList.add("correct");
+    mascot.textContent = "😅"; mascot.classList.add("sad");
+    fb.innerHTML = "Câu hụt rồi! Đáp án đúng đang tô xanh đó nè...<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">钓空了！正确答案是绿色那个……</span>";
     fb.className = "feedback bad";
     setTimeout(()=>playFile(item.syl+".mp3", item.hz), 300);
+    if(fish){
+      freezeFishAtCurrentSpot(fish, arena);
+      fish.style.transition = "left 450ms ease-in";
+      requestAnimationFrame(()=>{ fish.style.left = "calc(100% - 10px)"; });
+      bombTimeout = setTimeout(fishEscapes, 450);
+    } else {
+      autoAdvance(2200);
+    }
   }
 }
 
@@ -506,9 +528,14 @@ function fishEscapes(){
   const fish = document.getElementById("fish");
   if(fish) fish.remove();
   const fb = document.getElementById("arcadeFeedback");
+  const mascot = document.getElementById("mascot");
+  const correctEl = findCorrectEl(item);
+  if(correctEl) correctEl.classList.add("correct");
+  mascot.textContent = "😅"; mascot.classList.add("sad");
   fb.innerHTML = "Cá bơi mất rồi! Âm \""+item.py+"\" ("+item.hz+" — "+item.mn+")<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">鱼游走了</span>";
   fb.className = "feedback bad";
-  goToNextWhenReady();
+  setTimeout(()=>playFile(item.syl+".mp3", item.hz), 200);
+  autoAdvance(2200);
 }
 
 function finishGame(){

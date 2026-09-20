@@ -90,6 +90,15 @@
   @keyframes popAway{0%{transform:scale(1);opacity:1;}100%{transform:scale(1.7);opacity:0;}}
   .balloon.dud{opacity:.35;filter:grayscale(1);transform:scale(.9);}
   .balloon.rise{bottom:340px;}
+  .balloon.correct .body{outline:4px solid #2FAE72; box-shadow:0 0 0 5px rgba(47,174,114,.3), inset -8px -10px 0 rgba(0,0,0,.06);}
+  .balloon.wrong .body{outline:4px solid var(--red); animation:shake .35s ease;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+  .mascot{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);font-size:36px;
+    filter:drop-shadow(0 3px 3px rgba(0,0,0,.2)); transition:transform .25s ease; z-index:5;}
+  .mascot.happy{animation:mascotHappy .5s ease;}
+  .mascot.sad{animation:mascotSad .4s ease;}
+  @keyframes mascotHappy{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-14px);}}
+  @keyframes mascotSad{0%,100%{transform:translateX(-50%) rotate(0);}25%{transform:translateX(-50%) rotate(-8deg);}75%{transform:translateX(-50%) rotate(8deg);}}
 
   .feedback{min-height:24px;text-align:center;font-weight:700;font-size:14.5px;margin-top:12px;}
   .feedback.ok{color:var(--p4-dark);} .feedback.bad{color:var(--red-dark);}
@@ -151,10 +160,10 @@
       <div class="arena" id="arena">
         <div class="listen-tag" id="listenTag">🔊 Đang nghe...<span class="zhSub" style="display:inline; margin-left:4px;">🔊 正在听...</span></div>
         <button class="replay-mini" onclick="replayAudio()">🔊</button>
+        <div class="mascot" id="mascot">🧑‍🎓</div>
         <div class="balloon-row" id="balloonRow"></div>
       </div>
       <div class="feedback" id="arcadeFeedback"></div>
-        <button id="continueBtn" class="hidden" style="display:block;margin:8px auto 0;border:none;border-radius:20px;background:linear-gradient(135deg,#4fc3f7,#1e90c9);color:#fff;font-weight:800;font-size:16px;padding:12px 32px;cursor:pointer;box-shadow:0 6px 14px rgba(30,144,201,0.4);">▶ Tiếp tục<span class="zhSub">▶ 继续</span></button>
     </div>
   </section>
 
@@ -314,26 +323,14 @@ function buildDistractors(pool, target, n){
 
 let game = null;
 let riseTimeout = null;
+let advanceTimer = null;
 
-function goToNextWhenReady(){
-  // Cho be chu dong bam "Tiep tuc" sau khi da doc ky giai thich, khong ep thoi gian
-  const btn = document.getElementById('continueBtn');
-  if(!btn){ game.idx++; nextRound(); return; }
-  btn.classList.remove('hidden');
-  let advanced = false;
-  const doAdvance = ()=>{
-    if(advanced) return;
-    advanced = true;
-    clearTimeout(safetyTimer);
-    btn.classList.add('hidden');
-    btn.onclick = null;
-    game.idx++; nextRound();
-  };
-  btn.onclick = doAdvance;
-  const safetyTimer = setTimeout(doAdvance, 15000); // moc an toan, chi phong be quen bam
+function autoAdvance(delayMs){
+  clearTimeout(advanceTimer);
+  advanceTimer = setTimeout(()=>{ game.idx++; nextRound(); }, delayMs);
 }
 
-function clearTimer(){ if(riseTimeout){ clearTimeout(riseTimeout); riseTimeout=null; } }
+function clearTimer(){ if(riseTimeout){ clearTimeout(riseTimeout); riseTimeout=null; } clearTimeout(advanceTimer); }
 
 function startGame(){
   totalScore = 0; scoreDisplay();
@@ -348,8 +345,9 @@ function updateHearts(){ document.getElementById("arcadeHearts").textContent = "
 
 function nextRound(){
   clearTimer();
-  const cbtn=document.getElementById("continueBtn"); if(cbtn) cbtn.classList.add("hidden");
   if(game.idx >= game.queue.length || game.lives<=0){ finishGame(); return; }
+  const mascot = document.getElementById("mascot");
+  mascot.textContent = "🧑‍🎓"; mascot.className = "mascot";
   document.getElementById("arcadeIdx").textContent = game.idx+1;
   updateHearts();
   document.getElementById("arcadeFeedback").textContent = "";
@@ -369,6 +367,7 @@ function nextRound(){
     b.innerHTML = `<div class="body" style="--bc:${BALLOON_COLORS[i%4]}"><div class="hz">${opt.hz}</div><div class="py">${opt.py}</div></div><div class="knot" style="border-top-color:${BALLOON_COLORS[i%4]}"></div><div class="string"></div>`;
     b.style.transition = "none";
     b.style.bottom = "10px";
+    b.dataset.syl = opt.syl;
     b.onclick = ()=>answer(opt.syl, b);
     row.appendChild(b);
   });
@@ -395,29 +394,55 @@ function nextRound(){
 
 function replayAudio(){ if(game && game.current) playFile(game.current.syl+".mp3", game.current.hz); }
 
+function freezeAllBalloons(){
+  const arena = document.getElementById("arena");
+  const arenaRect = arena.getBoundingClientRect();
+  document.querySelectorAll(".balloon").forEach(b=>{
+    const r = b.getBoundingClientRect();
+    const curBottom = arenaRect.bottom - r.bottom;
+    b.style.transition = "none";
+    b.style.bottom = curBottom + "px";
+  });
+  void arena.offsetHeight;
+}
+
 function answer(syl, el){
   if(!game || game.answered) return;
   const item = game.current;
   const ok = item.syl === syl;
 
   const fb = document.getElementById("arcadeFeedback");
+  const mascot = document.getElementById("mascot");
   if(ok){
     game.answered = true;
-    clearTimer();
-    el.classList.add("pop");
+    clearTimeout(riseTimeout);
+    freezeAllBalloons();
+    el.classList.add("pop","correct");
     document.querySelectorAll(".balloon").forEach(b=>{ if(b!==el) b.classList.add("dud"); });
+    mascot.textContent = "😄"; mascot.classList.add("happy");
     totalScore++; scoreDisplay();
     fb.innerHTML = pick(["Đúng rồi! Bùm! 🎉<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">对了！砰！🎉</span>","Chuẩn không cần chỉnh! ⭐<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">完全正确！⭐</span>","Giỏi quá, tốt nghiệp sớm! 🎓<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">太棒了，提前毕业！🎓</span>"]);
     fb.className = "feedback ok";
     setTimeout(()=>playFile(item.syl+".mp3", item.hz), 300);
-    goToNextWhenReady();
+    autoAdvance(1700);
   } else {
     game.answered = true;
-    el.classList.add("dud");
-    fb.innerHTML = "Chưa đúng — để xem bóng nào đúng nhé...<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">还不对——来看看哪个气球才对……</span>";
+    el.classList.add("wrong");
+    mascot.textContent = "😅"; mascot.classList.add("sad");
+    fb.innerHTML = "Chưa đúng — đáp án đúng đang tô xanh đó nè...<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">还不对——正确答案是绿色那个……</span>";
     fb.className = "feedback bad";
     setTimeout(()=>playFile(item.syl+".mp3", item.hz), 300);
-    // KHÔNG dừng — để chùm bóng tiếp tục bay lên thật (balloonsFloatAway lo phần còn lại)
+    // tô xanh đúng bóng bay chứa đáp án đúng
+    document.querySelectorAll(".balloon").forEach(b=>{
+      if(b.dataset.syl===item.syl) b.classList.add("correct");
+    });
+    // bay nhanh hơn hẳn để mau qua câu mới
+    freezeAllBalloons();
+    document.querySelectorAll(".balloon").forEach(b=>{
+      b.style.transition = "bottom 500ms ease-in";
+      requestAnimationFrame(()=>{ b.style.bottom = "390px"; });
+    });
+    riseTimeout = setTimeout(balloonsFloatAway, 500);
   }
 }
 
@@ -425,11 +450,17 @@ function balloonsFloatAway(){
   game.answered = true;
   game.lives--;
   const item = game.current;
-  document.getElementById("balloonRow").innerHTML = "";
+  const mascot = document.getElementById("mascot");
+  mascot.textContent = "😅"; mascot.classList.add("sad");
+  document.querySelectorAll(".balloon").forEach(b=>{
+    if(b.dataset.syl===item.syl) b.classList.add("correct"); else b.classList.add("dud");
+  });
   const fb = document.getElementById("arcadeFeedback");
   fb.innerHTML = "Bóng bay mất rồi! Âm \""+item.py+"\" ("+item.hz+" — "+item.mn+")<span class=\"zhSub\" style=\"display:inline; margin-left:4px;\">气球飞走了</span>";
   fb.className = "feedback bad";
-  goToNextWhenReady();
+  setTimeout(()=>playFile(item.syl+".mp3", item.hz), 200);
+  setTimeout(()=>{ document.getElementById("balloonRow").innerHTML = ""; }, 900);
+  autoAdvance(2200);
 }
 
 function finishGame(){
