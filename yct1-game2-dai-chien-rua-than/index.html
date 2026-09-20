@@ -196,6 +196,11 @@
       <div class="ruleRow"><span class="ic">⚔️</span><span>Trả lời đúng → <b>gây sát thương</b> lên đối phương. Trả lời sai → không đánh trúng.<span class="zhSub">答对了→对对方造成伤害。答错→不会命中。</span></span></div>
       <div class="ruleRow"><span class="ic">🔥</span><span>Đúng liên tiếp → chuỗi lửa nhân sát thương <b>x2, x3</b> (tối đa x3)!<span class="zhSub">连续答对→连击火焰加倍伤害x2、x3（最多x3）！</span></span></div>
       <div class="ruleRow"><span class="ic">👀</span><span>Lượt của Rùa Thần, bé cũng xem được Rùa chọn gì — và đáp án đúng luôn được tiết lộ ở cả 2 lượt.<span class="zhSub">轮到神龟时，你也能看到神龟选了什么——两边的正确答案都会公布。</span></span></div>
+      <div class="ruleRow"><span class="ic">⚡</span><span>Trả lời càng nhanh, càng nhiều điểm! Điểm được lưu vào bảng xếp hạng.<span class="zhSub">回答越快，得分越多！分数会存入排行榜。</span></span></div>
+      <div id="leaderboardBox" style="margin-top:8px; background:#fff; border-radius:14px; padding:10px 14px; max-height:130px; overflow-y:auto; width:100%; box-sizing:border-box;">
+        <div style="font-weight:800; font-size:13px; margin-bottom:4px;">🏅 Bảng xếp hạng<span class="zhSub" style="display:inline; margin-left:4px;">🏅 排行榜</span></div>
+        <div id="leaderboardList" style="font-size:13px;"></div>
+      </div>
       <button id="startBtn" class="bigBtn">Vào trận! ⚔️<span class="zhSub">开始比赛！⚔️</span></button>
     </div>
   </div>
@@ -206,6 +211,7 @@
       <div id="endEmoji" style="font-size:48px;">🏆</div>
       <h1 id="endTitle">Kết thúc trận đấu!<span class="zhSub" style="font-size:0.6em;">比赛结束！</span></h1>
       <p id="endDesc"></p>
+      <div id="endScoreBox" style="font-weight:800; font-size:16px; margin:4px 0;"></div>
       <div id="summaryList"></div>
       <button id="replayBtn" class="bigBtn">Đấu lại 🔁<span class="zhSub">再战一次 🔁</span></button>
     </div>
@@ -282,6 +288,7 @@ const TOTAL_Q = QUESTIONS.length; // 30
 const START_HP = 300;
 const BASE_DMG = 10;
 const BOT_MISS_MIN = 3, BOT_MISS_MAX = 5;
+const LB_KEY = 'yct1boss_leaderboard_v1';
 
 /* ============ STATE ============ */
 let order = [];         // shuffled question indices with assigned owner
@@ -295,6 +302,8 @@ let botMissSet = new Set();
 let muted = false;
 let advancing = false;
 let currentQ = null;
+let score = 0;
+let qStartTime = 0;
 
 /* ============ DOM ============ */
 const pHpBar = document.getElementById('pHpBar');
@@ -408,6 +417,7 @@ function setupGame(){
   pCorrectCount=0; pTotal=0; bCorrectCount=0; bTotal=0;
   pLongestCombo=0; bLongestCombo=0;
   missedForReview = [];
+  score = 0;
 
   const botIndices = order.filter(o=>o.owner==='bot').map((o,i)=>i);
   const missCount = BOT_MISS_MIN + Math.floor(Math.random()*(BOT_MISS_MAX-BOT_MISS_MIN+1));
@@ -417,11 +427,51 @@ function setupGame(){
   renderTurnBanner();
 }
 
+/* ============ SCORE & LEADERBOARD ============ */
+function calcSpeedScore(elapsedSec){
+  if(elapsedSec<=3) return 150;
+  if(elapsedSec<=6) return 120;
+  if(elapsedSec<=10) return 90;
+  if(elapsedSec<=15) return 60;
+  return 30;
+}
+function loadLeaderboard(){
+  try{
+    const raw = localStorage.getItem(LB_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){ return []; }
+}
+function saveScoreToLeaderboard(finalScore){
+  let arr = loadLeaderboard();
+  const entry = {score: finalScore, date: new Date().toLocaleDateString('vi-VN')};
+  arr.push(entry);
+  arr.sort((a,b)=>b.score-a.score);
+  const rank = arr.indexOf(entry) + 1;
+  arr = arr.slice(0,10);
+  try{ localStorage.setItem(LB_KEY, JSON.stringify(arr)); }catch(e){}
+  return rank;
+}
+function renderLeaderboard(){
+  const box = document.getElementById('leaderboardList');
+  if(!box) return;
+  const arr = loadLeaderboard();
+  if(arr.length===0){
+    box.innerHTML = '<div style="opacity:0.6;">Chưa có điểm nào — đấu trận đầu tiên đi!<span class="zhSub" style="display:inline; margin-left:4px;">还没有记录——开始第一场吧！</span></div>';
+    return;
+  }
+  box.innerHTML = arr.map((x,i)=>{
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+    return `<div style="display:flex; justify-content:space-between; padding:2px 0;"><span>${medal} ${x.score} điểm</span><span style="opacity:0.6;">${x.date}</span></div>`;
+  }).join('');
+}
+
 function updateBars(){
   pHpBar.style.width = Math.max(0,(pHP/START_HP*100))+'%';
   bHpBar.style.width = Math.max(0,(bHP/START_HP*100))+'%';
   pFlames.textContent = flameStr(pStreak);
   bFlames.textContent = flameStr(bStreak);
+  document.getElementById('pAcc').textContent = '· ⭐'+score;
 }
 function flameStr(streak){
   if(streak>=3) return '🔥🔥🔥 x3';
@@ -501,6 +551,8 @@ function renderQuestion(q, owner){
     }, duration/3);
     setTimeout(()=>{ clearInterval(dotTimer); runBotTurn(q); }, duration);
   }
+
+  if(owner==='player') qStartTime = performance.now();
 }
 
 function playCurrentPrompt(q){
@@ -529,6 +581,8 @@ function handlePlayerAnswer(choiceIdx, q){
     const mult = pStreak>=3?3:(pStreak===2?2:1);
     const dmg = BASE_DMG*mult;
     bHP = Math.max(0, bHP-dmg);
+    const elapsedSec = (performance.now()-qStartTime)/1000;
+    score += calcSpeedScore(elapsedSec) * mult;
     sfxHit();
     showDamage(dmg, 'bot');
   } else {
@@ -627,6 +681,13 @@ function finishGame(){
   endDesc.textContent = `Bé đúng ${pCorrectCount}/${pTotal} câu (chuỗi dài nhất x${Math.min(3,pLongestCombo)}). `+
     `Rùa Thần đúng ${bCorrectCount}/${bTotal} câu.`;
 
+  const rank = saveScoreToLeaderboard(score);
+  const scoreBox = document.getElementById('endScoreBox');
+  scoreBox.innerHTML = rank<=10
+    ? `⭐ ${score} điểm — Hạng #${rank} bảng xếp hạng!<span class="zhSub" style="display:inline; margin-left:4px;">⭐ ${score}分 — 排行榜第${rank}名！</span>`
+    : `⭐ ${score} điểm<span class="zhSub" style="display:inline; margin-left:4px;">⭐ ${score}分</span>`;
+  renderLeaderboard();
+
   const list = document.getElementById('summaryList');
   list.innerHTML = '';
   if(missedForReview.length===0){
@@ -654,6 +715,7 @@ document.getElementById('startBtn').onclick = ()=>{
   nextQuestion();
 };
 initVoices();
+renderLeaderboard();
 document.getElementById('replayBtn').onclick = ()=>{
   endOverlay.classList.add('hidden');
   setupGame();

@@ -347,6 +347,10 @@
         </div>
       </div>
       <p style="font-size:13px; color:#8a7a99;">Bé có thể bấm 🔊 để nghe lại, 💡 để xin gợi ý.<span class="zhSub">你可以按🔊再听一次，按💡获取提示。</span></p>
+      <div id="leaderboardBox" style="margin-top:8px; background:#fff; border-radius:14px; padding:10px 14px; max-height:130px; overflow-y:auto; width:100%; box-sizing:border-box;">
+        <div style="font-weight:800; font-size:13px; margin-bottom:4px;">🏅 Bảng xếp hạng<span class="zhSub" style="display:inline; margin-left:4px;">🏅 排行榜</span></div>
+        <div id="leaderboardList" style="font-size:13px;"></div>
+      </div>
       <button id="startBtn" class="bigBtn">Bắt đầu chơi 🚀<span class="zhSub">开始游戏 🚀</span></button>
     </div>
   </div>
@@ -374,6 +378,7 @@
       <div style="font-size:52px;">🏆🎂✨</div>
       <h1>Xong rồi, giỏi quá!<span class="zhSub" style="font-size:0.55em;">完成啦，真棒！</span></h1>
       <p>Bé đã học được <b id="endCount">0</b>/30 từ trong buổi ôn tập này.</p>
+      <div id="endScoreBox" style="font-weight:800; font-size:16px; margin:4px 0;"></div>
       <div id="summaryList"></div>
       <button id="replayBtn" class="bigBtn">Chơi lại 🔁<span class="zhSub">再玩一次 🔁</span></button>
     </div>
@@ -435,7 +440,9 @@ let learnedCount = 0;
 let firstTryCorrect = new Set();
 let neededRetry = new Set();
 let correctSinceSpeak = 0;
+let wordStartTime = 0;
 let muted = false;
+const LB_KEY = 'yct1sinhnhat_leaderboard_v1';
 let hintTimer = null;
 let hintUsed = false;
 let currentAudioEl = null;
@@ -655,6 +662,7 @@ function nextWord(){
     const remainingHold = Math.max(0, 900-elapsed);
     setTimeout(()=>{
       wordCard.classList.add('show');
+      wordStartTime = performance.now();
       beginFall();
     }, remainingHold);
   });
@@ -727,7 +735,9 @@ function handleCorrect(){
   const rect = wordCard.getBoundingClientRect();
   burstConfetti(rect.left+rect.width/2, rect.top+rect.height/2, 16);
 
-  score += hintUsed ? 5 : 10;
+  const elapsedSec = (performance.now()-wordStartTime)/1000;
+  const speedPts = calcSpeedScore(elapsedSec);
+  score += hintUsed ? Math.round(speedPts/2) : speedPts;
   scoreVal.textContent = score;
 
   if(!firstTryCorrect.has(currentWord.pinyin) && !neededRetry.has(currentWord.pinyin)){
@@ -829,12 +839,57 @@ function stopRecordingIfActive(){
 }
 
 /* ============ END GAME ============ */
+function calcSpeedScore(elapsedSec){
+  if(elapsedSec<=3) return 150;
+  if(elapsedSec<=6) return 120;
+  if(elapsedSec<=10) return 90;
+  if(elapsedSec<=15) return 60;
+  return 30;
+}
+function loadLeaderboard(){
+  try{
+    const raw = localStorage.getItem(LB_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){ return []; }
+}
+function saveScoreToLeaderboard(finalScore){
+  let arr = loadLeaderboard();
+  const entry = {score: finalScore, date: new Date().toLocaleDateString('vi-VN')};
+  arr.push(entry);
+  arr.sort((a,b)=>b.score-a.score);
+  const rank = arr.indexOf(entry) + 1;
+  arr = arr.slice(0,10);
+  try{ localStorage.setItem(LB_KEY, JSON.stringify(arr)); }catch(e){}
+  return rank;
+}
+function renderLeaderboard(){
+  const box = document.getElementById('leaderboardList');
+  if(!box) return;
+  const arr = loadLeaderboard();
+  if(arr.length===0){
+    box.innerHTML = '<div style="opacity:0.6;">Chưa có điểm nào — chơi lần đầu đi nhé!<span class="zhSub" style="display:inline; margin-left:4px;">还没有记录——开始第一次挑战吧！</span></div>';
+    return;
+  }
+  box.innerHTML = arr.map((x,i)=>{
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+    return `<div style="display:flex; justify-content:space-between; padding:2px 0;"><span>${medal} ${x.score} điểm</span><span style="opacity:0.6;">${x.date}</span></div>`;
+  }).join('');
+}
+
 function finishGame(){
   pinyinInput.blur();
   sfxWin();
   const rect = playArea.getBoundingClientRect();
   burstConfetti(rect.left+rect.width/2, rect.top+40, 40);
   document.getElementById('endCount').textContent = learnedCount;
+
+  const rank = saveScoreToLeaderboard(score);
+  const scoreBox = document.getElementById('endScoreBox');
+  scoreBox.innerHTML = rank<=10
+    ? `⭐ ${score} điểm — Hạng #${rank} bảng xếp hạng!<span class="zhSub" style="display:inline; margin-left:4px;">⭐ ${score}分 — 排行榜第${rank}名！</span>`
+    : `⭐ ${score} điểm<span class="zhSub" style="display:inline; margin-left:4px;">⭐ ${score}分</span>`;
+  renderLeaderboard();
 
   const list = document.getElementById('summaryList');
   list.innerHTML='';
@@ -865,6 +920,7 @@ document.getElementById('muteBtn').onclick = function(){
 /* ============ INIT ============ */
 initBalloons();
 initVoices();
+renderLeaderboard();
 </script>
 
 <script>

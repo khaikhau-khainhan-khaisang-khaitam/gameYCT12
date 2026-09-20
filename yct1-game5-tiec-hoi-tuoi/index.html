@@ -107,6 +107,10 @@
       <h1>Bắn Hạ Chữ — Tiệc Hỏi Tuổi</h1>
       <p>Ôn số đếm & hỏi tuổi — <b>Bài 5 YCT1</b>.<span class="zhSub">复习数字和询问年龄</span></p>
       <p style="font-size:13px; color:#8a7a99;">Chữ Hán rơi xuống — gõ đúng <b>pinyin không dấu</b> (âm <b>ü</b> gõ là <b>v</b>). Cứ gõ đúng 1 âm tiết là súng 🔫 bắn 1 viên đạn trúng chữ đó, bắn đủ số âm tiết thì hạ được chữ! Gõ sai <b>3 lần</b> là thua!<span class="zhSub">汉字往下掉——正确输入不带声调的拼音（"ü"打成"v"）。每打对1个音节，枪🔫就会发射1颗子弹击中该字，打完所有音节即可击落！打错3次就算输！</span></p>
+      <div id="leaderboardBox" style="margin-top:8px; background:#fff; border-radius:14px; padding:10px 14px; max-height:130px; overflow-y:auto; width:100%; box-sizing:border-box;">
+        <div style="font-weight:800; font-size:13px; margin-bottom:4px;">🏅 Bảng xếp hạng<span class="zhSub" style="display:inline; margin-left:4px;">🏅 排行榜</span></div>
+        <div id="leaderboardList" style="font-size:13px;"></div>
+      </div>
       <button id="startBtn" class="bigBtn">Bắt đầu 🚀<span class="zhSub">开始 🚀</span></button>
     </div>
   </div>
@@ -116,6 +120,7 @@
       <div id="endEmoji" style="font-size:52px;">🏆</div>
       <h1 id="endTitle">Xong rồi!<span class="zhSub">完成了！</span></h1>
       <p id="endDesc"></p>
+      <div id="endScoreBox" style="font-weight:800; font-size:16px; margin:4px 0;"></div>
       <div id="endList"></div>
       <button id="replayBtn" class="bigBtn">Chơi lại 🔁<span class="zhSub">再玩一次 🔁</span></button>
     </div>
@@ -147,6 +152,39 @@ WORDS.forEach(w=>{ let c=0; w.cum=[]; w.syl.forEach(s=>{ c+=s.length; w.cum.push
 
 /* ============ STATE ============ */
 let queue=[], active=[], lives=MAX_LIVES, score=0, muted=false, ended=false, spawnTimer=null;
+const LB_KEY = 'yct1_tiechoituoi_leaderboard_v1';
+function calcSpeedScore(elapsedSec){
+  if(elapsedSec<=3) return 150;
+  if(elapsedSec<=6) return 120;
+  if(elapsedSec<=10) return 90;
+  if(elapsedSec<=15) return 60;
+  return 30;
+}
+function loadLeaderboard(){
+  try{ const raw = localStorage.getItem(LB_KEY); const arr = raw ? JSON.parse(raw) : []; return Array.isArray(arr) ? arr : []; }catch(e){ return []; }
+}
+function saveScoreToLeaderboard(finalScore){
+  let arr = loadLeaderboard();
+  const entry = {score: finalScore, date: new Date().toLocaleDateString('vi-VN')};
+  arr.push(entry); arr.sort((a,b)=>b.score-a.score);
+  const rank = arr.indexOf(entry) + 1;
+  arr = arr.slice(0,10);
+  try{ localStorage.setItem(LB_KEY, JSON.stringify(arr)); }catch(e){}
+  return rank;
+}
+function renderLeaderboard(){
+  const box = document.getElementById('leaderboardList');
+  if(!box) return;
+  const arr = loadLeaderboard();
+  if(arr.length===0){
+    box.innerHTML = '<div style="opacity:0.6;">Chưa có điểm nào — chơi lần đầu đi nhé!<span class="zhSub" style="display:inline; margin-left:4px;">还没有记录——开始第一次挑战吧！</span></div>';
+    return;
+  }
+  box.innerHTML = arr.map((x,i)=>{
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+    return `<div style="display:flex; justify-content:space-between; padding:2px 0;"><span>${medal} ${x.score} điểm</span><span style="opacity:0.6;">${x.date}</span></div>`;
+  }).join('');
+}
 let destroyedSet = new Set();
 let lockedObj = null;
 let actx=null, cachedZhVoice=null;
@@ -327,7 +365,8 @@ function fireBullet(target){
 }
 
 function correctHit(obj){
-  score+=10; updateScore();
+  const elapsedSec = (performance.now()-obj.start)/1000;
+  score += calcSpeedScore(elapsedSec); updateScore();
   sfxCorrect();
   const rect=obj.el.getBoundingClientRect();
   burstConfetti(rect.left+rect.width/2, rect.top+rect.height/2, 14);
@@ -377,6 +416,14 @@ function endGame(won){
     div.textContent=(ok?'✅ ':'⬜ ')+w.hanzi+' — '+w.vi;
     list.appendChild(div);
   });
+  const rank = saveScoreToLeaderboard(score);
+  const scoreBox = document.getElementById('endScoreBox');
+  if(scoreBox){
+    scoreBox.innerHTML = rank<=10
+      ? `⭐ ${score} điểm — Hạng #${rank} bảng xếp hạng!<span class="zhSub" style="display:inline; margin-left:4px;">⭐ ${score}分 — 排行榜第${rank}名！</span>`
+      : `⭐ ${score} điểm<span class="zhSub" style="display:inline; margin-left:4px;">⭐ ${score}分</span>`;
+  }
+  renderLeaderboard();
   setTimeout(()=>{ endOverlay.classList.remove('hidden'); }, 500);
 }
 
@@ -435,6 +482,7 @@ document.getElementById('muteBtn').onclick=function(){
 
 /* ============ INIT ============ */
 initVoices();
+renderLeaderboard();
 </script>
 
 <script>
