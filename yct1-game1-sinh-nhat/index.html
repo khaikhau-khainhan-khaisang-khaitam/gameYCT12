@@ -347,9 +347,10 @@
         </div>
       </div>
       <p style="font-size:13px; color:#8a7a99;">Bé có thể bấm 🔊 để nghe lại, 💡 để xin gợi ý.<span class="zhSub">你可以按🔊再听一次，按💡获取提示。</span></p>
-      <div id="leaderboardBox" style="margin-top:8px; background:#fff; border-radius:14px; padding:10px 14px; max-height:130px; overflow-y:auto; width:100%; box-sizing:border-box;">
+      <p style="font-size:13px; font-weight:700;">⚡ Gõ càng nhanh, càng nhiều điểm!<span class="zhSub" style="display:inline; margin-left:4px;">⚡ 打得越快，分数越高！</span></p>
+      <div class="leaderboardBox" style="margin-top:8px; background:#fff; border-radius:14px; padding:10px 14px; max-height:130px; overflow-y:auto; width:100%; box-sizing:border-box;">
         <div style="font-weight:800; font-size:13px; margin-bottom:4px;">🏅 Bảng xếp hạng<span class="zhSub" style="display:inline; margin-left:4px;">🏅 排行榜</span></div>
-        <div id="leaderboardList" style="font-size:13px;"></div>
+        <div class="leaderboardList" style="font-size:13px;"></div>
       </div>
       <button id="startBtn" class="bigBtn">Bắt đầu chơi 🚀<span class="zhSub">开始游戏 🚀</span></button>
     </div>
@@ -379,6 +380,10 @@
       <h1>Xong rồi, giỏi quá!<span class="zhSub" style="font-size:0.55em;">完成啦，真棒！</span></h1>
       <p>Bé đã học được <b id="endCount">0</b>/30 từ trong buổi ôn tập này.</p>
       <div id="endScoreBox" style="font-weight:800; font-size:16px; margin:4px 0;"></div>
+      <div class="leaderboardBox" style="margin-top:8px; background:#fff; border-radius:14px; padding:10px 14px; max-height:130px; overflow-y:auto; width:100%; box-sizing:border-box;">
+        <div style="font-weight:800; font-size:13px; margin-bottom:4px;">🏅 Bảng xếp hạng<span class="zhSub" style="display:inline; margin-left:4px;">🏅 排行榜</span></div>
+        <div class="leaderboardList" style="font-size:13px;"></div>
+      </div>
       <div id="summaryList"></div>
       <button id="replayBtn" class="bigBtn">Chơi lại 🔁<span class="zhSub">再玩一次 🔁</span></button>
     </div>
@@ -864,17 +869,16 @@ function saveScoreToLeaderboard(finalScore){
   return rank;
 }
 function renderLeaderboard(){
-  const box = document.getElementById('leaderboardList');
-  if(!box) return;
+  const boxes = document.querySelectorAll('.leaderboardList');
+  if(!boxes.length) return;
   const arr = loadLeaderboard();
-  if(arr.length===0){
-    box.innerHTML = '<div style="opacity:0.6;">Chưa có điểm nào — chơi lần đầu đi nhé!<span class="zhSub" style="display:inline; margin-left:4px;">还没有记录——开始第一次挑战吧！</span></div>';
-    return;
-  }
-  box.innerHTML = arr.map((x,i)=>{
-    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
-    return `<div style="display:flex; justify-content:space-between; padding:2px 0;"><span>${medal} ${x.score} điểm</span><span style="opacity:0.6;">${x.date}</span></div>`;
-  }).join('');
+  const html = arr.length===0
+    ? '<div style="opacity:0.6;">Chưa có điểm nào — chơi lần đầu đi nhé!<span class="zhSub" style="display:inline; margin-left:4px;">还没有记录——开始第一次挑战吧！</span></div>'
+    : arr.map((x,i)=>{
+        const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+        return `<div style="display:flex; justify-content:space-between; padding:2px 0;"><span>${medal} ${x.score} điểm</span><span style="opacity:0.6;">${x.date}</span></div>`;
+      }).join('');
+  boxes.forEach(box=>box.innerHTML = html);
 }
 
 function finishGame(){

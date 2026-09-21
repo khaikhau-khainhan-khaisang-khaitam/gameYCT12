@@ -197,9 +197,9 @@
       <div class="ruleRow"><span class="ic">🔥</span><span>Đúng liên tiếp → chuỗi lửa nhân sát thương <b>x2, x3</b> (tối đa x3)!<span class="zhSub">连续答对→连击火焰加倍伤害x2、x3（最多x3）！</span></span></div>
       <div class="ruleRow"><span class="ic">👀</span><span>Lượt của Rùa Thần, bé cũng xem được Rùa chọn gì — và đáp án đúng luôn được tiết lộ ở cả 2 lượt.<span class="zhSub">轮到神龟时，你也能看到神龟选了什么——两边的正确答案都会公布。</span></span></div>
       <div class="ruleRow"><span class="ic">⚡</span><span>Trả lời càng nhanh, càng nhiều điểm! Điểm được lưu vào bảng xếp hạng.<span class="zhSub">回答越快，得分越多！分数会存入排行榜。</span></span></div>
-      <div id="leaderboardBox" style="margin-top:8px; background:#fff; border-radius:14px; padding:10px 14px; max-height:130px; overflow-y:auto; width:100%; box-sizing:border-box;">
+      <div class="leaderboardBox" style="margin-top:8px; background:#fff; border-radius:14px; padding:10px 14px; max-height:130px; overflow-y:auto; width:100%; box-sizing:border-box;">
         <div style="font-weight:800; font-size:13px; margin-bottom:4px;">🏅 Bảng xếp hạng<span class="zhSub" style="display:inline; margin-left:4px;">🏅 排行榜</span></div>
-        <div id="leaderboardList" style="font-size:13px;"></div>
+        <div class="leaderboardList" style="font-size:13px;"></div>
       </div>
       <button id="startBtn" class="bigBtn">Vào trận! ⚔️<span class="zhSub">开始比赛！⚔️</span></button>
     </div>
@@ -212,6 +212,10 @@
       <h1 id="endTitle">Kết thúc trận đấu!<span class="zhSub" style="font-size:0.6em;">比赛结束！</span></h1>
       <p id="endDesc"></p>
       <div id="endScoreBox" style="font-weight:800; font-size:16px; margin:4px 0;"></div>
+      <div class="leaderboardBox" style="margin-top:8px; background:#fff; border-radius:14px; padding:10px 14px; max-height:130px; overflow-y:auto; width:100%; box-sizing:border-box;">
+        <div style="font-weight:800; font-size:13px; margin-bottom:4px;">🏅 Bảng xếp hạng<span class="zhSub" style="display:inline; margin-left:4px;">🏅 排行榜</span></div>
+        <div class="leaderboardList" style="font-size:13px;"></div>
+      </div>
       <div id="summaryList"></div>
       <button id="replayBtn" class="bigBtn">Đấu lại 🔁<span class="zhSub">再战一次 🔁</span></button>
     </div>
@@ -484,17 +488,16 @@ function saveScoreToLeaderboard(finalScore){
   return rank;
 }
 function renderLeaderboard(){
-  const box = document.getElementById('leaderboardList');
-  if(!box) return;
+  const boxes = document.querySelectorAll('.leaderboardList');
+  if(!boxes.length) return;
   const arr = loadLeaderboard();
-  if(arr.length===0){
-    box.innerHTML = '<div style="opacity:0.6;">Chưa có điểm nào — đấu trận đầu tiên đi!<span class="zhSub" style="display:inline; margin-left:4px;">还没有记录——开始第一场吧！</span></div>';
-    return;
-  }
-  box.innerHTML = arr.map((x,i)=>{
-    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
-    return `<div style="display:flex; justify-content:space-between; padding:2px 0;"><span>${medal} ${x.score} điểm</span><span style="opacity:0.6;">${x.date}</span></div>`;
-  }).join('');
+  const html = arr.length===0
+    ? '<div style="opacity:0.6;">Chưa có điểm nào — đấu trận đầu tiên đi!<span class="zhSub" style="display:inline; margin-left:4px;">还没有记录——开始第一场吧！</span></div>'
+    : arr.map((x,i)=>{
+        const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+        return `<div style="display:flex; justify-content:space-between; padding:2px 0;"><span>${medal} ${x.score} điểm</span><span style="opacity:0.6;">${x.date}</span></div>`;
+      }).join('');
+  boxes.forEach(box=>box.innerHTML = html);
 }
 
 function updateBars(){
